@@ -172,3 +172,5 @@ amplifytools.xcconfig
 *.tfstate.*
 .terraform/
 .terraform.lock.hcl
+
+.sst
