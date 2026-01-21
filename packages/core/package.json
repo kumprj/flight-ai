@@ -1,0 +1,13 @@
+{
+  "name": "@flight-ai/core",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.500.0",
+    "@aws-sdk/lib-dynamodb": "^3.500.0",
+    "@aws-sdk/client-scheduler": "^3.500.0",
+    "axios": "^1.6.0",
+    "twilio": "^4.20.0"
+  }
+}
