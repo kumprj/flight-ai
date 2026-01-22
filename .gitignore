@@ -172,5 +172,5 @@ amplifytools.xcconfig
 *.tfstate.*
 .terraform/
 .terraform.lock.hcl
-
+sst_oauth_values.txt
 .sst

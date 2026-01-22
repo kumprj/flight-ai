@@ -11,27 +11,56 @@ export default $config({
   async run() {
     // 1. Database
     const table = new sst.aws.Dynamo("Table", {
-      fields: {
-        pk: "string",
-        sk: "string",
-      },
-      primaryIndex: { hashKey: "pk", rangeKey: "sk" },
+      fields: {pk: "string", sk: "string"},
+      primaryIndex: {hashKey: "pk", rangeKey: "sk"},
     });
 
-    // 2. Auth (CORRECTED COMPONENT NAME)
+    // 2. Auth: User Pool
     const userPool = new sst.aws.CognitoUserPool("UserPool", {
-      // Optional: Add triggers or other settings here if needed
-      // For simple email/password or social login, defaults are often enough
+      mfa: "off",
+      usernames: ["email"],
     });
 
-    // Add a client for your React App
-    const client = userPool.addClient("WebClient", {
-      transform: {
-        client: {
-          callbackUrls: ["http://localhost:5173"],
-          logoutUrls: ["http://localhost:5173"],
-        }
-      }
+    // 2a. Auth: Google Identity Provider (Raw AWS Resource)
+    const googleProvider = new aws.cognito.IdentityProvider("GoogleProvider", {
+      userPoolId: userPool.id,
+      providerName: "Google",
+      providerType: "Google",
+      providerDetails: {
+        client_id: new sst.Secret("GOOGLE_CLIENT_ID").value,
+        client_secret: new sst.Secret("GOOGLE_CLIENT_SECRET").value,
+        authorize_scopes: "email profile openid",
+      },
+      attributeMapping: {
+        email: "email",
+        given_name: "given_name",
+        family_name: "family_name",
+        picture: "picture",
+      },
+    });
+
+    // 2b. Auth: User Pool Client (Raw AWS Resource)
+    // We use this instead of userPool.addClient to ensure we can use 'dependsOn'
+    const client = new aws.cognito.UserPoolClient("WebClient", {
+      userPoolId: userPool.id,
+
+      // Setup callbacks
+      callbackUrls: ["http://localhost:5173"],
+      logoutUrls: ["http://localhost:5173"],
+
+      // Link Providers
+      supportedIdentityProviders: ["COGNITO", "Google"],
+
+      // OAuth Flows
+      allowedOauthFlows: ["code"],
+      allowedOauthScopes: ["email", "profile", "openid"],
+      allowedOauthFlowsUserPoolClient: true,
+    }, {dependsOn: [googleProvider]}); // <--- EXPLICIT DEPENDENCY HERE
+
+    // 2c. Auth: Domain
+    const domain = new aws.cognito.UserPoolDomain("AuthDomain", {
+      userPoolId: userPool.id,
+      domain: `flight-ai-${$app.stage}`,
     });
 
     // 3. Worker
@@ -44,42 +73,62 @@ export default $config({
         TWILIO_TOKEN: process.env.TWILIO_TOKEN!,
         TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER!,
       },
-      permissions: [
-        {
-          actions: ["scheduler:*", "ses:*"],
-          resources: ["*"],
-        },
-      ],
+      permissions: [{actions: ["scheduler:*", "ses:*"], resources: ["*"]}],
     });
 
-    // 4. API Gateway
-    const api = new sst.aws.ApiGatewayV2("Api");
+    // 4. API
+    // 4. API
+    const api = new sst.aws.ApiGatewayV2("Api", {
+      // ADD THIS CORS BLOCK
+      cors: {
+        allowMethods: ["GET", "POST", "OPTIONS"],
+        allowOrigins: ["http://localhost:5173"], // Allow your local dev
+        allowHeaders: ["Authorization", "Content-Type"], // Explicitly allow Authorization
+      },
+      transform: {
+        route: {
+          handler: {
+            link: [table, notifyWorker],
+            environment: {
+              WORKER_ARN: notifyWorker.arn,
+              SCHEDULER_ROLE_ARN: notifyWorker.nodes.role.arn,
+            },
+          }
+        }
+      }
+    });
 
+
+    // Create a JWT Authorizer linked to your User Pool
+    const authorizer = api.addAuthorizer({
+      name: "UserPoolAuthorizer",
+      jwt: {
+        // Ensure this string matches the token 'iss' EXACTLY
+        issuer: $interpolate`https://cognito-idp.${aws.getRegionOutput().name}.amazonaws.com/${userPool.id}`,
+        // Ensure this matches the token 'aud' EXACTLY
+        audiences: [client.id],
+      },
+    });
+
+    // Secure the routes with this authorizer
     api.route("POST /trips", {
       handler: "packages/functions/src/trip.create",
-      link: [table, notifyWorker],
-      permissions: [
-        {
-          actions: ["scheduler:*", "iam:PassRole"],
-          resources: ["*"],
-        },
-      ],
-      environment: {
-        WORKER_ARN: notifyWorker.arn,
-        SCHEDULER_ROLE_ARN: notifyWorker.nodes.role.arn,
-      },
+      authorizer: authorizer.id,
     });
 
     api.route("GET /trips", {
       handler: "packages/functions/src/trip.list",
-      link: [table],
+      authorizer: authorizer.id,
     });
+
 
     return {
       ApiEndpoint: api.url,
       Region: aws.getRegionOutput().name,
       UserPoolId: userPool.id,
-      UserPoolClientId: client.id, // Access the client ID from the client object
+      UserPoolClientId: client.id,
+      AuthDomainPrefix: domain.domain,
+      AuthDomain: $interpolate`https://${domain.domain}.auth.${aws.getRegionOutput().name}.amazoncognito.com`,
     };
   },
 });

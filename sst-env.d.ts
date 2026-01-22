@@ -9,6 +9,14 @@ declare module "sst" {
       "type": "sst.aws.ApiGatewayV2"
       "url": string
     }
+    "GOOGLE_CLIENT_ID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GOOGLE_CLIENT_SECRET": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "NotifyWorker": {
       "name": string
       "type": "sst.aws.Function"
@@ -20,11 +28,6 @@ declare module "sst" {
     "UserPool": {
       "id": string
       "type": "sst.aws.CognitoUserPool"
-    }
-    "WebClient": {
-      "id": string
-      "secret": string
-      "type": "sst.aws.CognitoUserPoolClient"
     }
   }
 }
