@@ -3,15 +3,10 @@ import '@aws-amplify/ui-react/styles.css';
 import axios from 'axios';
 import {Config} from './config';
 import {fetchAuthSession} from 'aws-amplify/auth';
-import { formatFlightDate, formatFlightTimeOnly } from './utils/flightTimes';
-
-
-
-
 import Trips from './Trips';
 import {useState} from 'react';
 import Toast, {type ToastType} from './Toast';
-// IMPORT THE NEW COMPONENT
+import {formatFlightDate, formatFlightTimeOnly} from './utils/flightTimes';
 import CustomDatePicker from './DatePicker';
 
 interface FlightData {
@@ -57,24 +52,32 @@ function App() {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
 
-      // BUILD PARAMS - Include date if selected
-      const params: any = {flightNumber: flightNum};
-      if (selectedDate) {
-        params.date = selectedDate.toISOString().split('T')[0]; // "2026-05-20"
-      }
-
       const res = await axios.get(`${Config.API_URL}/flights/search`, {
-        params,
+        params: {flightNumber: flightNum},
         headers: {Authorization: `Bearer ${token}`}
       });
 
       const flights = res.data;
 
       if (flights && flights.length > 0) {
-        setSearchResults(flights);
+        let matches = flights;
+
+        // FILTER: If user picked a date, filter by it
+        if (selectedDate) {
+          const dateStr = selectedDate.toISOString().split('T')[0];
+          matches = flights.filter((f: any) => f.departureTime.startsWith(dateStr));
+
+          // If strict filtering removed everything, fallback to original list (or show empty)
+          if (matches.length === 0) {
+            showToast(`Showing all flights found on ${selectedDate.toLocaleDateString()}. `, "success");
+            matches = flights;
+          }
+        }
+
+        setSearchResults(matches);
         setStep('select');
       } else {
-        showToast(`No flights found for ${flightNum}.`, "error");
+        showToast(`Flight ${flightNum} not found.`, "error");
       }
     } catch (err) {
       console.error(err);
@@ -83,7 +86,6 @@ function App() {
       setLoading(false);
     }
   };
-
 
   // 2. SELECT FLIGHT
   const handleSelectFlight = (flight: FlightData) => {
@@ -194,7 +196,7 @@ function App() {
                                     <CustomDatePicker
                                         selected={selectedDate}
                                         onChange={(date) => setSelectedDate(date)}
-                                        placeholder="mm/dd/yyyy"
+                                        placeholder="Date (Opt)"
                                     />
                                   </div>
                                 </div>
@@ -249,9 +251,10 @@ function App() {
                                       </div>
                                       <div
                                           className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
-                                        <span>{formatFlightDate(flight.departureTime, flight.origin)}</span>
-                                        <span>{formatFlightTimeOnly(flight.departureTime, flight.origin)}</span>
+                                        <span>{flight.departureTime ? formatFlightDate(flight.departureTime, flight.origin) : ''}</span>
+                                        <span>{flight.departureTime ? formatFlightTimeOnly(flight.departureTime, flight.origin) : ''}</span>
                                       </div>
+
                                       <div
                                           className="mt-2 text-xs text-gray-400 font-medium flex items-center gap-2">
                                         <span>{flight.origin}</span>
@@ -288,6 +291,7 @@ function App() {
                                       {selectedFlight ? formatFlightTimeOnly(selectedFlight.departureTime, selectedFlight.origin) : ''}
                                     </p>
                                   </div>
+
                                 </div>
                                 <div className="px-2">
                                   <p className="text-xs text-gray-500 uppercase">Leaving From</p>
