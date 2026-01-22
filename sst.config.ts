@@ -72,6 +72,7 @@ export default $config({
         TWILIO_SID: process.env.TWILIO_SID!,
         TWILIO_TOKEN: process.env.TWILIO_TOKEN!,
         TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER!,
+        MY_PHONE_NUMBER: process.env.MY_PHONE_NUMBER!,
       },
       permissions: [{actions: ["scheduler:*", "ses:*"], resources: ["*"]}],
     });
@@ -114,10 +115,28 @@ export default $config({
     api.route("POST /trips", {
       handler: "packages/functions/src/trip.create",
       authorizer: authorizer.id,
+      link: [table],
+      environment: {
+        WORKER_ARN: notifyWorker.arn,
+        SCHEDULER_ROLE_ARN: notifyWorker.nodes.role.arn,
+      },
+      // ADD THIS:
+      permissions: [
+        { actions: ["scheduler:*", "iam:PassRole"], resources: ["*"] }
+      ],
     });
 
     api.route("GET /trips", {
       handler: "packages/functions/src/trip.list",
+      link: [table],
+      environment: {
+        WORKER_ARN: notifyWorker.arn,
+        SCHEDULER_ROLE_ARN: notifyWorker.nodes.role.arn,
+      },
+      // ADD THIS:
+      permissions: [
+        { actions: ["scheduler:*", "iam:PassRole"], resources: ["*"] }
+      ],
       authorizer: authorizer.id,
     });
 

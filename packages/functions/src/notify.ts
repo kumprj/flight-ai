@@ -1,43 +1,62 @@
-import { SchedulerPayload } from "@flight-ai/core/types";
+import { SchedulerHandler } from "aws-lambda";
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { GoogleMaps } from "@flight-ai/core/maps";
 import { Messenger } from "@flight-ai/core/twilio";
-import { Database } from "@flight-ai/core/dynamodb";
+import { SchedulerPayload } from "@flight-ai/core/types";
 
-export const handler = async (event: SchedulerPayload) => {
-  console.log(`Processing trip ${event.tripId} for user ${event.userId}`);
+const ses = new SESClient({});
+
+export const handler: SchedulerHandler = async (event) => {
+  console.log("Worker triggered:", JSON.stringify(event, null, 2));
+  const payload = event as unknown as SchedulerPayload;
+
+  if (!payload.homeAddress || !payload.airportCode) {
+    console.error("Missing address or airport in payload");
+    return;
+  }
 
   try {
-    // 1. Get User Profile (to get their phone number)
-    // We assume the user profile is stored under PK: USER#<email>, SK: PROFILE
-    const userProfile = await Database.getProfile(event.userId);
-
-    if (!userProfile?.phone) {
-      console.error("No phone number found for user");
-      return;
-    }
-
-    // 2. Check Traffic
-    // We calculate traffic from Home -> Airport
-    const trafficStats = await GoogleMaps.getTravelTime(
-        event.homeAddress,
-        event.airportCode, // e.g., "ORD" or "O'Hare International Airport"
+    // 1. Calculate Travel Time
+    const travelInfo = await GoogleMaps.getTravelTime(
+        payload.homeAddress,
+        payload.airportCode,
         new Date()
     );
 
-    // 3. Logic: When should they leave?
-    // Current time + Drive Time + 10 minute buffer
-    const leaveInMinutes = Math.round(trafficStats.durationSeconds / 60);
+    const message = `✈️ Flight Alert! \n\nTraffic to ${payload.airportCode} is currently ${travelInfo.durationText}.\nWe recommend leaving by ${new Date(Date.now() + 30 * 60 * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.`;
 
-    const message = `✈️ Flight Alert: Traffic to ${event.airportCode} is currently ${trafficStats.durationText}. You should leave in the next ${10} minutes to arrive 2 hours early. Drive safe!`;
+    // 2. Send SMS (Twilio)
+    // In a real app, you'd fetch the user's phone number from DynamoDB here using payload.userId
+    const userPhone = process.env.MY_PHONE_NUMBER;
+    if (userPhone) {
+      await Messenger.sendSms(userPhone, message);
+      console.log("SMS sent");
+    }
 
-    // 4. Send SMS
-    await Messenger.sendSms(userProfile.phone, message);
+    // 3. Send Email (SES)
+    // We assume the user ID "rkump24_gmail_com" contains the email info,
+    // or you can fetch the profile. For now, we reconstruct it or use a default.
+    const userEmail = payload.userId.replace("_gmail_com", "@gmail.com").replace(/_/g, "."); // Rough reconstruction
+    // OR just use your env var for testing:
+    const targetEmail = process.env.MY_EMAIL || "rkump24@gmail.com";
 
-    console.log("Notification sent successfully");
+    // IMPORTANT: The 'Source' email must be verified in SES console (sandboxed mode)
+    const senderEmail = process.env.SENDER_EMAIL || "rkump24@gmail.com";
+
+    await ses.send(new SendEmailCommand({
+      Source: senderEmail,
+      Destination: { ToAddresses: [targetEmail] },
+      Message: {
+        Subject: { Data: "Flight Alert: Time to Leave!" },
+        Body: {
+          Text: { Data: message }
+        }
+      }
+    }));
+    console.log("Email sent");
 
   } catch (error) {
-    console.error("Error processing notification:", error);
-    // In a real app, you might want to send this to a Dead Letter Queue (DLQ)
+    console.error("Notification failed:", error);
     throw error;
   }
 };
