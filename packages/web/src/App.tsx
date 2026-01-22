@@ -1,13 +1,13 @@
-import {Authenticator} from '@aws-amplify/ui-react';
+import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import axios from 'axios';
-import {Config} from './config';
-import {fetchAuthSession} from 'aws-amplify/auth';
+import { Config } from './config';
+import { fetchAuthSession } from 'aws-amplify/auth';
 import Trips from './Trips';
-import {useState} from 'react';
-import Toast, {type ToastType} from './Toast';
-import {formatFlightDate, formatFlightTimeOnly} from './utils/flightTimes';
+import { useState } from 'react';
+import Toast, { type ToastType } from './Toast';
 import CustomDatePicker from './DatePicker';
+import { formatFlightDate, formatFlightTimeOnly } from './utils/flightTimes'; // ADD THIS LINE
 
 interface FlightData {
   flightNumber: string;
