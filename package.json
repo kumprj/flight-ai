@@ -10,8 +10,11 @@
     "remove": "sst remove"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
     "sst": "^3.0.0",
-    "typescript": "^5.0.0",
-    "@types/node": "^20.0.0"
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.972.0"
   }
 }

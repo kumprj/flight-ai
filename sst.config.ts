@@ -75,6 +75,26 @@ export default $config({
         MY_PHONE_NUMBER: process.env.MY_PHONE_NUMBER!,
       },
       permissions: [{actions: ["scheduler:*", "ses:*"], resources: ["*"]}],
+      transform: {
+        role: (args) => {
+          // Ensure the AssumeRolePolicyDocument allows both Lambda and Scheduler
+          args.assumeRolePolicy = {
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Effect: "Allow",
+                Principal: {
+                  Service: [
+                    "lambda.amazonaws.com",
+                    "scheduler.amazonaws.com"
+                  ],
+                },
+                Action: "sts:AssumeRole",
+              },
+            ],
+          };
+        },
+      },
     });
 
     // 4. API
@@ -122,7 +142,7 @@ export default $config({
       },
       // ADD THIS:
       permissions: [
-        { actions: ["scheduler:*", "iam:PassRole"], resources: ["*"] }
+        {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
     });
 
@@ -135,7 +155,7 @@ export default $config({
       },
       // ADD THIS:
       permissions: [
-        { actions: ["scheduler:*", "iam:PassRole"], resources: ["*"] }
+        {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
       authorizer: authorizer.id,
     });
