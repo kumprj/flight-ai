@@ -7,7 +7,7 @@ import Trips from './Trips';
 import {useState} from 'react';
 import Toast, {type ToastType} from './Toast';
 import CustomDatePicker from './DatePicker';
-import {formatFlightDate, formatFlightTimeOnly} from './utils/flightTimes'; // ADD THIS LINE
+import {formatFlightDate, formatFlightTimeOnly} from './utils/flightTimes';
 
 interface FlightData {
   flightNumber: string;
