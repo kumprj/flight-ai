@@ -4,19 +4,19 @@ const ROUTES_API_URL = "https://routes.googleapis.com/directions/v2:computeRoute
 
 export const GoogleMaps = {
   getTravelTime: async (origin: string, destination: string, arrivalTime: Date) => {
-    // We want to arrive 2 hours before the flight.
-    // Note: The Routes API works best with 'departureTime', but for strict arrival
-    // we often estimate or subtract duration. For simplicity here, we ask for
-    // traffic conditions assuming we leave *now* (at the trigger time).
+    // Note: 'arrivalTime' isn't used in the API call below, which means
+    // it calculates traffic for "right now". This is correct for your
+    // Worker, which runs 4 hours before the flight (at the moment you want to leave).
 
     const response = await axios.post(
         ROUTES_API_URL,
-        {
+        { // <--- WRAP BODY IN OBJECT
           origin: { address: origin },
           destination: { address: destination },
           travelMode: "DRIVE",
           routingPreference: "TRAFFIC_AWARE",
-          // 'computeRoutes' requires a field mask to return specific data
+          // Optional: Add 'departureTime' if you want predictive traffic,
+          // but omitting it defaults to "now", which is what you want.
         },
         {
           headers: {
@@ -27,10 +27,9 @@ export const GoogleMaps = {
         }
     );
 
-    const route = response.data.routes[0];
+    const route = response.data.routes?.[0]; // Add safety check
     if (!route) throw new Error("No route found");
 
-    // Duration comes as "3600s". We parse it to seconds.
     const durationSeconds = parseInt(route.duration.replace("s", ""));
 
     return {
