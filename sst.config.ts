@@ -113,6 +113,7 @@ export default $config({
             environment: {
               WORKER_ARN: notifyWorker.arn,
               SCHEDULER_ROLE_ARN: notifyWorker.nodes.role.arn,
+              AVIATION_STACK_KEY: process.env.AVIATION_STACK_KEY!,
             },
           }
         }
@@ -136,11 +137,6 @@ export default $config({
       handler: "packages/functions/src/trip.create",
       authorizer: authorizer.id,
       link: [table],
-      environment: {
-        WORKER_ARN: notifyWorker.arn,
-        SCHEDULER_ROLE_ARN: notifyWorker.nodes.role.arn,
-      },
-      // ADD THIS:
       permissions: [
         {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
@@ -149,15 +145,20 @@ export default $config({
     api.route("GET /trips", {
       handler: "packages/functions/src/trip.list",
       link: [table],
-      environment: {
-        WORKER_ARN: notifyWorker.arn,
-        SCHEDULER_ROLE_ARN: notifyWorker.nodes.role.arn,
-      },
-      // ADD THIS:
       permissions: [
         {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
       authorizer: authorizer.id,
+    });
+    // New Flight Search Route
+    api.route("GET /flights/search", {
+      handler: "packages/functions/src/flight.search",
+      transform: {
+        route: (args) => {
+          args.authorizationType = "JWT";
+          args.authorizerId = authorizer.id;
+        }
+      }
     });
 
 
