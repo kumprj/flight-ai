@@ -1,274 +1,317 @@
-import {useState, useEffect} from 'react';
-import {Amplify} from 'aws-amplify';
 import {Authenticator} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import axios from 'axios';
-import {fetchAuthSession} from 'aws-amplify/auth';
 import {Config} from './config';
+import {fetchAuthSession} from 'aws-amplify/auth';
+import { formatFlightDate, formatFlightTimeOnly } from './utils/flightTimes';
+
+
+
+
 import Trips from './Trips';
-import Toast, {ToastType} from './Toast';
-
-// Configure Amplify
-Amplify.configure({
-  Auth: {
-    Cognito: {
-      userPoolId: Config.USER_POOL_ID,
-      userPoolClientId: Config.USER_POOL_CLIENT_ID,
-      loginWith: {
-        oauth: {
-          domain: Config.COGNITO_DOMAIN,
-          scopes: ['email', 'profile', 'openid'],
-          redirectSignIn: [Config.REDIRECT_URI],
-          redirectSignOut: [Config.REDIRECT_URI],
-          responseType: 'code',
-        },
-      },
-    },
-  },
-});
-
-type ViewState = 'list' | 'search' | 'confirm';
+import {useState} from 'react';
+import Toast, {type ToastType} from './Toast';
+// IMPORT THE NEW COMPONENT
+import CustomDatePicker from './DatePicker';
 
 interface FlightData {
   flightNumber: string;
+  departureTime: string;
   origin: string;
   destination: string;
-  departureTime: string;
   airline: string;
 }
 
+type Step = 'input' | 'select' | 'confirm';
+
 function App() {
-  const [view, setView] = useState<ViewState>('list');
-  const [flightNumInput, setFlightNumInput] = useState('');
+  const [view, setView] = useState<'add' | 'list'>('list');
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState<Step>('input');
+
+  // State for Data
+  const [searchResults, setSearchResults] = useState<FlightData[]>([]);
+  const [selectedFlight, setSelectedFlight] = useState<FlightData | null>(null);
   const [homeAddress, setHomeAddress] = useState('');
 
-  // New State for Search
-  const [isSearching, setIsSearching] = useState(false);
-  const [flightData, setFlightData] = useState<FlightData | null>(null);
+  // NEW: State for the Date Picker
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-  // Toast State
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
   const showToast = (msg: string, type: ToastType = 'success') => {
     setToast({msg, type});
   };
 
-  const handleSearchFlight = async (e: React.FormEvent) => {
+  const handleLookup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!flightNumInput) return;
+    setLoading(true);
 
-    setIsSearching(true);
-    setFlightData(null); // Clear previous
+    const form = new FormData(e.target as HTMLFormElement);
+    const flightNum = (form.get('flightNumber') as string).toUpperCase();
+    const address = form.get('homeAddress') as string;
+
+    setHomeAddress(address);
 
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
 
-      // Call our new API endpoint
+      // BUILD PARAMS - Include date if selected
+      const params: any = {flightNumber: flightNum};
+      if (selectedDate) {
+        params.date = selectedDate.toISOString().split('T')[0]; // "2026-05-20"
+      }
+
       const res = await axios.get(`${Config.API_URL}/flights/search`, {
-        params: {flightNumber: flightNumInput},
+        params,
         headers: {Authorization: `Bearer ${token}`}
       });
 
       const flights = res.data;
 
       if (flights && flights.length > 0) {
-        // Find the first "active" or "scheduled" flight, or just default to the first one
-        const match = flights[0];
-
-        setFlightData({
-          flightNumber: match.flightNumber,
-          origin: match.origin,
-          destination: match.destination,
-          departureTime: match.departureTime,
-          airline: match.airline
-        });
-
-        // Move to confirm step only if we found data
-        setView('confirm');
+        setSearchResults(flights);
+        setStep('select');
       } else {
-        showToast(`No flights found for ${flightNumInput}`, 'error');
+        showToast(`No flights found for ${flightNum}.`, "error");
       }
     } catch (err) {
       console.error(err);
-      showToast("Failed to search flight info", 'error');
+      showToast("Failed to search flight. Check inputs.", "error");
     } finally {
-      setIsSearching(false);
+      setLoading(false);
     }
   };
 
-  const handleConfirmTrip = async () => {
-    if (!flightData || !homeAddress) {
-      showToast("Please enter your home address", 'error');
-      return;
-    }
 
+  // 2. SELECT FLIGHT
+  const handleSelectFlight = (flight: FlightData) => {
+    setSelectedFlight(flight);
+    setStep('confirm');
+  };
+
+  // 3. CONFIRM TRIP
+  const handleConfirm = async () => {
+    setLoading(true);
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
 
-      await axios.post(
-          `${Config.API_URL}/trips`,
-          {
-            flightNumber: flightData.flightNumber,
-            date: flightData.departureTime, // Use the real date from API
-            airportCode: flightData.origin, // Use real origin
-            homeAddress,
-            userId: "user_from_token" // Backend handles this now
-          },
-          {
-            headers: {Authorization: `Bearer ${token}`},
-          }
-      );
+      await axios.post(`${Config.API_URL}/trips`, {
+        flightNumber: selectedFlight?.flightNumber,
+        date: selectedFlight?.departureTime,
+        airportCode: selectedFlight?.origin,
+        homeAddress: homeAddress,
+      }, {
+        headers: {Authorization: `Bearer ${token}`}
+      });
 
       showToast("Trip tracked successfully!", "success");
-      setFlightData(null);
-      setFlightNumInput('');
+
+      setStep('input');
+      setSelectedFlight(null);
+      setSearchResults([]);
       setHomeAddress('');
+      setSelectedDate(null); // Reset date
       setView('list');
     } catch (err) {
       console.error(err);
-      showToast("Failed to save trip", "error");
+      showToast("Failed to save trip.", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleCancel = () => {
+    setStep('input');
+    setSearchResults([]);
+  };
+
   return (
-      <Authenticator>
-        {({signOut, user}) => (
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10">
-
-              {/* Toast Notification */}
-              {toast && (
-                  <Toast
-                      message={toast.msg}
-                      type={toast.type}
-                      onClose={() => setToast(null)}
-                  />
-              )}
-
-              <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
-                {/* Header */}
-                <div className="bg-indigo-600 p-6 flex justify-between items-center">
-                  <h1 className="text-white text-xl font-bold">Flight AI</h1>
-                  <button onClick={signOut} className="text-indigo-200 hover:text-white text-sm">
-                    Sign Out
-                  </button>
-                </div>
-
-                <div className="p-6">
-                  {/* LIST VIEW */}
-                  {view === 'list' && (
-                      <Trips onBack={() => setView('search')}/>
-                  )}
-
-                  {/* SEARCH VIEW */}
-                  {view === 'search' && (
-                      <div>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4">Track a New
-                          Flight</h2>
-                        <form onSubmit={handleSearchFlight}>
-                          <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Flight
-                              Number</label>
-                            <input
-                                type="text"
-                                placeholder="e.g. AA123"
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none uppercase"
-                                value={flightNumInput}
-                                onChange={(e) => setFlightNumInput(e.target.value.toUpperCase())}
-                            />
-                          </div>
-                          <div className="flex gap-3">
-                            <button
-                                type="button"
-                                onClick={() => setView('list')}
-                                className="flex-1 py-3 text-gray-600 bg-gray-100 rounded-lg font-medium hover:bg-gray-200 transition"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={isSearching || !flightNumInput}
-                                className="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50"
-                            >
-                              {isSearching ? 'Searching...' : 'Find Flight'}
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                  )}
-
-                  {/* CONFIRM VIEW */}
-                  {view === 'confirm' && flightData && (
-                      <div>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4">Confirm Trip
-                          Details</h2>
-
-                        <div className="bg-indigo-50 p-4 rounded-lg mb-6 border border-indigo-100">
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <p className="text-gray-500">Flight</p>
-                              <p className="font-semibold text-gray-900">{flightData.flightNumber}</p>
-                              <p className="text-xs text-gray-500">{flightData.airline}</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-gray-500">Departing</p>
-                              <p className="font-semibold text-gray-900">
-                                {new Date(flightData.departureTime).toLocaleDateString()}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {new Date(flightData.departureTime).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </p>
-                            </div>
-                            <div className="col-span-2 pt-2 border-t border-indigo-100 mt-2">
-                              <p className="text-gray-500">Route</p>
-                              <p className="font-semibold text-gray-900 flex items-center gap-2">
-                                {flightData.origin}
-                                <span className="text-indigo-400">➝</span>
-                                {flightData.destination}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="mb-6">
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Where are you leaving from?
-                          </label>
-                          <input
-                              type="text"
-                              placeholder="e.g. 123 Main St, Chicago, IL"
-                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                              value={homeAddress}
-                              onChange={(e) => setHomeAddress(e.target.value)}
-                          />
-                        </div>
-
-                        <div className="flex gap-3">
-                          <button
-                              onClick={() => setView('search')}
-                              className="flex-1 py-3 text-gray-600 bg-gray-100 rounded-lg font-medium hover:bg-gray-200 transition"
-                          >
-                            Back
-                          </button>
-                          <button
-                              onClick={handleConfirmTrip}
-                              disabled={!homeAddress}
-                              className="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50"
-                          >
-                            Track Flight
-                          </button>
-                        </div>
-                      </div>
-                  )}
-                </div>
-              </div>
-            </div>
+      <div className="app-container">
+        {toast && (
+            <Toast
+                message={toast.msg}
+                type={toast.type}
+                onClose={() => setToast(null)}
+            />
         )}
-      </Authenticator>
+
+        <Authenticator socialProviders={['google']}>
+          {({signOut}) => (
+              <div
+                  className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-6 flex flex-col items-center font-sans">
+
+                <header
+                    className="w-full max-w-md flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800">
+                  <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Flight AI
+                  </h1>
+                  <div className="flex gap-4 text-sm font-medium">
+                    <button
+                        onClick={() => setView('list')}
+                        className={`${view === 'list' ? 'text-blue-600' : 'text-gray-500'}`}
+                    >
+                      My Trips
+                    </button>
+                    <button onClick={signOut} className="text-gray-400 hover:text-red-500">
+                      Sign Out
+                    </button>
+                  </div>
+                </header>
+
+                <main className="w-full max-w-md">
+                  {view === 'list' ? (
+                      <Trips onBack={() => setView('add')}/>
+                  ) : (
+                      <>
+                        {/* STEP 1: INPUT */}
+                        {step === 'input' && (
+                            <div className="animate-fade-in">
+                              <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-bold">Track a New Flight</h2>
+                                <button onClick={() => setView('list')}
+                                        className="text-sm text-gray-500">Cancel
+                                </button>
+                              </div>
+
+                              <form onSubmit={handleLookup} className="space-y-4">
+                                <div>
+                                  <label
+                                      className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
+                                    Flight Info
+                                  </label>
+                                  <div className="flex gap-2">
+                                    <input
+                                        name="flightNumber"
+                                        placeholder="e.g. AA123"
+                                        required
+                                        className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none uppercase font-medium"
+                                    />
+
+                                    {/* REPLACED: Native Input -> Custom DatePicker */}
+                                    <CustomDatePicker
+                                        selected={selectedDate}
+                                        onChange={(date) => setSelectedDate(date)}
+                                        placeholder="mm/dd/yyyy"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label
+                                      className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
+                                    Start Location
+                                  </label>
+                                  <input
+                                      name="homeAddress"
+                                      placeholder="123 Main St, Chicago..."
+                                      required
+                                      defaultValue={homeAddress}
+                                      className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                                  />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70"
+                                >
+                                  {loading ? 'Searching...' : 'Find Flight'}
+                                </button>
+                              </form>
+                            </div>
+                        )}
+
+                        {/* STEP 2: SELECT FLIGHT */}
+                        {step === 'select' && (
+                            <div className="animate-fade-in">
+                              <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-xl font-bold">Select Flight</h2>
+                                <button onClick={handleCancel}
+                                        className="text-sm text-gray-500">Back
+                                </button>
+                              </div>
+
+                              <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+                                {searchResults.map((flight, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleSelectFlight(flight)}
+                                        className="w-full text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border-2 border-transparent hover:border-blue-500 hover:bg-white dark:hover:bg-gray-700 transition-all shadow-sm group"
+                                    >
+                                      <div className="flex justify-between items-center mb-1">
+                                        <span
+                                            className="font-bold text-lg">{flight.flightNumber}</span>
+                                        <span
+                                            className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-md">{flight.airline}</span>
+                                      </div>
+                                      <div
+                                          className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
+                                        <span>{formatFlightDate(flight.departureTime, flight.origin)}</span>
+                                        <span>{formatFlightTimeOnly(flight.departureTime, flight.origin)}</span>
+                                      </div>
+                                      <div
+                                          className="mt-2 text-xs text-gray-400 font-medium flex items-center gap-2">
+                                        <span>{flight.origin}</span>
+                                        <span
+                                            className="h-[1px] flex-1 bg-gray-300 dark:bg-gray-600"></span>
+                                        <span>{flight.destination}</span>
+                                      </div>
+                                    </button>
+                                ))}
+                              </div>
+                            </div>
+                        )}
+
+                        {/* STEP 3: CONFIRM */}
+                        {step === 'confirm' && (
+                            <div
+                                className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-xl space-y-6 animate-fade-in border border-gray-100 dark:border-gray-700">
+                              <h2 className="text-xl font-bold text-center">Confirm Trip
+                                Details</h2>
+                              <div className="space-y-4">
+                                <div
+                                    className="flex items-center justify-between p-4 bg-white dark:bg-gray-700/50 rounded-xl">
+                                  <div>
+                                    <p className="text-xs text-gray-500 uppercase">Flight</p>
+                                    <p className="text-xl font-bold">{selectedFlight?.flightNumber}</p>
+                                    <p className="text-xs text-gray-400">{selectedFlight?.airline}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-xs text-gray-500 uppercase">Departing</p>
+                                    <p className="text-lg font-bold text-blue-500">
+                                      {selectedFlight ? formatFlightDate(selectedFlight.departureTime, selectedFlight.origin) : ''}
+                                    </p>
+                                    <p className="text-sm font-medium text-gray-400">
+                                      {selectedFlight ? formatFlightTimeOnly(selectedFlight.departureTime, selectedFlight.origin) : ''}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="px-2">
+                                  <p className="text-xs text-gray-500 uppercase">Leaving From</p>
+                                  <p className="text-sm truncate">{homeAddress}</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-3 pt-2">
+                                <button onClick={handleCancel}
+                                        className="flex-1 py-3 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl font-medium">Cancel
+                                </button>
+                                <button onClick={handleConfirm} disabled={loading}
+                                        className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all">
+                                  {loading ? 'Scheduling...' : 'Track Flight'}
+                                </button>
+                              </div>
+                            </div>
+                        )}
+                      </>
+                  )}
+                </main>
+              </div>
+          )}
+        </Authenticator>
+      </div>
   );
 }
 

@@ -97,10 +97,7 @@ export default $config({
       },
     });
 
-    // 4. API
-    // 4. API
     const api = new sst.aws.ApiGatewayV2("Api", {
-      // ADD THIS CORS BLOCK
       cors: {
         allowMethods: ["GET", "POST", "OPTIONS"],
         allowOrigins: ["http://localhost:5173"], // Allow your local dev

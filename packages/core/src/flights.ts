@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Aviationstack uses HTTP for the free tier
 const API_URL = "http://api.aviationstack.com/v1/flights";
 
 export interface FlightResult {
@@ -14,18 +13,23 @@ export interface FlightResult {
 }
 
 export const Flights = {
-  search: async (flightIata: string): Promise<FlightResult[]> => {
-    console.log(`Searching for flight: ${flightIata}`);
+  search: async (flightIata: string, date?: string): Promise<FlightResult[]> => {
+    console.log(`Searching for flight: ${flightIata}`, date ? `on ${date}` : '');
 
     try {
-      const res = await axios.get(API_URL, {
-        params: {
-          access_key: process.env.AVIATION_STACK_KEY,
-          flight_iata: flightIata,
-          // Limit to avoid huge payloads
-          limit: 10
-        }
-      });
+      const params: any = {
+        access_key: process.env.AVIATION_STACK_KEY,
+        flight_iata: flightIata,
+        limit: 20 // Increase limit to get more results
+      };
+
+      // Add date if provided (format: YYYY-MM-DD)
+      // NOTE: Free tier may not support this well, but we try
+      if (date) {
+        params.flight_date = date;
+      }
+
+      const res = await axios.get(API_URL, { params });
 
       if (res.data.error) {
         console.error("Aviationstack Error:", res.data.error);
@@ -34,8 +38,8 @@ export const Flights = {
 
       const data = res.data.data || [];
 
-      // Map the messy API response to our clean interface
-      return data.map((f: any) => ({
+      // Map the response
+      const mapped = data.map((f: any) => ({
         flightNumber: f.flight.iata,
         airline: f.airline.name,
         origin: f.departure.iata,
@@ -44,6 +48,18 @@ export const Flights = {
         arrivalTime: f.arrival.scheduled,
         status: f.flight_status
       }));
+
+      // CLIENT-SIDE FILTER as backup if API doesn't respect date param
+      if (date && mapped.length > 0) {
+        const filtered = mapped.filter((f: FlightResult) =>
+            f.departureTime.startsWith(date)
+        );
+
+        // If we got matches, return them, otherwise return all (maybe API ignored date)
+        return filtered.length > 0 ? filtered : mapped;
+      }
+
+      return mapped;
 
     } catch (error) {
       console.error("Flight Search Exception:", error);

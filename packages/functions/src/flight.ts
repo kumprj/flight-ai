@@ -2,8 +2,13 @@ import { APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { Flights } from "@flight-ai/core/flights";
 
 export const search: APIGatewayProxyHandlerV2 = async (event) => {
-  // 1. Get query params
   const flightNumber = event.queryStringParameters?.flightNumber;
+  const date = event.queryStringParameters?.date;
+  console.log('Environment check:', {
+    hasKey: !!process.env.AVIATION_STACK_KEY,
+    keyPreview: process.env.AVIATION_STACK_KEY?.substring(0, 8) + '...'
+  });
+  console.log('Search request:', { flightNumber, date }); // Debug log
 
   if (!flightNumber) {
     return {
@@ -12,10 +17,14 @@ export const search: APIGatewayProxyHandlerV2 = async (event) => {
     };
   }
 
-  // 2. Call Core Logic
-  const results = await Flights.search(flightNumber);
+  const results = await Flights.search(flightNumber, date);
 
-  // 3. Return Results
+  console.log('API returned:', results.length, 'flights'); // Debug log
+  // ADD THIS
+  if (results.length === 0) {
+    console.warn('No flights found - possible rate limit or no data');
+  }
+
   return {
     statusCode: 200,
     headers: { "Content-Type": "application/json" },

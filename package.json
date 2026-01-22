@@ -17,6 +17,10 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.972.0"
+    "@aws-sdk/client-ses": "^3.972.0",
+    "@types/react-datepicker": "^6.2.0",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "react-datepicker": "^9.1.0"
   }
 }
