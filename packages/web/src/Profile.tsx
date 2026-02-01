@@ -110,6 +110,18 @@ export default function Profile({ onBack }: ProfileProps) {
     }
   };
 
+  const formatPhoneNumber = (value: string) => {
+    const digits = value.replace(/\D/g, '');
+
+    // If starts with 1, use it, otherwise add +1
+    if (digits.startsWith('1') && digits.length === 11) {
+      return `+${digits}`;
+    } else if (digits.length === 10) {
+      return `+1${digits}`;
+    }
+    return value; // Return as-is if invalid
+  };
+
   const handleVerifyCode = async () => {
     if (!verificationCode || verificationCode.length !== 6) {
       showToast('Please enter the 6-digit code', 'error');
@@ -178,7 +190,8 @@ export default function Profile({ onBack }: ProfileProps) {
                       placeholder="+1 (555) 123-4567"
                       value={profile.phoneNumber}
                       onChange={(e) => {
-                        setProfile({ ...profile, phoneNumber: e.target.value, phoneVerified: false });
+                        const formatted = formatPhoneNumber(e.target.value);
+                        setProfile({ ...profile, phoneNumber: formatted, phoneVerified: false });
                       }}
                       className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none"
                   />

@@ -23,18 +23,31 @@ export default function Trips({onBack}: { onBack: () => void }) {
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
-      // console.log("Using Token:", token);
+      console.log("Using Token:", token);
 
       const res = await axios.get(`${Config.API_URL}/trips`, {
-        headers: {
-          Authorization: `Bearer ${token}` // <--- ADD "Bearer "
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
 
-      setTrips(res.data);
+      // Sort trips by date - nearest first
+      const sortedTrips = res.data.sort((a: Trip, b: Trip) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateA - dateB; // Ascending order (soonest first)
+      });
+      setTrips(sortedTrips)
+      // const now = new Date().getTime();
+      // const upcomingTrips = res.data
+      //     .filter((trip: Trip) => new Date(trip.date).getTime() > now)
+      //     .sort((a: Trip, b: Trip) => {
+      //       return new Date(a.date).getTime() - new Date(b.date).getTime();
+      //     });
+
+      // setTrips(upcomingTrips);
+
     } catch (err) {
       console.error(err);
-      alert('Failed to load trips');
+      alert("Failed to load trips");
     } finally {
       setLoading(false);
     }

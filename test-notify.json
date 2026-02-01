@@ -1,0 +1,6 @@
+{
+  "tripId": "TRIP#2026-02-01T10:00:00#AA123",
+    "userId": "your-cognito-user-id",
+    "homeAddress": "123 Main St, Chicago, IL",
+    "airportCode": "ORD"
+}
