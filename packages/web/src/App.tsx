@@ -4,7 +4,7 @@ import axios from 'axios';
 import {Config} from './config';
 import {fetchAuthSession} from 'aws-amplify/auth';
 import Trips from './Trips';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import Toast, {type ToastType} from './Toast';
 import CustomDatePicker from './DatePicker';
 import {formatFlightDate, formatFlightTimeOnly} from './utils/flightTimes';
@@ -31,12 +31,36 @@ function App() {
 
   const [view, setView] = useState<'add' | 'list' | 'profile'>('list');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
   const showToast = (msg: string, type: ToastType = 'success') => {
     setToast({msg, type});
   };
+
+  const loadUserProfile = async () => {
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+
+      const res = await axios.get(`${Config.API_URL}/profile`, {
+        headers: {Authorization: `Bearer ${token}`}
+      });
+
+      if (res.data && res.data.homeAddress) {
+        setHomeAddress(res.data.homeAddress); // Directly set the home address
+      }
+    } catch (err) {
+      // Profile doesn't exist yet, that's ok
+      console.log('No profile found');
+    }
+  };
+
+
+  useEffect(() => {
+    if (view === 'add') {
+      loadUserProfile();
+    }
+  }, [view]);
 
   const handleLookup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,7 +111,6 @@ function App() {
     }
   };
 
-  // 2. SELECT FLIGHT
   const handleSelectFlight = (flight: FlightData) => {
     setSelectedFlight(flight);
     setStep('confirm');
@@ -153,27 +176,39 @@ function App() {
                   <div className="flex gap-4 text-sm font-medium">
                     <button
                         onClick={() => setView('list')}
-                        className={`${view === 'list' ? 'text-blue-600' : 'text-gray-500'}`}
+                        className={`${
+                            view === 'list'
+                                ? 'text-blue-600 border-b-2 border-blue-600'
+                                : 'text-gray-500 hover:text-blue-500 hover:border-b-2 hover:border-blue-300'
+                        } pb-1 transition-all cursor-pointer border-b-2 border-transparent`}
                     >
                       My Trips
                     </button>
                     <button
                         onClick={() => setView('profile')}
-                        className={`${view === 'profile' ? 'text-blue-600' : 'text-gray-500'}`}
+                        className={`${
+                            view === 'profile'
+                                ? 'text-blue-600 border-b-2 border-blue-600'
+                                : 'text-gray-500 hover:text-blue-500 hover:border-b-2 hover:border-blue-300'
+                        } pb-1 transition-all cursor-pointer border-b-2 border-transparent`}
                     >
                       Profile
                     </button>
-                    <button onClick={signOut} className="text-gray-400 hover:text-red-500">
+                    <button
+                        onClick={signOut}
+                        className="text-gray-400 hover:text-red-500 pb-1 transition-colors cursor-pointer"
+                    >
                       Sign Out
                     </button>
                   </div>
+
                 </header>
 
                 <main className="w-full max-w-md">
                   {view === 'list' ? (
-                      <Trips onBack={() => setView('add')} />
+                      <Trips onBack={() => setView('add')}/>
                   ) : view === 'profile' ? (
-                      <Profile onBack={() => setView('list')} />
+                      <Profile onBack={() => setView('list')}/>
                   ) : (
                       <>
                         {step === 'input' && (
@@ -216,9 +251,11 @@ function App() {
                                       name="homeAddress"
                                       placeholder="123 Main St, Chicago..."
                                       required
-                                      defaultValue={homeAddress}
+                                      value={homeAddress}
+                                      onChange={(e) => setHomeAddress(e.target.value)}
                                       className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none"
                                   />
+
                                 </div>
 
                                 <button
