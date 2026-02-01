@@ -11,9 +11,46 @@ const twilioClient = twilio(
     process.env.TWILIO_TOKEN!
 );
 
+/**
+ * Helper to generate a consistent User ID from the email claim.
+ */
+const getUserIdFromClaims = (claims: any): string | null => {
+  console.log("JWT Claims:", JSON.stringify(claims, null, 2));
+
+  if (!claims) {
+    console.log("No claims found");
+    return null;
+  }
+
+  // Try different email claim names (Google OAuth, Cognito, etc.)
+  const email = claims.email || claims["cognito:username"] || claims.sub;
+
+  if (!email) {
+    console.log("No email found in claims");
+    return null;
+  }
+
+  console.log("Email extracted:", email);
+
+  // Only replace @ and . if it looks like an email
+  if (email.includes("@")) {
+    return email.replace(/[@.]/g, "_");
+  }
+
+  return email;
+};
+
 // GET /profile
 export const get: APIGatewayProxyHandlerV2 = async (event) => {
-  const userId = event.requestContext.authorizer?.jwt.claims.sub as string;
+  const claims = event.requestContext.authorizer?.jwt?.claims;
+  const userId = getUserIdFromClaims(claims);
+
+  if (!userId) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: "Unauthorized - no valid user ID" }),
+    };
+  }
 
   const result = await dynamodb.get({
     TableName: Resource.Table.name,
@@ -36,7 +73,17 @@ export const get: APIGatewayProxyHandlerV2 = async (event) => {
 
 // PUT /profile
 export const update: APIGatewayProxyHandlerV2 = async (event) => {
-  const userId = event.requestContext.authorizer?.jwt.claims.sub as string;
+  console.log("Full event:", JSON.stringify(event, null, 2));
+  const claims = event.requestContext.authorizer?.jwt?.claims;
+  const userId = getUserIdFromClaims(claims);
+
+  if (!userId) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: "Unauthorized - no valid user ID" }),
+    };
+  }
+
   const body = JSON.parse(event.body || "{}");
 
   const profileData = {
@@ -49,6 +96,8 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
     arrivalPreference: body.arrivalPreference || 2,
     updatedAt: new Date().toISOString(),
   };
+
+  console.log("Saving profile:", profileData);
 
   await dynamodb.put({
     TableName: Resource.Table.name,
@@ -64,7 +113,16 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
 
 // POST /profile/verify/send
 export const sendVerification: APIGatewayProxyHandlerV2 = async (event) => {
-  const userId = event.requestContext.authorizer?.jwt.claims.sub as string;
+  const claims = event.requestContext.authorizer?.jwt?.claims;
+  const userId = getUserIdFromClaims(claims);
+
+  if (!userId) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: "Unauthorized - no valid user ID" }),
+    };
+  }
+
   const body = JSON.parse(event.body || "{}");
   const phoneNumber = body.phoneNumber;
 
@@ -116,7 +174,16 @@ export const sendVerification: APIGatewayProxyHandlerV2 = async (event) => {
 
 // POST /profile/verify/confirm
 export const confirmVerification: APIGatewayProxyHandlerV2 = async (event) => {
-  const userId = event.requestContext.authorizer?.jwt.claims.sub as string;
+  const claims = event.requestContext.authorizer?.jwt?.claims;
+  const userId = getUserIdFromClaims(claims);
+
+  if (!userId) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: "Unauthorized - no valid user ID" }),
+    };
+  }
+
   const body = JSON.parse(event.body || "{}");
   const { phoneNumber, code } = body;
 

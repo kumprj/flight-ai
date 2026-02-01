@@ -97,9 +97,7 @@ export default $config({
       },
     });
 
-// After creating the notifyWorker, add this:
-
-// 3b. Cron Job Function
+    // 3b. Cron Job Function
     const cronJob = new sst.aws.Function("CronJob", {
       handler: "packages/functions/src/cron.handler",
       link: [table, notifyWorker],
@@ -109,25 +107,24 @@ export default $config({
       permissions: [
         {actions: ["lambda:InvokeFunction"], resources: [notifyWorker.arn]}
       ],
-      timeout: "5 minutes", // Give it time to process all trips
+      timeout: "5 minutes",
     });
 
 // EventBridge rule to trigger every hour
-    new aws.cloudwatch.EventRule("HourlyTripCheck", {
-      scheduleExpression: "rate(1 hour)", // Run every hour
+    const eventRule = new aws.cloudwatch.EventRule("HourlyTripCheck", {
+      scheduleExpression: "rate(1 hour)",
     });
 
     new aws.cloudwatch.EventTarget("HourlyTripCheckTarget", {
-      rule: "HourlyTripCheck",
+      rule: eventRule.name,
       arn: cronJob.arn,
     });
 
-// Grant EventBridge permission to invoke the Lambda
     new aws.lambda.Permission("HourlyTripCheckPermission", {
       action: "lambda:InvokeFunction",
       function: cronJob.name,
       principal: "events.amazonaws.com",
-      sourceArn: aws.cloudwatch.getEventRule({name: "HourlyTripCheck"}).then(r => r.arn),
+      sourceArn: eventRule.arn,
     });
 
 
@@ -199,7 +196,7 @@ export default $config({
       }
     });
 
-// Profile Routes - same pattern
+// Profile Routes - using same auth pattern as other routes
     api.route("GET /profile", {
       handler: "packages/functions/src/profile.get",
       auth: {
@@ -235,6 +232,7 @@ export default $config({
         }
       }
     });
+
 
 
     return {

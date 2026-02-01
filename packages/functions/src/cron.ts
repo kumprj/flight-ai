@@ -41,10 +41,8 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
 
       const arrivalPreference = profile.Item?.arrivalPreference || 2; // Default 2 hours
 
-      // Calculate notification window
-      // We want to notify when it's time to leave (flight time - arrival preference - estimated travel time)
-      // For simplicity, we'll assume max 2 hour travel time and notify 4 hours before flight
-      const notificationWindow = arrivalPreference + 2; // hours before flight
+      // Calculate notification window (assume max 2 hour travel + arrival preference)
+      const notificationWindow = arrivalPreference + 2;
       const hoursUntilFlight = (flightDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
       console.log(`Trip ${item.sk}: Flight in ${hoursUntilFlight.toFixed(2)} hours`);
@@ -55,7 +53,7 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
 
         await lambda.send(new InvokeCommand({
           FunctionName: process.env.WORKER_ARN!,
-          InvocationType: "Event", // Async invocation
+          InvocationType: "Event",
           Payload: JSON.stringify({
             tripId: item.sk,
             userId: userId,
@@ -67,7 +65,6 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
         console.log(`Notification triggered for ${item.flightNumber}`);
       } else if (hoursUntilFlight <= 0) {
         console.log(`Flight ${item.flightNumber} has already departed`);
-        // Optionally delete old trips here
       } else {
         console.log(`Flight ${item.flightNumber} is too far away (${hoursUntilFlight.toFixed(2)} hours)`);
       }
