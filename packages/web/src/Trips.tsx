@@ -4,9 +4,9 @@ import {Config} from './config';
 import {fetchAuthSession} from 'aws-amplify/auth';
 
 interface Trip {
-  sk: string; // The ID "TRIP#2026-05-20#AA123"
+  sk: string;
   flightNumber: string;
-  date: string; // "2026-05-20T14:30"
+  date: string;
   airportCode: string;
   homeAddress: string;
 }
@@ -23,28 +23,16 @@ export default function Trips({onBack}: { onBack: () => void }) {
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
-      console.log("Using Token:", token);
-
       const res = await axios.get(`${Config.API_URL}/trips`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {Authorization: `Bearer ${token}`}
       });
 
-      // Sort trips by date - nearest first
       const sortedTrips = res.data.sort((a: Trip, b: Trip) => {
         const dateA = new Date(a.date).getTime();
         const dateB = new Date(b.date).getTime();
-        return dateA - dateB; // Ascending order (soonest first)
+        return dateA - dateB;
       });
-      setTrips(sortedTrips)
-      // const now = new Date().getTime();
-      // const upcomingTrips = res.data
-      //     .filter((trip: Trip) => new Date(trip.date).getTime() > now)
-      //     .sort((a: Trip, b: Trip) => {
-      //       return new Date(a.date).getTime() - new Date(b.date).getTime();
-      //     });
-
-      // setTrips(upcomingTrips);
-
+      setTrips(sortedTrips);
     } catch (err) {
       console.error(err);
       alert("Failed to load trips");
@@ -53,59 +41,98 @@ export default function Trips({onBack}: { onBack: () => void }) {
     }
   };
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString('en-US', {
-      weekday: 'short', month: 'short', day: 'numeric',
-      hour: 'numeric', minute: '2-digit'
-    });
+  const formatDate = (dateStr: string, timezone?: string) => {
+    // Parse the ISO string (handles +00:00 UTC format)
+    const date = new Date(dateStr);
+
+    // Use the timezone from the trip data
+    const options: Intl.DateTimeFormatOptions = timezone
+        ? {timeZone: timezone}
+        : {};
+
+    return {
+      dayOfWeek: date.toLocaleDateString('en-US', {
+        weekday: 'short',
+        ...options
+      }),
+      monthDay: date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        ...options
+      }),
+      time: date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        ...options
+      })
+    };
   };
 
   return (
-      <div className="w-full max-w-md animate-fade-in">
+      <div className="max-w-2xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">My Trips</h2>
-          <button onClick={onBack}
-                  className="text-blue-500 hover:text-blue-600 text-sm font-semibold">
+          <h1 className="text-3xl font-bold">My Trips</h1>
+          <button
+              onClick={onBack}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
             + Add New
           </button>
         </div>
 
         {loading ? (
-            <div className="text-center py-10 text-gray-500">Loading flights...</div>
+            <div className="text-center text-gray-500 py-12">Loading flights...</div>
         ) : trips.length === 0 ? (
-            <div className="text-center py-10 text-gray-500 bg-gray-50 dark:bg-gray-800 rounded-xl">
-              <p>No upcoming trips found.</p>
-              <button onClick={onBack}
-                      className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">No upcoming trips found.</p>
+              <button
+                  onClick={onBack}
+                  className="text-blue-600 hover:underline"
+              >
                 Track your first flight
               </button>
             </div>
         ) : (
             <div className="space-y-4">
-              {trips.map((trip) => (
-                  <div key={trip.sk}
-                       className="bg-gray-100 dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="text-xl font-bold text-blue-600 dark:text-blue-400">{trip.flightNumber}</h3>
-                        <p className="text-xs text-gray-500 font-mono mt-1">TO {trip.airportCode}</p>
-                      </div>
-                      <div className="text-right">
-                        <div
-                            className="text-lg font-semibold">{formatDate(trip.date).split(',')[0]}</div>
-                        <div
-                            className="text-sm text-gray-500">{formatDate(trip.date).split(', ')[1]}</div>
-                      </div>
-                    </div>
-
+              {trips.map((trip) => {
+                const formatted = formatDate(trip.date);
+                return (
                     <div
-                        className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center text-sm">
-                      <span className="text-gray-500">Leaving from</span>
-                      <span className="truncate max-w-[150px] font-medium"
-                            title={trip.homeAddress}>{trip.homeAddress}</span>
+                        key={trip.sk}
+                        className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                            {trip.flightNumber}
+                          </h2>
+                          <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">
+                            TO {trip.airportCode}
+                          </p>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            <p className="mb-1">Leaving from</p>
+                            <p className="font-medium text-gray-700 dark:text-gray-300">
+                              {trip.homeAddress}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                            {formatted.dayOfWeek}
+                          </div>
+                          <div className="text-gray-600 dark:text-gray-400">
+                            {formatted.monthDay}
+                          </div>
+                          <div
+                              className="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                            {formatted.time}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-              ))}
+                );
+              })}
             </div>
         )}
       </div>

@@ -16,6 +16,26 @@ const getUserIdFromClaims = (claims: any): string | null => {
   return (claims.email as string).replace(/[@.]/g, "_");
 };
 
+/**
+ * Get timezone for airport code
+ */
+const getAirportTimezone = (airportCode: string): string => {
+  const timezones: Record<string, string> = {
+    // US Timezones
+    'JFK': 'America/New_York', 'LGA': 'America/New_York', 'EWR': 'America/New_York',
+    'ORD': 'America/Chicago', 'MDW': 'America/Chicago',
+    'LAX': 'America/Los_Angeles', 'SFO': 'America/Los_Angeles', 'SAN': 'America/Los_Angeles',
+    'DEN': 'America/Denver', 'PHX': 'America/Phoenix',
+    'ATL': 'America/New_York', 'DFW': 'America/Chicago', 'IAH': 'America/Chicago',
+    'MIA': 'America/New_York', 'MCO': 'America/New_York', 'BOS': 'America/New_York',
+    'SEA': 'America/Los_Angeles', 'LAS': 'America/Los_Angeles', 'MSP': 'America/Chicago',
+    'DTW': 'America/New_York', 'PHL': 'America/New_York', 'CLT': 'America/New_York',
+    // Add more as needed
+  };
+
+  return timezones[airportCode.toUpperCase()] || 'America/Chicago'; // Default fallback
+};
+
 export const create: APIGatewayProxyHandlerV2 = async (event) => {
   // 1. Get User ID from the valid Token
   const claims = event.requestContext.authorizer?.jwt?.claims;
@@ -29,23 +49,25 @@ export const create: APIGatewayProxyHandlerV2 = async (event) => {
   const body = JSON.parse(event.body || "{}");
   const tripId = `${body.date}#${body.flightNumber}`;
 
-  // 2. Save to Database
+  // Get timezone for the destination airport
+  const timezone = getAirportTimezone(body.airportCode);
+
+  // 2. Save to Database with timezone
   try {
     await Database.put({
       pk: `USER#${userId}`,
       sk: `TRIP#${tripId}`,
       ...body,
+      timezone, // Add timezone to the trip
       userId,
       createdAt: Date.now(),
     });
 
-    console.log("Trip created:", tripId);
+    console.log("Trip created:", tripId, "Timezone:", timezone);
   } catch (e) {
     console.error("Database Put Error:", e);
     return { statusCode: 500, body: JSON.stringify({ error: "Failed to save trip" }) };
   }
-
-  // No more EventBridge Scheduler - the hourly cron will handle notifications
 
   return {
     statusCode: 200,

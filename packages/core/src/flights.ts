@@ -10,7 +10,22 @@ export interface FlightResult {
   departureTime: string;
   arrivalTime: string;
   status: string;
+  timezone: string;
 }
+
+/**
+ * Aviation Stack returns times in UTC format but they represent LOCAL time
+ * Extract just the time portion and combine with date to treat as local
+ */
+const parseAsLocalTime = (isoString: string, timezone: string): string => {
+  if (!isoString) return '';
+
+  // Extract date and time parts: "2026-02-01T16:25:00+00:00" -> "2026-02-01T16:25:00"
+  const withoutTimezone = isoString.split('+')[0].split('Z')[0];
+
+  // Return in simple ISO format to be interpreted as local
+  return withoutTimezone;
+};
 
 export const Flights = {
   search: async (flightIata: string, date?: string): Promise<FlightResult[]> => {
@@ -20,16 +35,14 @@ export const Flights = {
       const params: any = {
         access_key: process.env.AVIATION_STACK_KEY,
         flight_iata: flightIata,
-        limit: 20 // Increase limit to get more results
+        limit: 20
       };
 
-      // Add date if provided (format: YYYY-MM-DD)
-      // NOTE: Free tier may not support this well, but we try
       if (date) {
         params.flight_date = date;
       }
 
-      const res = await axios.get(API_URL, { params });
+      const res = await axios.get(API_URL, {params});
 
       if (res.data.error) {
         console.error("Aviationstack Error:", res.data.error);
@@ -44,18 +57,18 @@ export const Flights = {
         airline: f.airline.name,
         origin: f.departure.iata,
         destination: f.arrival.iata,
-        departureTime: f.departure.scheduled,
-        arrivalTime: f.arrival.scheduled,
-        status: f.flight_status
+        // Strip timezone suffix to treat as local time
+        departureTime: parseAsLocalTime(f.departure.scheduled, f.departure.timezone),
+        arrivalTime: parseAsLocalTime(f.arrival.scheduled, f.arrival.timezone),
+        status: f.flight_status,
+        timezone: f.departure.timezone || 'UTC'
       }));
 
-      // CLIENT-SIDE FILTER as backup if API doesn't respect date param
+      // Filter by date if provided
       if (date && mapped.length > 0) {
         const filtered = mapped.filter((f: FlightResult) =>
             f.departureTime.startsWith(date)
         );
-
-        // If we got matches, return them, otherwise return all (maybe API ignored date)
         return filtered.length > 0 ? filtered : mapped;
       }
 

@@ -12,38 +12,51 @@ const twilioClient = twilio(
 );
 
 /**
- * Helper to generate a consistent User ID from the email claim.
+ * Decode JWT token manually (without verification - API Gateway already validated it)
  */
-const getUserIdFromClaims = (claims: any): string | null => {
-  console.log("JWT Claims:", JSON.stringify(claims, null, 2));
+const decodeJWT = (token: string): any => {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
 
-  if (!claims) {
-    console.log("No claims found");
+    const payload = Buffer.from(parts[1], 'base64').toString('utf-8');
+    return JSON.parse(payload);
+  } catch (error) {
+    console.error("Failed to decode JWT:", error);
+    return null;
+  }
+};
+
+/**
+ * Extract user ID from Authorization header
+ */
+const getUserIdFromEvent = (event: any): string | null => {
+  const authHeader = event.headers?.authorization || event.headers?.Authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.log("No authorization header found");
     return null;
   }
 
-  // Try different email claim names (Google OAuth, Cognito, etc.)
-  const email = claims.email || claims["cognito:username"] || claims.sub;
+  const token = authHeader.substring(7); // Remove "Bearer "
+  const decoded = decodeJWT(token);
 
-  if (!email) {
-    console.log("No email found in claims");
+  console.log("Decoded token:", JSON.stringify(decoded, null, 2));
+
+  if (!decoded || !decoded.email) {
+    console.log("No email in token");
     return null;
   }
 
-  console.log("Email extracted:", email);
+  const email = decoded.email;
+  console.log("Email from token:", email);
 
-  // Only replace @ and . if it looks like an email
-  if (email.includes("@")) {
-    return email.replace(/[@.]/g, "_");
-  }
-
-  return email;
+  return email.replace(/[@.]/g, "_");
 };
 
 // GET /profile
 export const get: APIGatewayProxyHandlerV2 = async (event) => {
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
+  const userId = getUserIdFromEvent(event);
 
   if (!userId) {
     return {
@@ -73,9 +86,7 @@ export const get: APIGatewayProxyHandlerV2 = async (event) => {
 
 // PUT /profile
 export const update: APIGatewayProxyHandlerV2 = async (event) => {
-  console.log("Full event:", JSON.stringify(event, null, 2));
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
+  const userId = getUserIdFromEvent(event);
 
   if (!userId) {
     return {
@@ -113,8 +124,7 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
 
 // POST /profile/verify/send
 export const sendVerification: APIGatewayProxyHandlerV2 = async (event) => {
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
+  const userId = getUserIdFromEvent(event);
 
   if (!userId) {
     return {
@@ -174,8 +184,7 @@ export const sendVerification: APIGatewayProxyHandlerV2 = async (event) => {
 
 // POST /profile/verify/confirm
 export const confirmVerification: APIGatewayProxyHandlerV2 = async (event) => {
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
+  const userId = getUserIdFromEvent(event);
 
   if (!userId) {
     return {

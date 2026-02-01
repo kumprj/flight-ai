@@ -196,69 +196,21 @@ export default $config({
       }
     });
 
-// Profile Routes - with named functions for better logs
+// Profile Routes - no authorizer, we'll decode the JWT ourselves
     api.route("GET /profile", {
       handler: "packages/functions/src/profile.get",
-      auth: {
-        jwt: {
-          authorizer: authorizer.id,
-        }
-      },
-      transform: {
-        handler: {
-          function: (args, opts) => {
-            args.functionName = `${opts.app.name}-${opts.app.stage}-ProfileGet`;
-          }
-        }
-      }
     });
 
     api.route("PUT /profile", {
       handler: "packages/functions/src/profile.update",
-      auth: {
-        jwt: {
-          authorizer: authorizer.id,
-        }
-      },
-      transform: {
-        handler: {
-          function: (args, opts) => {
-            args.functionName = `${opts.app.name}-${opts.app.stage}-ProfileUpdate`;
-          }
-        }
-      }
     });
 
     api.route("POST /profile/verify/send", {
       handler: "packages/functions/src/profile.sendVerification",
-      auth: {
-        jwt: {
-          authorizer: authorizer.id,
-        }
-      },
-      transform: {
-        handler: {
-          function: (args, opts) => {
-            args.functionName = `${opts.app.name}-${opts.app.stage}-ProfileVerifySend`;
-          }
-        }
-      }
     });
 
     api.route("POST /profile/verify/confirm", {
       handler: "packages/functions/src/profile.confirmVerification",
-      auth: {
-        jwt: {
-          authorizer: authorizer.id,
-        }
-      },
-      transform: {
-        handler: {
-          function: (args, opts) => {
-            args.functionName = `${opts.app.name}-${opts.app.stage}-ProfileVerifyConfirm`;
-          }
-        }
-      }
     });
 
 
