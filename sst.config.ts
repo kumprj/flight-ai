@@ -196,12 +196,19 @@ export default $config({
       }
     });
 
-// Profile Routes - using same auth pattern as other routes
+// Profile Routes - with named functions for better logs
     api.route("GET /profile", {
       handler: "packages/functions/src/profile.get",
       auth: {
         jwt: {
           authorizer: authorizer.id,
+        }
+      },
+      transform: {
+        handler: {
+          function: (args, opts) => {
+            args.functionName = `${opts.app.name}-${opts.app.stage}-ProfileGet`;
+          }
         }
       }
     });
@@ -212,6 +219,13 @@ export default $config({
         jwt: {
           authorizer: authorizer.id,
         }
+      },
+      transform: {
+        handler: {
+          function: (args, opts) => {
+            args.functionName = `${opts.app.name}-${opts.app.stage}-ProfileUpdate`;
+          }
+        }
       }
     });
 
@@ -220,6 +234,13 @@ export default $config({
       auth: {
         jwt: {
           authorizer: authorizer.id,
+        }
+      },
+      transform: {
+        handler: {
+          function: (args, opts) => {
+            args.functionName = `${opts.app.name}-${opts.app.stage}-ProfileVerifySend`;
+          }
         }
       }
     });
@@ -230,9 +251,15 @@ export default $config({
         jwt: {
           authorizer: authorizer.id,
         }
+      },
+      transform: {
+        handler: {
+          function: (args, opts) => {
+            args.functionName = `${opts.app.name}-${opts.app.stage}-ProfileVerifyConfirm`;
+          }
+        }
       }
     });
-
 
 
     return {
