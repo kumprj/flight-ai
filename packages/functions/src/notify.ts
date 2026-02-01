@@ -20,16 +20,16 @@ export const handler: SchedulerHandler = async (event) => {
 
   try {
     // Commenting real trip for now.
-    // const trip = await dynamodb.get({
-    //   TableName: Resource.Table.name,
-    //   Key: { pk: `USER#${payload.userId}`, sk: payload.tripId },
-    // });
-    const trip = {
-      Item: {
-        flightNumber: "UA920",
-        date: new Date().toISOString(),
-      }
-    };
+    const trip = await dynamodb.get({
+      TableName: Resource.Table.name,
+      Key: { pk: `USER#${payload.userId}`, sk: payload.tripId },
+    });
+    // const trip = {
+    //   Item: {
+    //     flightNumber: "UA920",
+    //     date: new Date().toISOString(),
+    //   }
+    // };
 
     console.log("Using mock trip data for testing");
 

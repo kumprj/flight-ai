@@ -1,14 +1,11 @@
-import {SchedulerClient, CreateScheduleCommand} from "@aws-sdk/client-scheduler";
-import {Trip, SchedulerPayload} from "@flight-ai/core/types";
-import {Resource} from "sst";
+import { Trip, SchedulerPayload } from "@flight-ai/core/types";
+import { Resource } from "sst";
 import {
   APIGatewayProxyEventV2,
   APIGatewayProxyHandlerV2,
   APIGatewayProxyResultV2
 } from "aws-lambda";
-import {Database} from "@flight-ai/core/dynamodb";
-
-const scheduler = new SchedulerClient({});
+import { Database } from "@flight-ai/core/dynamodb";
 
 /**
  * Helper to generate a consistent User ID from the email claim.
@@ -26,7 +23,7 @@ export const create: APIGatewayProxyHandlerV2 = async (event) => {
 
   if (!userId) {
     console.error("Unauthorized: Missing email claim");
-    return {statusCode: 401, body: "Unauthorized"};
+    return { statusCode: 401, body: "Unauthorized" };
   }
 
   const body = JSON.parse(event.body || "{}");
@@ -35,48 +32,28 @@ export const create: APIGatewayProxyHandlerV2 = async (event) => {
   // 2. Save to Database
   try {
     await Database.put({
-      pk: `USER#${userId}`, // Secure, readable PK
+      pk: `USER#${userId}`,
       sk: `TRIP#${tripId}`,
       ...body,
-      userId, // Store the consistent ID
+      userId,
       createdAt: Date.now(),
     });
+
+    console.log("Trip created:", tripId);
   } catch (e) {
     console.error("Database Put Error:", e);
-    return {statusCode: 500, body: JSON.stringify({error: "Failed to save trip"})};
+    return { statusCode: 500, body: JSON.stringify({ error: "Failed to save trip" }) };
   }
 
-  // 3. Schedule Notification
-  const flightTime = new Date(body.date).getTime();
-  // Trigger 4 hours before flight
-  const triggerTime = new Date(flightTime - (4 * 60 * 60 * 1000));
-  const dateStr = triggerTime.toISOString().split('.')[0]; // Format for Scheduler
+  // No more EventBridge Scheduler - the hourly cron will handle notifications
 
-  const payload: SchedulerPayload = {
-    tripId,
-    userId, // Use the secure ID, not the one from the body
-    homeAddress: body.homeAddress,
-    airportCode: body.airportCode
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      status: "created",
+      message: "Trip created successfully. You'll be notified when it's time to leave."
+    })
   };
-
-  try {
-    await scheduler.send(new CreateScheduleCommand({
-      // Unique name: notify-USERID-TRIPID
-      Name: `notify-${userId}-${tripId.replace(/[^a-zA-Z0-9]/g, "")}`,
-      ScheduleExpression: `at(${dateStr})`,
-      Target: {
-        Arn: process.env.WORKER_ARN,
-        RoleArn: process.env.SCHEDULER_ROLE_ARN,
-        Input: JSON.stringify(payload),
-      },
-      FlexibleTimeWindow: {Mode: "OFF"}
-    }));
-  } catch (e) {
-    console.error("Failed to schedule:", e);
-    // We don't fail the request if scheduling fails, but we log it.
-  }
-
-  return {statusCode: 200, body: JSON.stringify({status: "created"})};
 };
 
 export const list: APIGatewayProxyHandlerV2 = async (event) => {
@@ -91,9 +68,9 @@ export const list: APIGatewayProxyHandlerV2 = async (event) => {
 
   try {
     const trips = await Database.listTrips(userId);
-    return {statusCode: 200, body: JSON.stringify(trips)};
+    return { statusCode: 200, body: JSON.stringify(trips) };
   } catch (e) {
     console.error("Database List Error:", e);
-    return {statusCode: 500, body: "Database error"};
+    return { statusCode: 500, body: "Database error" };
   }
 };
