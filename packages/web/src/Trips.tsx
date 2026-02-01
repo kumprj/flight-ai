@@ -23,7 +23,7 @@ export default function Trips({onBack}: { onBack: () => void }) {
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
-      console.log("Using Token:", token);
+      // console.log("Using Token:", token);
 
       const res = await axios.get(`${Config.API_URL}/trips`, {
         headers: {

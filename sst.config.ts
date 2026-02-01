@@ -99,9 +99,9 @@ export default $config({
 
     const api = new sst.aws.ApiGatewayV2("Api", {
       cors: {
-        allowMethods: ["GET", "POST", "OPTIONS"],
-        allowOrigins: ["http://localhost:5173"], // Allow your local dev
-        allowHeaders: ["Authorization", "Content-Type"], // Explicitly allow Authorization
+        allowMethods: ["GET", "POST", "OPTIONS", "PUT"],
+        allowOrigins: ["http://localhost:5173"],
+        allowHeaders: ["Authorization", "Content-Type"],
       },
       transform: {
         route: {
@@ -111,6 +111,9 @@ export default $config({
               WORKER_ARN: notifyWorker.arn,
               SCHEDULER_ROLE_ARN: notifyWorker.nodes.role.arn,
               AVIATION_STACK_KEY: process.env.AVIATION_STACK_KEY!,
+              TWILIO_SID: process.env.TWILIO_SID!,
+              TWILIO_TOKEN: process.env.TWILIO_TOKEN!,
+              TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER!,
             },
           }
         }
@@ -145,18 +148,60 @@ export default $config({
       permissions: [
         {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
-      authorizer: authorizer.id,
-    });
-    // New Flight Search Route
-    api.route("GET /flights/search", {
-      handler: "packages/functions/src/flight.search",
-      transform: {
-        route: (args) => {
-          args.authorizationType = "JWT";
-          args.authorizerId = authorizer.id;
+      auth: {
+        jwt: {
+          authorizer: authorizer.id,
         }
       }
     });
+
+// Flight Search Route - using same auth pattern
+    api.route("GET /flights/search", {
+      handler: "packages/functions/src/flight.search",
+      auth: {
+        jwt: {
+          authorizer: authorizer.id,
+        }
+      }
+    });
+
+// Profile Routes - same pattern
+    api.route("GET /profile", {
+      handler: "packages/functions/src/profile.get",
+      auth: {
+        jwt: {
+          authorizer: authorizer.id,
+        }
+      }
+    });
+
+    api.route("PUT /profile", {
+      handler: "packages/functions/src/profile.update",
+      auth: {
+        jwt: {
+          authorizer: authorizer.id,
+        }
+      }
+    });
+
+    api.route("POST /profile/verify/send", {
+      handler: "packages/functions/src/profile.sendVerification",
+      auth: {
+        jwt: {
+          authorizer: authorizer.id,
+        }
+      }
+    });
+
+    api.route("POST /profile/verify/confirm", {
+      handler: "packages/functions/src/profile.confirmVerification",
+      auth: {
+        jwt: {
+          authorizer: authorizer.id,
+        }
+      }
+    });
+
 
 
     return {

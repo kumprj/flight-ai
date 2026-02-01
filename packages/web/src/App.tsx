@@ -8,6 +8,7 @@ import {useState} from 'react';
 import Toast, {type ToastType} from './Toast';
 import CustomDatePicker from './DatePicker';
 import {formatFlightDate, formatFlightTimeOnly} from './utils/flightTimes';
+import Profile from './Profile';
 
 interface FlightData {
   flightNumber: string;
@@ -20,7 +21,6 @@ interface FlightData {
 type Step = 'input' | 'select' | 'confirm';
 
 function App() {
-  const [view, setView] = useState<'add' | 'list'>('list');
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<Step>('input');
 
@@ -29,7 +29,7 @@ function App() {
   const [selectedFlight, setSelectedFlight] = useState<FlightData | null>(null);
   const [homeAddress, setHomeAddress] = useState('');
 
-  // NEW: State for the Date Picker
+  const [view, setView] = useState<'add' | 'list' | 'profile'>('list');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
@@ -157,6 +157,12 @@ function App() {
                     >
                       My Trips
                     </button>
+                    <button
+                        onClick={() => setView('profile')}
+                        className={`${view === 'profile' ? 'text-blue-600' : 'text-gray-500'}`}
+                    >
+                      Profile
+                    </button>
                     <button onClick={signOut} className="text-gray-400 hover:text-red-500">
                       Sign Out
                     </button>
@@ -165,108 +171,108 @@ function App() {
 
                 <main className="w-full max-w-md">
                   {view === 'list' ? (
-                      <Trips onBack={() => setView('add')}/>
+                      <Trips onBack={() => setView('add')} />
+                  ) : view === 'profile' ? (
+                      <Profile onBack={() => setView('list')} />
                   ) : (
                       <>
-                        {/* STEP 1: INPUT */}
-                      {step === 'input' && (
-                          <div className="animate-fade-in">
-                            <div className="flex items-center justify-between mb-6">
-                              <h2 className="text-xl font-bold">Track a New Flight</h2>
-                              <button onClick={() => setView('list')}
-                                      className="text-sm text-gray-500">Cancel
-                              </button>
-                            </div>
+                        {step === 'input' && (
+                            <div className="animate-fade-in">
+                              <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-bold">Track a New Flight</h2>
+                                <button onClick={() => setView('list')}
+                                        className="text-sm text-gray-500">Cancel
+                                </button>
+                              </div>
 
-                            <form onSubmit={handleLookup} className="space-y-4">
-                              <div>
-                                <label
-                                    className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
-                                  Flight Info
-                                </label>
-                                <div className="flex gap-2">
+                              <form onSubmit={handleLookup} className="space-y-4">
+                                <div>
+                                  <label
+                                      className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
+                                    Flight Info
+                                  </label>
+                                  <div className="flex gap-2">
+                                    <input
+                                        name="flightNumber"
+                                        placeholder="e.g. AA123"
+                                        required
+                                        className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none uppercase font-medium"
+                                    />
+
+                                    <CustomDatePicker
+                                        selected={selectedDate}
+                                        onChange={(date) => setSelectedDate(date)}
+                                        placeholder="Date (Opt)"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label
+                                      className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
+                                    Start Location
+                                  </label>
                                   <input
-                                      name="flightNumber"
-                                      placeholder="e.g. AA123"
+                                      name="homeAddress"
+                                      placeholder="123 Main St, Chicago..."
                                       required
-                                      className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none uppercase font-medium"
-                                  />
-
-                                  {/* REPLACED: Native Input -> Custom DatePicker */}
-                                  <CustomDatePicker
-                                      selected={selectedDate}
-                                      onChange={(date) => setSelectedDate(date)}
-                                      placeholder="Date (Opt)"
+                                      defaultValue={homeAddress}
+                                      className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none"
                                   />
                                 </div>
-                              </div>
 
-                              <div>
-                                <label
-                                    className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
-                                  Start Location
-                                </label>
-                                <input
-                                    name="homeAddress"
-                                    placeholder="123 Main St, Chicago..."
-                                    required
-                                    defaultValue={homeAddress}
-                                    className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none"
-                                />
-                              </div>
-
-                              <button
-                                  type="submit"
-                                  disabled={loading}
-                                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70"
-                              >
-                                {loading ? 'Searching...' : 'Find Flight'}
-                              </button>
-                            </form>
-                          </div>
-                      )}
-
-                      {/* STEP 2: SELECT FLIGHT */}
-                      {step === 'select' && (
-                          <div className="animate-fade-in">
-                            <div className="flex items-center justify-between mb-4">
-                              <h2 className="text-xl font-bold">Select Flight</h2>
-                              <button onClick={handleCancel}
-                                      className="text-sm text-gray-500">Back
-                              </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70"
+                                >
+                                  {loading ? 'Searching...' : 'Find Flight'}
+                                </button>
+                              </form>
                             </div>
+                        )}
 
-                            <div className="space-y-3 max-h-[60vh] overflow-y-auto">
-                              {searchResults.map((flight, idx) => (
-                                  <button
-                                      key={idx}
-                                      onClick={() => handleSelectFlight(flight)}
-                                      className="w-full text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border-2 border-transparent hover:border-blue-500 hover:bg-white dark:hover:bg-gray-700 transition-all shadow-sm group"
-                                  >
-                                    <div className="flex justify-between items-center mb-1">
+                        {/* STEP 2: SELECT FLIGHT */}
+                        {step === 'select' && (
+                            <div className="animate-fade-in">
+                              <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-xl font-bold">Select Flight</h2>
+                                <button onClick={handleCancel}
+                                        className="text-sm text-gray-500">Back
+                                </button>
+                              </div>
+
+                              <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+                                {searchResults.map((flight, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleSelectFlight(flight)}
+                                        className="w-full text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border-2 border-transparent hover:border-blue-500 hover:bg-white dark:hover:bg-gray-700 transition-all shadow-sm group"
+                                    >
+                                      <div className="flex justify-between items-center mb-1">
                                         <span
                                             className="font-bold text-lg">{flight.flightNumber}</span>
-                                      <span
-                                          className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-md">{flight.airline}</span>
-                                    </div>
-                                    <div
-                                        className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
-                                      <span>{formatFlightDate(flight.departureTime, flight.origin)}</span>
-                                      <span>{formatFlightTimeOnly(flight.departureTime, flight.origin)}</span>
-                                    </div>
+                                        <span
+                                            className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-md">{flight.airline}</span>
+                                      </div>
+                                      <div
+                                          className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
+                                        <span>{formatFlightDate(flight.departureTime, flight.origin)}</span>
+                                        <span>{formatFlightTimeOnly(flight.departureTime, flight.origin)}</span>
+                                      </div>
 
-                                    <div
-                                        className="mt-2 text-xs text-gray-400 font-medium flex items-center gap-2">
-                                      <span>{flight.origin}</span>
-                                      <span
-                                          className="h-[1px] flex-1 bg-gray-300 dark:bg-gray-600"></span>
-                                      <span>{flight.destination}</span>
-                                    </div>
-                                  </button>
-                              ))}
+                                      <div
+                                          className="mt-2 text-xs text-gray-400 font-medium flex items-center gap-2">
+                                        <span>{flight.origin}</span>
+                                        <span
+                                            className="h-[1px] flex-1 bg-gray-300 dark:bg-gray-600"></span>
+                                        <span>{flight.destination}</span>
+                                      </div>
+                                    </button>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                      )}
+                        )}
 
                         {/* STEP 3: CONFIRM */}
                         {step === 'confirm' && (
