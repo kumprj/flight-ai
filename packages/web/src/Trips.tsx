@@ -27,7 +27,7 @@ export default function Trips({onBack}: { onBack: () => void }) {
         headers: {Authorization: `Bearer ${token}`}
       });
 
-      const sortedTrips = res.data.sort((a: Trip, b: Trip) => {
+      const sortedTrips = res.data.sort((b: Trip, a: Trip) => {
         const dateA = new Date(a.date).getTime();
         const dateB = new Date(b.date).getTime();
         return dateA - dateB;
