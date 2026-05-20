@@ -252,7 +252,9 @@ function App() {
                               <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-xl font-bold">{editingTrip ? 'Edit Trip' : 'Track a New Flight'}</h2>
                                 <button onClick={() => setView('list')}
-                                        className="text-sm text-gray-500">Cancel
+                                        className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium rounded-lg transition-colors"
+                                >
+                                  Cancel
                                 </button>
                               </div>
 
@@ -312,7 +314,9 @@ function App() {
                               <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl font-bold">Select Flight</h2>
                                 <button onClick={handleCancel}
-                                        className="text-sm text-gray-500">Back
+                                        className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium rounded-lg transition-colors"
+                                >
+                                  Back
                                 </button>
                               </div>
 
@@ -380,7 +384,7 @@ function App() {
                               </div>
                               <div className="flex gap-3 pt-2">
                                 <button onClick={handleCancel}
-                                        className="flex-1 py-3 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl font-medium">Cancel
+                                        className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl font-medium transition-colors">Cancel
                                 </button>
                                 <button onClick={handleConfirm} disabled={loading}
                                         className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all">

@@ -140,7 +140,12 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                           </div>
                           <button
                               onClick={() => onEdit(trip)}
-                              className="mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                              disabled={old}
+                              className={`mt-3 px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
+                                old
+                                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed opacity-50'
+                                  : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 border-blue-200 dark:border-blue-800'
+                              }`}
                           >
                             Edit
                           </button>
