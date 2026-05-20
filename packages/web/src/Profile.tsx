@@ -174,7 +174,7 @@ export default function Profile({ onBack }: ProfileProps) {
 
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">My Profile</h2>
-          <button onClick={onBack} className="text-blue-500 hover:text-blue-600 text-sm font-semibold">
+          <button onClick={onBack} className="text-green-700 hover:text-green-800 text-sm font-semibold">
             Back
           </button>
         </div>
@@ -197,7 +197,7 @@ export default function Profile({ onBack }: ProfileProps) {
                         const formatted = formatPhoneNumber(e.target.value);
                         setProfile({ ...profile, phoneNumber: formatted, phoneVerified: false });
                       }}
-                      className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                      className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none"
                   />
                   {profile.phoneVerified ? (
                       <div className="flex items-center px-4 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg text-sm font-semibold">
@@ -208,7 +208,7 @@ export default function Profile({ onBack }: ProfileProps) {
                           type="button"
                           onClick={handleSendVerification}
                           disabled={sendingCode || !profile.phoneNumber}
-                          className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                          className="px-4 py-3 bg-green-700 hover:bg-green-800 text-white text-sm font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                       >
                         {sendingCode ? 'Sending...' : 'Verify'}
                       </button>
@@ -218,7 +218,7 @@ export default function Profile({ onBack }: ProfileProps) {
 
                 {/* Verification Code Input */}
                 {showVerification && !profile.phoneVerified && (
-                    <div className="mt-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div className="mt-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                       <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
                         Enter the 6-digit code sent to {profile.phoneNumber}
                       </p>
@@ -229,7 +229,7 @@ export default function Profile({ onBack }: ProfileProps) {
                             placeholder="123456"
                             value={verificationCode}
                             onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
-                            className="flex-1 p-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none text-center text-lg font-mono"
+                            className="flex-1 p-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-green-600 outline-none text-center text-lg font-mono"
                         />
                         <button
                             type="button"
@@ -244,7 +244,7 @@ export default function Profile({ onBack }: ProfileProps) {
                           type="button"
                           onClick={handleSendVerification}
                           disabled={sendingCode}
-                          className="text-xs text-blue-600 hover:text-blue-700 mt-2"
+                          className="text-xs text-green-700 hover:text-green-800 mt-2"
                       >
                         Didn't receive it? Resend code
                       </button>
@@ -298,7 +298,7 @@ export default function Profile({ onBack }: ProfileProps) {
                             value={option.value}
                             checked={profile.arrivalPreference === option.value}
                             onChange={(e) => setProfile({ ...profile, arrivalPreference: parseFloat(e.target.value) })}
-                            className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            className="w-4 h-4 text-green-700 focus:ring-2 focus:ring-green-600"
                         />
                         <span className="ml-3 text-sm font-medium">{option.label}</span>
                       </label>
@@ -338,7 +338,7 @@ export default function Profile({ onBack }: ProfileProps) {
               <button
                   type="submit"
                   disabled={saving}
-                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70"
+                  className="w-full py-3.5 bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-green-600/30 transition-all disabled:opacity-70"
               >
                 {saving ? 'Saving...' : 'Save Profile'}
               </button>

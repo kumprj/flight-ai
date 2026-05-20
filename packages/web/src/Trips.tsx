@@ -84,7 +84,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           <h1 className="text-3xl font-bold">My Trips</h1>
           <button
               onClick={onBack}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors"
           >
             + Add New
           </button>
@@ -97,7 +97,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
               <p className="text-gray-500 mb-4">No upcoming trips found.</p>
               <button
                   onClick={onBack}
-                  className="text-blue-600 hover:underline"
+                  className="text-green-700 hover:underline"
               >
                 Track your first flight
               </button>
@@ -114,7 +114,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                          <h2 className="text-2xl font-bold text-green-700 dark:text-green-600 mb-1">
                             {trip.flightNumber}
                           </h2>
                           <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">
@@ -135,7 +135,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                             {formatted.monthDay}
                           </div>
                           <div
-                              className="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                              className="text-lg font-semibold text-green-700 dark:text-green-600 mt-2">
                             {formatted.time}
                           </div>
                           <button
@@ -144,7 +144,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                               className={`mt-3 px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
                                 old
                                   ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed opacity-50'
-                                  : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 border-blue-200 dark:border-blue-800'
+                                  : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-600 hover:bg-green-100 dark:hover:bg-green-900/50 border-green-200 dark:border-green-800'
                               }`}
                           >
                             Edit

@@ -206,7 +206,7 @@ function App() {
 
                 <header
                     className="w-full max-w-md flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800">
-                  <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent">
                     Flight AI
                   </h1>
                   <div className="flex gap-4 text-sm font-medium">
@@ -214,8 +214,8 @@ function App() {
                         onClick={() => setView('list')}
                         className={`${
                             view === 'list'
-                                ? 'text-blue-600 border-b-2 border-blue-600'
-                                : 'text-gray-500 hover:text-blue-500 hover:border-b-2 hover:border-blue-300'
+                                ? 'text-green-700 border-b-2 border-green-700'
+                                : 'text-gray-500 hover:text-green-600 hover:border-b-2 hover:border-green-300'
                         } pb-1 transition-all cursor-pointer border-b-2 border-transparent`}
                     >
                       My Trips
@@ -224,8 +224,8 @@ function App() {
                         onClick={() => setView('profile')}
                         className={`${
                             view === 'profile'
-                                ? 'text-blue-600 border-b-2 border-blue-600'
-                                : 'text-gray-500 hover:text-blue-500 hover:border-b-2 hover:border-blue-300'
+                                ? 'text-green-700 border-b-2 border-green-700'
+                                : 'text-gray-500 hover:text-green-600 hover:border-b-2 hover:border-green-300'
                         } pb-1 transition-all cursor-pointer border-b-2 border-transparent`}
                     >
                       Profile
@@ -270,7 +270,7 @@ function App() {
                                         placeholder="e.g. AA123"
                                         required
                                         defaultValue={editingTrip?.flightNumber}
-                                        className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none uppercase font-medium"
+                                        className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
                                     />
 
                                     <CustomDatePicker
@@ -292,7 +292,7 @@ function App() {
                                       required
                                       value={homeAddress}
                                       onChange={(e) => setHomeAddress(e.target.value)}
-                                      className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                                      className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none"
                                   />
 
                                 </div>
@@ -300,7 +300,7 @@ function App() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70"
+                                    className="w-full py-3.5 bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-green-600/30 transition-all disabled:opacity-70"
                                 >
                                   {loading ? 'Searching...' : 'Find Flight'}
                                 </button>
@@ -325,13 +325,13 @@ function App() {
                                     <button
                                         key={idx}
                                         onClick={() => handleSelectFlight(flight)}
-                                        className="w-full text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border-2 border-transparent hover:border-blue-500 hover:bg-white dark:hover:bg-gray-700 transition-all shadow-sm group"
+                                        className="w-full text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border-2 border-transparent hover:border-green-600 hover:bg-white dark:hover:bg-gray-700 transition-all shadow-sm group"
                                     >
                                       <div className="flex justify-between items-center mb-1">
                                         <span
                                             className="font-bold text-lg">{flight.flightNumber}</span>
                                         <span
-                                            className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-md">{flight.airline}</span>
+                                            className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded-md">{flight.airline}</span>
                                       </div>
                                       <div
                                           className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
@@ -368,7 +368,7 @@ function App() {
                                   </div>
                                   <div className="text-right">
                                     <p className="text-xs text-gray-500 uppercase">Departing</p>
-                                    <p className="text-lg font-bold text-blue-500">
+                                    <p className="text-lg font-bold text-green-700">
                                       {selectedFlight ? formatFlightDate(selectedFlight.departureTime, selectedFlight.origin) : ''}
                                     </p>
                                     <p className="text-sm font-medium text-gray-400">

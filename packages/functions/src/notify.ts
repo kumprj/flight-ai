@@ -103,7 +103,7 @@ export const handler: SchedulerHandler = async (event) => {
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background-color: #f3f4f6;">
   <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 40px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);">
+    <div style="background: linear-gradient(135deg, #15803d 0%, #166534 100%); border-radius: 16px; padding: 40px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);">
       <div style="font-size: 48px; margin-bottom: 16px;">✈️</div>
       <h1 style="color: white; margin: 0 0 8px 0; font-size: 28px; font-weight: 700;">Flight Alert</h1>
       <p style="color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 18px;">Flight ${trip.Item.flightNumber}</p>
@@ -115,14 +115,14 @@ export const handler: SchedulerHandler = async (event) => {
         <p style="color: #1f2937; font-size: 16px; margin: 0; line-height: 1.6;">
           From <strong>${payload.homeAddress}</strong> to <strong>${payload.airportCode}</strong>
         </p>
-        <p style="color: #2563eb; font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${travelInfo.durationText}</p>
+        <p style="color: #15803d; font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${travelInfo.durationText}</p>
       </div>
       
-      <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 12px; padding: 24px; border-left: 4px solid #2563eb;">
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 12px; padding: 24px; border-left: 4px solid #15803d;">
         <p style="color: #4b5563; font-size: 15px; margin: 0 0 12px 0; line-height: 1.6;">
           To arrive <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong>, you should leave at:
         </p>
-        <p style="color: #2563eb; font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
+        <p style="color: #15803d; font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
           ${leaveTime.toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',
