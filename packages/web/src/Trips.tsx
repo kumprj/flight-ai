@@ -9,9 +9,10 @@ interface Trip {
   date: string;
   airportCode: string;
   homeAddress: string;
+  createdAt?: number;
 }
 
-export default function Trips({onBack}: { onBack: () => void }) {
+export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (trip: Trip) => void }) {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -128,6 +129,12 @@ export default function Trips({onBack}: { onBack: () => void }) {
                               className="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-2">
                             {formatted.time}
                           </div>
+                          <button
+                              onClick={() => onEdit(trip)}
+                              className="mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                          >
+                            Edit
+                          </button>
                         </div>
                       </div>
                     </div>

@@ -96,3 +96,44 @@ export const list: APIGatewayProxyHandlerV2 = async (event) => {
     return { statusCode: 500, body: "Database error" };
   }
 };
+
+export const update: APIGatewayProxyHandlerV2 = async (event) => {
+  const claims = event.requestContext.authorizer?.jwt?.claims;
+  const userId = getUserIdFromClaims(claims);
+
+  if (!userId) {
+    console.error("Unauthorized: Missing email claim");
+    return { statusCode: 401, body: "Unauthorized" };
+  }
+
+  const body = JSON.parse(event.body || "{}");
+  const tripId = `${body.date}#${body.flightNumber}`;
+
+  // Get timezone for the destination airport
+  const timezone = getAirportTimezone(body.airportCode);
+
+  try {
+    await Database.put({
+      pk: `USER#${userId}`,
+      sk: `TRIP#${tripId}`,
+      ...body,
+      timezone,
+      userId,
+      createdAt: body.createdAt || Date.now(),
+      updatedAt: Date.now(),
+    });
+
+    console.log("Trip updated:", tripId);
+  } catch (e) {
+    console.error("Database Update Error:", e);
+    return { statusCode: 500, body: JSON.stringify({ error: "Failed to update trip" }) };
+  }
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      status: "updated",
+      message: "Trip updated successfully."
+    })
+  };
+};

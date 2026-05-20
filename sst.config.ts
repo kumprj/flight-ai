@@ -186,6 +186,15 @@ export default $config({
       }
     });
 
+    api.route("PUT /trips", {
+      handler: "packages/functions/src/trip.update",
+      authorizer: authorizer.id,
+      link: [table],
+      permissions: [
+        {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
+      ],
+    });
+
 // Flight Search Route - using same auth pattern
     api.route("GET /flights/search", {
       handler: "packages/functions/src/flight.search",

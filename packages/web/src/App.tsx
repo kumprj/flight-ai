@@ -18,6 +18,15 @@ interface FlightData {
   airline: string;
 }
 
+interface Trip {
+  sk: string;
+  flightNumber: string;
+  date: string;
+  airportCode: string;
+  homeAddress: string;
+  createdAt?: number;
+}
+
 type Step = 'input' | 'select' | 'confirm';
 
 function App() {
@@ -32,6 +41,7 @@ function App() {
   const [view, setView] = useState<'add' | 'list' | 'profile'>('list');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
+  const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
 
   const showToast = (msg: string, type: ToastType = 'success') => {
     setToast({msg, type});
@@ -123,22 +133,37 @@ function App() {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
 
-      await axios.post(`${Config.API_URL}/trips`, {
-        flightNumber: selectedFlight?.flightNumber,
-        date: selectedFlight?.departureTime,
-        airportCode: selectedFlight?.origin,
-        homeAddress: homeAddress,
-      }, {
-        headers: {Authorization: `Bearer ${token}`}
-      });
-
-      showToast("Trip tracked successfully!", "success");
+      if (editingTrip) {
+        // Update existing trip
+        await axios.put(`${Config.API_URL}/trips`, {
+          flightNumber: selectedFlight?.flightNumber,
+          date: selectedFlight?.departureTime,
+          airportCode: selectedFlight?.origin,
+          homeAddress: homeAddress,
+          createdAt: editingTrip.createdAt,
+        }, {
+          headers: {Authorization: `Bearer ${token}`}
+        });
+        showToast("Trip updated successfully!", "success");
+      } else {
+        // Create new trip
+        await axios.post(`${Config.API_URL}/trips`, {
+          flightNumber: selectedFlight?.flightNumber,
+          date: selectedFlight?.departureTime,
+          airportCode: selectedFlight?.origin,
+          homeAddress: homeAddress,
+        }, {
+          headers: {Authorization: `Bearer ${token}`}
+        });
+        showToast("Trip tracked successfully!", "success");
+      }
 
       setStep('input');
       setSelectedFlight(null);
       setSearchResults([]);
       setHomeAddress('');
       setSelectedDate(null); // Reset date
+      setEditingTrip(null);
       setView('list');
     } catch (err) {
       console.error(err);
@@ -151,6 +176,14 @@ function App() {
   const handleCancel = () => {
     setStep('input');
     setSearchResults([]);
+    setEditingTrip(null);
+  };
+
+  const handleEdit = (trip: Trip) => {
+    setEditingTrip(trip);
+    setHomeAddress(trip.homeAddress);
+    setSelectedDate(new Date(trip.date));
+    setView('add');
   };
 
   return (
@@ -206,7 +239,7 @@ function App() {
 
                 <main className="w-full max-w-md">
                   {view === 'list' ? (
-                      <Trips onBack={() => setView('add')}/>
+                      <Trips onBack={() => setView('add')} onEdit={handleEdit}/>
                   ) : view === 'profile' ? (
                       <Profile onBack={() => setView('list')}/>
                   ) : (
@@ -214,7 +247,7 @@ function App() {
                         {step === 'input' && (
                             <div className="animate-fade-in">
                               <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold">Track a New Flight</h2>
+                                <h2 className="text-xl font-bold">{editingTrip ? 'Edit Trip' : 'Track a New Flight'}</h2>
                                 <button onClick={() => setView('list')}
                                         className="text-sm text-gray-500">Cancel
                                 </button>
@@ -231,6 +264,7 @@ function App() {
                                         name="flightNumber"
                                         placeholder="e.g. AA123"
                                         required
+                                        defaultValue={editingTrip?.flightNumber}
                                         className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none uppercase font-medium"
                                     />
 
@@ -347,7 +381,7 @@ function App() {
                                 </button>
                                 <button onClick={handleConfirm} disabled={loading}
                                         className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all">
-                                  {loading ? 'Scheduling...' : 'Track Flight'}
+                                  {loading ? 'Scheduling...' : (editingTrip ? 'Update Trip' : 'Track Flight')}
                                 </button>
                               </div>
                             </div>
