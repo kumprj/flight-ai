@@ -13,3 +13,8 @@ export interface SchedulerPayload {
   homeAddress: string;
   airportCode: string;
 }
+
+export interface NotificationPreferences {
+  emailEnabled: boolean;
+  smsEnabled: boolean;
+}

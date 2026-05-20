@@ -105,6 +105,8 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
     email: body.email || "",
     homeAddress: body.homeAddress || "",
     arrivalPreference: body.arrivalPreference || 2,
+    emailEnabled: body.emailEnabled !== undefined ? body.emailEnabled : true,
+    smsEnabled: body.smsEnabled !== undefined ? body.smsEnabled : false,
     updatedAt: new Date().toISOString(),
   };
 

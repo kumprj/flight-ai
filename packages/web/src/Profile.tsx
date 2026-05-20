@@ -10,6 +10,8 @@ interface UserProfile {
   email: string;
   homeAddress: string;
   arrivalPreference: number;
+  emailEnabled: boolean;
+  smsEnabled: boolean;
 }
 
 interface ProfileProps {
@@ -29,6 +31,8 @@ export default function Profile({ onBack }: ProfileProps) {
     email: '',
     homeAddress: '',
     arrivalPreference: 2,
+    emailEnabled: true,
+    smsEnabled: false,
   });
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
@@ -301,6 +305,34 @@ export default function Profile({ onBack }: ProfileProps) {
                   ))}
                 </div>
                 <p className="text-xs text-gray-400 mt-2">We'll notify you when it's time to leave</p>
+              </div>
+
+              {/* Notification Preferences */}
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-gray-500 mb-3 font-semibold">
+                  Notification Preferences
+                </label>
+                <div className="space-y-3">
+                  <label className="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <input
+                        type="checkbox"
+                        checked={profile.emailEnabled}
+                        onChange={(e) => setProfile({ ...profile, emailEnabled: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 rounded"
+                    />
+                    <span className="ml-3 text-sm font-medium">Email notifications</span>
+                  </label>
+                  <label className="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <input
+                        type="checkbox"
+                        checked={profile.smsEnabled}
+                        onChange={(e) => setProfile({ ...profile, smsEnabled: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 rounded"
+                    />
+                    <span className="ml-3 text-sm font-medium">SMS notifications</span>
+                  </label>
+                </div>
+                <p className="text-xs text-gray-400 mt-2">Choose how you want to receive departure alerts</p>
               </div>
 
               <button
