@@ -94,30 +94,51 @@ export const handler: SchedulerHandler = async (event) => {
           Text: {Data: message},
           Html: {
             Data: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #2563eb;">✈️ Flight Alert for ${trip.Item.flightNumber}!</h2>
-            
-            <p style="font-size: 16px; line-height: 1.6;">
-              Current travel time from <strong>${payload.homeAddress}</strong> to 
-              <strong>${payload.airportCode}</strong> is <strong>${travelInfo.durationText}</strong>.
-            </p>
-            
-            <div style="background-color: #dbeafe; border-left: 4px solid #2563eb; padding: 16px; margin: 20px 0;">
-              <p style="margin: 0; font-size: 18px;">
-                To arrive <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong>, 
-                you should leave at:
-              </p>
-              <p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #2563eb;">
-                ${leaveTime.toLocaleTimeString('en-US', {
-              hour: 'numeric',
-              minute: '2-digit',
-              timeZone: 'America/Chicago'
-            })}
-              </p>
-            </div>
-            
-            <p style="color: #6b7280;">Safe travels! 🛫</p>
-          </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flight Alert</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background-color: #f3f4f6;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 40px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);">
+      <div style="font-size: 48px; margin-bottom: 16px;">✈️</div>
+      <h1 style="color: white; margin: 0 0 8px 0; font-size: 28px; font-weight: 700;">Flight Alert</h1>
+      <p style="color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 18px;">Flight ${trip.Item.flightNumber}</p>
+    </div>
+    
+    <div style="background: white; border-radius: 16px; padding: 32px; margin-top: 24px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+      <div style="margin-bottom: 24px;">
+        <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Travel Time</p>
+        <p style="color: #1f2937; font-size: 16px; margin: 0; line-height: 1.6;">
+          From <strong>${payload.homeAddress}</strong> to <strong>${payload.airportCode}</strong>
+        </p>
+        <p style="color: #2563eb; font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${travelInfo.durationText}</p>
+      </div>
+      
+      <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 12px; padding: 24px; border-left: 4px solid #2563eb;">
+        <p style="color: #4b5563; font-size: 15px; margin: 0 0 12px 0; line-height: 1.6;">
+          To arrive <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong>, you should leave at:
+        </p>
+        <p style="color: #2563eb; font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
+          ${leaveTime.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            timeZone: 'America/Chicago'
+          })}
+        </p>
+      </div>
+      
+      <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: center;">
+        <p style="color: #9ca3af; font-size: 14px; margin: 0;">Safe travels! 🛫</p>
+        <p style="color: #d1d5db; font-size: 12px; margin: 8px 0 0 0;">Powered by Flight AI</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
         `
           }
         }
