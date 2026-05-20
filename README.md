@@ -173,6 +173,11 @@ flight-ai/
 5. **Hourly Checks**: A cron job runs every hour to check for upcoming trips and schedule notifications
 6. **Notification Delivery**: The notify worker sends emails via AWS SES and SMS via Twilio
 
+
+### To Deploy AWS Resources:
+
+npx sst deploy from root
+
 ## License
 
 Private project

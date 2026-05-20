@@ -7,7 +7,8 @@ interface Trip {
   sk: string;
   flightNumber: string;
   date: string;
-  airportCode: string;
+  originAirport: string;
+  destinationAirport: string;
   homeAddress: string;
   createdAt?: number;
 }
@@ -70,6 +71,13 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     };
   };
 
+  const isOldTrip = (dateStr: string) => {
+    const tripDate = new Date(dateStr);
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    return tripDate < twoDaysAgo;
+  };
+
   return (
       <div className="max-w-2xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
@@ -98,10 +106,11 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
             <div className="space-y-4">
               {trips.map((trip) => {
                 const formatted = formatDate(trip.date);
+                const old = isOldTrip(trip.date);
                 return (
                     <div
                         key={trip.sk}
-                        className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
+                        className={`bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 ${old ? 'opacity-50 grayscale' : ''}`}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -109,7 +118,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                             {trip.flightNumber}
                           </h2>
                           <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">
-                            TO {trip.airportCode}
+                            {trip.originAirport} → {trip.destinationAirport}
                           </p>
                           <div className="text-sm text-gray-500 dark:text-gray-400">
                             <p className="mb-1">Leaving from</p>

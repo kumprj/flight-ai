@@ -2,7 +2,8 @@ export interface Trip {
   userId: string;
   flightNumber: string;
   date: string; // ISO 8601
-  airportCode: string;
+  originAirport: string;
+  destinationAirport: string;
   homeAddress: string;
 }
 

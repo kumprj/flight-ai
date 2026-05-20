@@ -22,7 +22,8 @@ interface Trip {
   sk: string;
   flightNumber: string;
   date: string;
-  airportCode: string;
+  originAirport: string;
+  destinationAirport: string;
   homeAddress: string;
   createdAt?: number;
 }
@@ -138,7 +139,8 @@ function App() {
         await axios.put(`${Config.API_URL}/trips`, {
           flightNumber: selectedFlight?.flightNumber,
           date: selectedFlight?.departureTime,
-          airportCode: selectedFlight?.origin,
+          originAirport: selectedFlight?.origin,
+          destinationAirport: selectedFlight?.destination,
           homeAddress: homeAddress,
           createdAt: editingTrip.createdAt,
         }, {
@@ -150,7 +152,8 @@ function App() {
         await axios.post(`${Config.API_URL}/trips`, {
           flightNumber: selectedFlight?.flightNumber,
           date: selectedFlight?.departureTime,
-          airportCode: selectedFlight?.origin,
+          originAirport: selectedFlight?.origin,
+          destinationAirport: selectedFlight?.destination,
           homeAddress: homeAddress,
         }, {
           headers: {Authorization: `Bearer ${token}`}
