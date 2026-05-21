@@ -8,8 +8,10 @@ import {
 import { Database } from "@flight-ai/core/dynamodb";
 import {SESClient, SendEmailCommand} from "@aws-sdk/client-ses";
 import {GoogleMaps} from "@flight-ai/core/maps";
+import twilio from "twilio";
 
 const ses = new SESClient({});
+const twilioClient = twilio(process.env.TWILIO_SID!, process.env.TWILIO_TOKEN!);
 
 /**
  * Helper to generate a consistent User ID from the email claim.
@@ -676,6 +678,19 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
         }
       }
     }));
+
+    // Send SMS if phone is verified
+    if (profile?.phoneNumber && profile?.phoneVerified) {
+      console.log("Sending test SMS to:", profile.phoneNumber);
+      await twilioClient.messages.create({
+        body: message,
+        from: process.env.TWILIO_FROM_NUMBER!,
+        to: profile.phoneNumber,
+      });
+      console.log("Test SMS sent successfully");
+    } else {
+      console.log("No verified phone number, skipping SMS");
+    }
 
     return {
       statusCode: 200,

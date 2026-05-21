@@ -17,15 +17,21 @@ export const GoogleMaps = {
 
     console.log("Calculating route from:", origin, "to:", destinationAddress);
 
+    // Only pass departureTime if it's more than 5 minutes in the future
+    const isFutureDeparture = arrivalTime.getTime() > Date.now() + (5 * 60 * 1000);
+    const body: Record<string, any> = {
+      origin: {address: origin},
+      destination: {address: destinationAddress},
+      travelMode: "DRIVE",
+      routingPreference: "TRAFFIC_AWARE",
+    };
+    if (isFutureDeparture) {
+      body.departureTime = arrivalTime.toISOString();
+    }
+
     const response = await axios.post(
         ROUTES_API_URL,
-        {
-          origin: {address: origin},
-          destination: {address: destinationAddress},
-          travelMode: "DRIVE",
-          routingPreference: "TRAFFIC_AWARE",
-          departureTime: arrivalTime.toISOString(),
-        },
+        body,
         {
           headers: {
             "Content-Type": "application/json",
