@@ -4,20 +4,28 @@ import { Flights } from "@flight-ai/core/flights";
 export const search: APIGatewayProxyHandlerV2 = async (event) => {
   const flightNumber = event.queryStringParameters?.flightNumber;
   const date = event.queryStringParameters?.date;
+  const depIata = event.queryStringParameters?.depIata;
+  const arrIata = event.queryStringParameters?.arrIata;
   console.log('Environment check:', {
     hasKey: !!process.env.AVIATION_STACK_KEY,
     keyPreview: process.env.AVIATION_STACK_KEY?.substring(0, 8) + '...'
   });
-  console.log('Search request:', { flightNumber, date }); // Debug log
+  console.log('Search request:', { flightNumber, date, depIata, arrIata }); // Debug log
 
-  if (!flightNumber) {
+  let results;
+
+  if (depIata && arrIata && date) {
+    // Route search: departure + destination + date (required)
+    results = await Flights.searchByRoute(depIata, arrIata, date);
+  } else if (flightNumber) {
+    // Flight number search: flight number + optional date
+    results = await Flights.search(flightNumber, date);
+  } else {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: "Missing flightNumber parameter" }),
+      body: JSON.stringify({ error: "Missing required parameters. Provide either flightNumber (with optional date) or depIata + arrIata + date" }),
     };
   }
-
-  const results = await Flights.search(flightNumber, date);
 
   console.log('API returned:', results.length, 'flights'); // Debug log
   // ADD THIS
