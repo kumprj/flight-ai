@@ -3,6 +3,7 @@ import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import { Resource } from "sst";
+import { getAirportTimezone } from "@flight-ai/core/airports";
 
 const dynamodb = DynamoDBDocument.from(new DynamoDB({}));
 const lambda = new LambdaClient({});
@@ -41,24 +42,7 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
       const arrivalPreference = profile.Item?.arrivalPreference || 2;
 
       // Convert naive local date string to true UTC using the origin airport's timezone
-      const airportTimezones: Record<string, string> = {
-        'JFK': 'America/New_York', 'LGA': 'America/New_York', 'EWR': 'America/New_York',
-        'BOS': 'America/New_York', 'PHL': 'America/New_York', 'DCA': 'America/New_York',
-        'IAD': 'America/New_York', 'BWI': 'America/New_York', 'ATL': 'America/New_York',
-        'MIA': 'America/New_York', 'FLL': 'America/New_York', 'MCO': 'America/New_York',
-        'TPA': 'America/New_York', 'CLT': 'America/New_York', 'DTW': 'America/New_York',
-        'ORD': 'America/Chicago', 'MDW': 'America/Chicago', 'DFW': 'America/Chicago',
-        'IAH': 'America/Chicago', 'MSP': 'America/Chicago', 'STL': 'America/Chicago',
-        'MCI': 'America/Chicago', 'MSY': 'America/Chicago', 'MKE': 'America/Chicago',
-        'OMA': 'America/Chicago', 'DSM': 'America/Chicago', 'AUS': 'America/Chicago',
-        'BNA': 'America/Chicago',
-        'DEN': 'America/Denver', 'SLC': 'America/Denver', 'ABQ': 'America/Denver',
-        'PHX': 'America/Phoenix', 'TUS': 'America/Phoenix',
-        'LAX': 'America/Los_Angeles', 'SFO': 'America/Los_Angeles', 'SAN': 'America/Los_Angeles',
-        'SEA': 'America/Los_Angeles', 'PDX': 'America/Los_Angeles', 'LAS': 'America/Los_Angeles',
-        'HNL': 'Pacific/Honolulu', 'ANC': 'America/Anchorage',
-      };
-      const timezone = airportTimezones[item.originAirport?.toUpperCase()] || item.timezone || 'America/Chicago';
+      const timezone = getAirportTimezone(item.originAirport) || item.timezone || 'America/Chicago';
       const naiveDateStr = (item.date as string).split('+')[0].split('Z')[0];
       const naiveAsUTC = new Date(naiveDateStr + 'Z');
       const tzFormatter = new Intl.DateTimeFormat('en-US', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });

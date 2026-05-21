@@ -1,19 +1,11 @@
 import axios from "axios";
+import { getAirportAddress } from "./airports";
 
 const ROUTES_API_URL = "https://routes.googleapis.com/directions/v2:computeRoutes";
 
 export const GoogleMaps = {
   getTravelTime: async (origin: string, destination: string, arrivalTime: Date) => {
-    // Convert airport code to actual airport address
-    const AIRPORT_ADDRESSES: Record<string, string> = {
-      'ORD': "O'Hare International Airport, Chicago, IL",
-      'MDW': "Midway International Airport, Chicago, IL",
-      'LAX': "Los Angeles International Airport, CA",
-      'JFK': "John F. Kennedy International Airport, New York, NY",
-      // Add more as needed
-    };
-
-    const destinationAddress = AIRPORT_ADDRESSES[destination.toUpperCase()] || `${destination} Airport`;
+    const destinationAddress = getAirportAddress(destination);
 
     console.log("Calculating route from:", origin, "to:", destinationAddress);
 
