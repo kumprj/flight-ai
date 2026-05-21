@@ -53,7 +53,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
 
-      const travelTimePromises = trips.map(async (trip) => {
+      const travelTimePromises = trips.filter(trip => !isOldTrip(trip.date)).map(async (trip) => {
         try {
           const res = await axios.post(`${Config.API_URL}/trips/travel-time`, {
             homeAddress: trip.homeAddress,
