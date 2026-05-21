@@ -2,15 +2,22 @@ import { useState } from 'react';
 import { scanCalendarForFlights, type CalendarFlight } from './utils/googleCalendar';
 
 interface Props {
-  onImport: (flights: CalendarFlight[]) => void;
+  onImport: (flights: CalendarFlight[], address: string) => Promise<void>;
   onClose: () => void;
+  homeAddress?: string;
 }
 
-export default function CalendarImport({ onImport, onClose }: Props) {
+export default function CalendarImport({ onImport, onClose, homeAddress = '' }: Props) {
   const [state, setState] = useState<'idle' | 'scanning' | 'results' | 'error'>('idle');
   const [flights, setFlights] = useState<CalendarFlight[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState('');
+  const [addresses, setAddresses] = useState<Record<string, string>>({});
+  const [importing, setImporting] = useState(false);
+
+  const getAddress = (key: string) => addresses[key] ?? homeAddress;
+  const setAddress = (key: string, val: string) =>
+    setAddresses((prev) => ({ ...prev, [key]: val }));
 
   const scan = async () => {
     setState('scanning');
@@ -33,16 +40,31 @@ export default function CalendarImport({ onImport, onClose }: Props) {
     });
   };
 
-  const handleImport = () => {
-    const toImport = flights.filter((f) =>
-      selected.has(`${f.flightNumber}::${f.date}`)
-    );
-    onImport(toImport);
+  const handleImport = async () => {
+    const toImport = flights
+      .filter((f) => selected.has(`${f.flightNumber}::${f.date}`))
+      .map((f) => ({ ...f, address: getAddress(`${f.flightNumber}::${f.date}`) }));
+    setImporting(true);
+    try {
+      await onImport(toImport, '');
+    } finally {
+      setImporting(false);
+    }
   };
+
+  const allAddressesFilled = flights
+    .filter((f) => selected.has(`${f.flightNumber}::${f.date}`))
+    .every((f) => getAddress(`${f.flightNumber}::${f.date}`).trim() !== '');
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md relative">
+        {importing && (
+          <div className="absolute inset-0 bg-white/70 dark:bg-gray-900/70 rounded-2xl z-10 flex flex-col items-center justify-center gap-3">
+            <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Importing flights…</p>
+          </div>
+        )}
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
           <div className="flex items-center gap-2">
@@ -51,7 +73,7 @@ export default function CalendarImport({ onImport, onClose }: Props) {
             </svg>
             <h2 className="font-semibold text-gray-900 dark:text-white">Import from Google Calendar</h2>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+          <button onClick={onClose} disabled={importing} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -113,36 +135,50 @@ export default function CalendarImport({ onImport, onClose }: Props) {
                       const key = `${flight.flightNumber}::${flight.date}`;
                       const isSelected = selected.has(key);
                       return (
-                        <label
+                        <div
                           key={key}
-                          className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${
+                          className={`p-3 rounded-xl transition-colors ${
                             isSelected
                               ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
                               : 'bg-gray-50 dark:bg-gray-800 border border-transparent'
                           }`}
                         >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => toggle(key)}
-                            className="accent-green-600 w-4 h-4 shrink-0"
-                          />
-                          <div className="min-w-0">
-                            <p className="font-semibold text-gray-900 dark:text-white text-sm">
-                              {flight.flightNumber}
-                              <span className="ml-2 text-green-700 dark:text-green-400 font-medium">
-                                {new Date(flight.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                              </span>
-                            </p>
-                            <p className="text-xs text-gray-400 truncate">{flight.eventTitle}</p>
-                          </div>
-                        </label>
+                          <label className="flex items-center gap-3 cursor-pointer mb-2">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggle(key)}
+                              className="accent-green-600 w-4 h-4 shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                                {flight.flightNumber}
+                                <span className="ml-2 text-green-700 dark:text-green-400 font-medium">
+                                  {new Date(flight.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </span>
+                              </p>
+                              <p className="text-xs text-gray-400 truncate">{flight.eventTitle}</p>
+                            </div>
+                          </label>
+                          {isSelected && (
+                            <div className="mt-2">
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium">Starting address</p>
+                              <input
+                                type="text"
+                                value={getAddress(key)}
+                                onChange={(e) => setAddress(key, e.target.value)}
+                                placeholder="e.g. 123 Main St, Chicago, IL"
+                                className="w-full p-2 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-green-600 outline-none text-xs transition-all"
+                              />
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
                   <button
                     onClick={handleImport}
-                    disabled={selected.size === 0}
+                    disabled={selected.size === 0 || !allAddressesFilled}
                     className="w-full py-3 bg-green-700 hover:bg-green-800 disabled:opacity-40 text-white font-medium rounded-xl transition-colors"
                   >
                     Import {selected.size} Flight{selected.size !== 1 ? 's' : ''}

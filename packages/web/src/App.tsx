@@ -50,26 +50,13 @@ function App() {
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [showCalendarImport, setShowCalendarImport] = useState(false);
 
-  const handleCalendarImport = async (flights: CalendarFlight[]) => {
-    setShowCalendarImport(false);
-    if (flights.length === 0) return;
+  const handleCalendarImport = async (flights: CalendarFlight[], address: string): Promise<void> => {
+    if (flights.length === 0) { setShowCalendarImport(false); return; }
+    if (address) setHomeAddress(address);
 
-    setLoading(true);
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
-
-      // Ensure home address is loaded
-      let address = homeAddress;
-      if (!address) {
-        try {
-          const profileRes = await axios.get(`${Config.API_URL}/profile`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          address = profileRes.data?.homeAddress ?? '';
-          setHomeAddress(address);
-        } catch {}
-      }
 
       let imported = 0;
       const ambiguous: Array<{ flight: CalendarFlight; results: FlightData[] }> = [];
@@ -91,7 +78,7 @@ function App() {
               date: results[0].departureTime,
               originAirport: results[0].origin,
               destinationAirport: results[0].destination,
-              homeAddress: address,
+              homeAddress: calFlight.address || address,
             }, { headers: { Authorization: `Bearer ${token}` } });
             imported++;
           } else {
@@ -128,6 +115,7 @@ function App() {
       showToast('Calendar import failed.', 'error');
     } finally {
       setLoading(false);
+      setShowCalendarImport(false);
     }
   };
 
@@ -378,7 +366,10 @@ function App() {
 
                               <button
                                   type="button"
-                                  onClick={() => setShowCalendarImport(true)}
+                                  onClick={async () => {
+                    await loadUserProfile();
+                    setShowCalendarImport(true);
+                  }}
                                   className="w-full mb-4 py-2.5 px-4 border border-dashed border-green-600/50 hover:border-green-600 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2"
                               >
                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -598,6 +589,7 @@ function App() {
             <CalendarImport
                 onImport={handleCalendarImport}
                 onClose={() => setShowCalendarImport(false)}
+                homeAddress={homeAddress}
             />
         )}
       </div>

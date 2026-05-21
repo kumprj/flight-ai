@@ -5,6 +5,7 @@ export interface CalendarFlight {
   date: string;        // YYYY-MM-DD
   eventTitle: string;
   eventId: string;
+  address?: string;
 }
 
 declare global {
@@ -15,12 +16,33 @@ declare global {
           initTokenClient(config: {
             client_id: string;
             scope: string;
-            callback: (response: { access_token?: string; error?: string }) => void;
+            callback: (response: { access_token?: string; expires_in?: number; error?: string }) => void;
           }): { requestAccessToken(): void };
         };
       };
     };
   }
+}
+
+const TOKEN_KEY = 'gcal_access_token';
+const EXPIRY_KEY = 'gcal_token_expiry';
+const EXPIRY_BUFFER_MS = 2 * 60 * 1000; // refresh 2 min before actual expiry
+
+function getCachedToken(): string | null {
+  const token = sessionStorage.getItem(TOKEN_KEY);
+  const expiry = sessionStorage.getItem(EXPIRY_KEY);
+  if (!token || !expiry) return null;
+  if (Date.now() >= Number(expiry) - EXPIRY_BUFFER_MS) {
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(EXPIRY_KEY);
+    return null;
+  }
+  return token;
+}
+
+function cacheToken(token: string, expiresIn: number) {
+  sessionStorage.setItem(TOKEN_KEY, token);
+  sessionStorage.setItem(EXPIRY_KEY, String(Date.now() + expiresIn * 1000));
 }
 
 const FLIGHT_REGEX = /\b([A-Z]{2})\s?(\d{2,4})\b/g;
@@ -46,6 +68,9 @@ function waitForGIS(): Promise<void> {
 }
 
 function getAccessToken(): Promise<string> {
+  const cached = getCachedToken();
+  if (cached) return Promise.resolve(cached);
+
   return new Promise(async (resolve, reject) => {
     await waitForGIS();
     const client = window.google!.accounts.oauth2.initTokenClient({
@@ -55,6 +80,7 @@ function getAccessToken(): Promise<string> {
         if (response.error || !response.access_token) {
           reject(new Error(response.error || 'Failed to get access token'));
         } else {
+          cacheToken(response.access_token, response.expires_in ?? 3600);
           resolve(response.access_token);
         }
       },

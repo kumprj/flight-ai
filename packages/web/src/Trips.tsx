@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import axios from 'axios';
 import {Config} from './config';
 import {fetchAuthSession} from 'aws-amplify/auth';
+import Toast, {type ToastType} from './Toast';
 
 interface Trip {
   sk: string;
@@ -17,7 +18,11 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [testNotifying, setTestNotifying] = useState<string | null>(null);
-  const [travelTimes, setTravelTimes] = useState<Record<string, { durationText: string; durationSeconds: number }>>({});
+  const [travelTimes, setTravelTimes] = useState<Record<string, { durationText: string; durationSeconds: number }>>({})
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
+
+  const showToast = (msg: string, type: ToastType = 'success') => setToast({ msg, type });
 
   useEffect(() => {
     loadTrips();
@@ -42,7 +47,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       loadTravelTimes(sortedTrips);
     } catch (err) {
       console.error(err);
-      alert("Failed to load trips");
+      showToast("Failed to load trips", "error");
     } finally {
       setLoading(false);
     }
@@ -129,17 +134,14 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       alert("Test notification sent! Check your email.");
     } catch (err) {
       console.error(err);
-      alert("Failed to send test notification.");
+      showToast("Failed to send test notification.", "error");
     } finally {
       setTestNotifying(null);
     }
   };
 
   const handleDelete = async (trip: Trip) => {
-    if (!confirm(`Are you sure you want to delete trip ${trip.flightNumber}?`)) {
-      return;
-    }
-
+    setConfirmDeleteId(null);
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
@@ -147,11 +149,11 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         data: { tripId: trip.sk },
         headers: {Authorization: `Bearer ${token}`}
       });
-      alert("Trip deleted successfully.");
-      loadTrips(); // Reload trips
+      showToast(`${trip.flightNumber} removed.`);
+      loadTrips();
     } catch (err) {
       console.error(err);
-      alert("Failed to delete trip.");
+      showToast("Failed to delete trip.", "error");
     }
   };
 
@@ -646,17 +648,34 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                           >
                             {testNotifying === trip.sk ? 'Sending...' : 'Test Notify'}
                           </button>
-                          <button
-                              onClick={() => handleDelete(trip)}
-                              disabled={old}
-                              className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
-                                old
-                                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed opacity-50'
-                                  : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 border-red-200 dark:border-red-800'
-                              }`}
-                          >
-                            Delete
-                          </button>
+                          {confirmDeleteId === trip.sk ? (
+                              <>
+                                <button
+                                    onClick={() => handleDelete(trip)}
+                                    className="px-3 py-1.5 text-sm font-medium rounded-lg border bg-red-600 text-white hover:bg-red-700 border-red-600 transition-colors"
+                                >
+                                  Confirm
+                                </button>
+                                <button
+                                    onClick={() => setConfirmDeleteId(null)}
+                                    className="px-3 py-1.5 text-sm font-medium rounded-lg border bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700 transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                              </>
+                          ) : (
+                              <button
+                                  onClick={() => setConfirmDeleteId(trip.sk)}
+                                  disabled={old}
+                                  className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
+                                    old
+                                      ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed opacity-50'
+                                      : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 border-red-200 dark:border-red-800'
+                                  }`}
+                              >
+                                Delete
+                              </button>
+                          )}
                           <button
                               onClick={() => onEdit(trip)}
                               disabled={old}
@@ -675,6 +694,9 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
               })}
             </div>
         )}
+      {toast && (
+          <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />
+      )}
       </div>
   );
 }
