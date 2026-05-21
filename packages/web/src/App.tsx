@@ -104,6 +104,11 @@ function App() {
           setLoading(false);
           return;
         }
+        if (!/^[A-Z]{2}\d{2,4}$/.test(flightNum)) {
+          showToast("Invalid flight number. Expected format: 2 letters followed by 2–4 digits (e.g. UA123).", "error");
+          setLoading(false);
+          return;
+        }
         params.flightNumber = flightNum;
         if (selectedDate) {
           params.date = selectedDate.toISOString().split('T')[0];
@@ -330,6 +335,7 @@ function App() {
                                             name="flightNumber"
                                             placeholder="e.g. AA123"
                                             required
+                                            maxLength={6}
                                             defaultValue={editingTrip?.flightNumber}
                                             className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
                                         />
