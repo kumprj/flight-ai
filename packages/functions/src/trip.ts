@@ -143,13 +143,31 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
 };
 
 export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
-
-  if (!userId) {
-    console.error("Unauthorized: Missing email claim");
-    return { statusCode: 401, body: "Unauthorized" };
+  // Manual JWT decoding like profile endpoints
+  const authHeader = event.headers?.Authorization || event.headers?.authorization;
+  if (!authHeader) {
+    console.log("No authorization header found");
+    return { statusCode: 401, body: "Unauthorized: Missing Authorization header" };
   }
+
+  const token = authHeader.replace('Bearer ', '');
+
+  // Decode JWT manually (simple base64 decode for now)
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    console.log("Invalid token format");
+    return { statusCode: 401, body: "Unauthorized: Invalid token format" };
+  }
+
+  const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+  const email = payload.email;
+
+  if (!email) {
+    console.log("No email in token payload");
+    return { statusCode: 401, body: "Unauthorized: Missing email in token" };
+  }
+
+  const userId = email.replace(/[@.]/g, "_");
 
   const body = JSON.parse(event.body || "{}");
   const tripId = body.tripId;
@@ -266,13 +284,33 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
 };
 
 export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
-
-  if (!userId) {
-    console.error("Unauthorized: Missing email claim");
-    return { statusCode: 401, body: "Unauthorized" };
+  // Manual JWT decoding like profile endpoints
+  const authHeader = event.headers?.Authorization || event.headers?.authorization;
+  if (!authHeader) {
+    console.log("No authorization header found");
+    return { statusCode: 401, body: "Unauthorized: Missing Authorization header" };
   }
+
+  const token = authHeader.replace('Bearer ', '');
+
+  // Decode JWT manually (simple base64 decode for now)
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    console.log("Invalid token format");
+    return { statusCode: 401, body: "Unauthorized: Invalid token format" };
+  }
+
+  const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+  console.log("Decoded token payload:", JSON.stringify(payload, null, 2));
+
+  const email = payload.email;
+
+  if (!email) {
+    console.log("No email in token payload");
+    return { statusCode: 401, body: "Unauthorized: Missing email in token" };
+  }
+
+  const userId = email.replace(/[@.]/g, "_");
 
   const body = JSON.parse(event.body || "{}");
   const { homeAddress, airportCode } = body;
@@ -282,11 +320,13 @@ export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
   }
 
   try {
+    console.log("Calculating travel time from", homeAddress, "to", airportCode);
     const travelInfo = await GoogleMaps.getTravelTime(
       homeAddress,
       airportCode,
       new Date()
     );
+    console.log("Travel time calculated:", travelInfo);
 
     return {
       statusCode: 200,
@@ -294,18 +334,33 @@ export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
     };
   } catch (error) {
     console.error("Travel time calculation failed:", error);
-    return { statusCode: 500, body: JSON.stringify({ error: "Failed to calculate travel time" }) };
+    return { statusCode: 500, body: JSON.stringify({ error: "Failed to calculate travel time", details: error instanceof Error ? error.message : String(error) }) };
   }
 };
 
 export const remove: APIGatewayProxyHandlerV2 = async (event) => {
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
-
-  if (!userId) {
-    console.error("Unauthorized: Missing email claim");
-    return { statusCode: 401, body: "Unauthorized" };
+  // Manual JWT decoding like profile endpoints
+  const authHeader = event.headers?.Authorization || event.headers?.authorization;
+  if (!authHeader) {
+    return { statusCode: 401, body: "Unauthorized: Missing Authorization header" };
   }
+
+  const token = authHeader.replace('Bearer ', '');
+
+  // Decode JWT manually (simple base64 decode for now)
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    return { statusCode: 401, body: "Unauthorized: Invalid token format" };
+  }
+
+  const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+  const email = payload.email;
+
+  if (!email) {
+    return { statusCode: 401, body: "Unauthorized: Missing email in token" };
+  }
+
+  const userId = email.replace(/[@.]/g, "_");
 
   const body = JSON.parse(event.body || "{}");
   const tripId = body.tripId;

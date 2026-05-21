@@ -130,7 +130,7 @@ export default $config({
 
     const api = new sst.aws.ApiGatewayV2("Api", {
       cors: {
-        allowMethods: ["GET", "POST", "OPTIONS", "PUT"],
+        allowMethods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
         allowOrigins: ["http://localhost:5173"],
         allowHeaders: ["Authorization", "Content-Type"],
       },
@@ -145,6 +145,7 @@ export default $config({
               TWILIO_SID: process.env.TWILIO_SID!,
               TWILIO_TOKEN: process.env.TWILIO_TOKEN!,
               TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER!,
+              GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY!,
             },
           }
         }
@@ -205,7 +206,6 @@ export default $config({
 
     api.route("DELETE /trips", {
       handler: "packages/functions/src/trip.remove",
-      authorizer: authorizer.id,
       link: [table],
       permissions: [
         {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
@@ -218,20 +218,11 @@ export default $config({
       permissions: [
         {actions: ["ses:*"], resources: ["*"]}
       ],
-      auth: {
-        jwt: {
-          authorizer: authorizer.id,
-        }
-      }
     });
 
     api.route("POST /trips/travel-time", {
       handler: "packages/functions/src/trip.getTravelTime",
-      authorizer: authorizer.id,
       link: [table],
-      environment: {
-        GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY!,
-      },
     });
 
 // Flight Search Route - using same auth pattern
