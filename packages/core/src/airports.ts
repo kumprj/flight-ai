@@ -255,7 +255,6 @@ export const AIRPORTS: Record<string, AirportInfo> = {
   'ADL': { name: 'Adelaide Airport',                             city: 'Adelaide, AU',        timezone: 'Australia/Adelaide' },
   'AKL': { name: 'Auckland Airport',                             city: 'Auckland, NZ',        timezone: 'Pacific/Auckland' },
   'CHC': { name: 'Christchurch Airport',                         city: 'Christchurch, NZ',    timezone: 'Pacific/Auckland' },
-  'HNL': { name: 'Daniel K. Inouye International Airport',       city: 'Honolulu, HI',        timezone: 'Pacific/Honolulu' },
   // ── Africa ──────────────────────────────────────────────────────────────────
   'JNB': { name: 'O.R. Tambo International Airport',             city: 'Johannesburg, ZA',    timezone: 'Africa/Johannesburg' },
   'CPT': { name: 'Cape Town International Airport',              city: 'Cape Town, ZA',       timezone: 'Africa/Johannesburg' },
