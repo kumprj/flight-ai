@@ -141,7 +141,7 @@ export default $config({
             environment: {
               WORKER_ARN: notifyWorker.arn,
               SCHEDULER_ROLE_ARN: notifyWorker.nodes.role.arn,
-              AVIATION_STACK_KEY: process.env.AVIATION_STACK_KEY!,
+              AERODATABOX_API_KEY: process.env.AERODATABOX_API_KEY!,
               TWILIO_SID: process.env.TWILIO_SID!,
               TWILIO_TOKEN: process.env.TWILIO_TOKEN!,
               TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER!,

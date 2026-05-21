@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://api.aviationstack.com/v1/flights";
+const AERODATABOX_BASE_URL = "https://aerodatabox.p.rapidapi.com";
 
 export interface FlightResult {
   flightNumber: string;
@@ -13,105 +13,91 @@ export interface FlightResult {
   timezone: string;
 }
 
+const aeroHeaders = () => ({
+  'X-RapidAPI-Key': process.env.AERODATABOX_API_KEY!,
+  'X-RapidAPI-Host': 'aerodatabox.p.rapidapi.com',
+});
+
 /**
- * Aviation Stack returns times in UTC format but they represent LOCAL time
- * Extract just the time portion and combine with date to treat as local
+ * AeroDataBox returns times as "YYYY-MM-DD HH:mm+HH:mm" (local time with offset).
+ * Strip the offset to get a naive local time string for storage.
  */
-const parseAsLocalTime = (isoString: string, timezone: string): string => {
-  if (!isoString) return '';
-
-  // Extract date and time parts: "2026-02-01T16:25:00+00:00" -> "2026-02-01T16:25:00"
-  const withoutTimezone = isoString.split('+')[0].split('Z')[0];
-
-  // Return in simple ISO format to be interpreted as local
-  return withoutTimezone;
+const parseLocalTime = (timeStr: string): string => {
+  if (!timeStr) return '';
+  // "2026-05-21 17:45-05:00" -> "2026-05-21T17:45:00"
+  const withoutOffset = timeStr.replace(/[+-]\d{2}:\d{2}$/, '').trim();
+  return withoutOffset.replace(' ', 'T') + (withoutOffset.includes(':') && withoutOffset.split(':').length === 2 ? ':00' : '');
 };
+
+const mapFlight = (f: any): FlightResult => ({
+  flightNumber: f.number?.replace(/ /g, '') || '',
+  airline: f.airline?.name || '',
+  origin: f.departure?.airport?.iata || '',
+  destination: f.arrival?.airport?.iata || '',
+  departureTime: parseLocalTime(
+    f.departure?.scheduledTime?.local ||
+    f.departure?.revisedTime?.local ||
+    f.departure?.predictedTime?.local || ''
+  ),
+  arrivalTime: parseLocalTime(
+    f.arrival?.scheduledTime?.local ||
+    f.arrival?.revisedTime?.local ||
+    f.arrival?.predictedTime?.local || ''
+  ),
+  status: f.status || 'Unknown',
+  timezone: f.departure?.airport?.timeZone || 'UTC',
+});
 
 export const Flights = {
   search: async (flightIata: string, date?: string): Promise<FlightResult[]> => {
-    console.log(`Searching for flight: ${flightIata}`, date ? `on ${date}` : '');
+    const today = new Date().toISOString().split('T')[0];
+    const searchDate = date || today;
+    console.log(`Searching AeroDataBox for flight: ${flightIata} on ${searchDate}`);
 
     try {
-      const params: any = {
-        access_key: process.env.AVIATION_STACK_KEY,
-        flight_iata: flightIata,
-        limit: 20
-      };
+      const res = await axios.get(
+        `${AERODATABOX_BASE_URL}/flights/number/${encodeURIComponent(flightIata)}/${searchDate}`,
+        { headers: aeroHeaders() }
+      );
 
-      if (date) {
-        params.flight_date = date;
-      }
-
-      const res = await axios.get(API_URL, {params});
-
-      if (res.data.error) {
-        console.error("Aviationstack Error:", res.data.error);
-        throw new Error(res.data.error.info || "Flight API Error");
-      }
-
-      const data = res.data.data || [];
-
-      // Map the response
-      const mapped = data.map((f: any) => ({
-        flightNumber: f.flight.iata,
-        airline: f.airline.name,
-        origin: f.departure.iata,
-        destination: f.arrival.iata,
-        // Strip timezone suffix to treat as local time
-        departureTime: parseAsLocalTime(f.departure.scheduled, f.departure.timezone),
-        arrivalTime: parseAsLocalTime(f.arrival.scheduled, f.arrival.timezone),
-        status: f.flight_status,
-        timezone: f.departure.timezone || 'UTC'
-      }));
-
-      // Don't filter by date - let the API handle it via flight_date parameter
-      return mapped;
-
-    } catch (error) {
-      console.error("Flight Search Exception:", error);
+      const data: any[] = Array.isArray(res.data) ? res.data : [];
+      console.log(`AeroDataBox returned ${data.length} results`);
+      return data.map(mapFlight);
+    } catch (error: any) {
+      console.error("AeroDataBox Flight Search Exception:", error?.response?.data || error?.message || error);
       return [];
     }
   },
 
   searchByRoute: async (depIata: string, arrIata: string, date: string): Promise<FlightResult[]> => {
-    console.log(`Searching for route: ${depIata} -> ${arrIata} on ${date}`);
+    console.log(`Searching AeroDataBox for route: ${depIata} -> ${arrIata} on ${date}`);
 
-    // Does not work at the moment, need to fix api endpoint.
     try {
-      const params: any = {
-        access_key: process.env.AVIATION_STACK_KEY,
-        dep_iata: depIata,
-        arr_iata: arrIata,
-        flight_date: date,
-        limit: 20
-      };
+      // AeroDataBox limits airport queries to 12-hour windows, so split the day into AM and PM halves
+      const [amRes, pmRes] = await Promise.all([
+        axios.get(
+          `${AERODATABOX_BASE_URL}/flights/airports/iata/${depIata}/${date}T00:00/${date}T11:59`,
+          { params: { direction: 'Departure', withLeg: true }, headers: aeroHeaders() }
+        ),
+        axios.get(
+          `${AERODATABOX_BASE_URL}/flights/airports/iata/${depIata}/${date}T12:00/${date}T23:59`,
+          { params: { direction: 'Departure', withLeg: true }, headers: aeroHeaders() }
+        ),
+      ]);
 
-      const res = await axios.get(API_URL, {params});
+      const departures: any[] = [
+        ...(amRes.data?.departures || []),
+        ...(pmRes.data?.departures || []),
+      ];
 
-      if (res.data.error) {
-        console.error("Aviationstack Error:", res.data.error);
-        throw new Error(res.data.error.info || "Flight API Error");
-      }
+      console.log(`AeroDataBox route search returned ${departures.length} total departures`);
 
-      const data = res.data.data || [];
-
-      // Map the response
-      const mapped = data.map((f: any) => ({
-        flightNumber: f.flight.iata,
-        airline: f.airline.name,
-        origin: f.departure.iata,
-        destination: f.arrival.iata,
-        // Strip timezone suffix to treat as local time
-        departureTime: parseAsLocalTime(f.departure.scheduled, f.departure.timezone),
-        arrivalTime: parseAsLocalTime(f.arrival.scheduled, f.arrival.timezone),
-        status: f.flight_status,
-        timezone: f.departure.timezone || 'UTC'
-      }));
-
-      return mapped;
-
-    } catch (error) {
-      console.error("Route Search Exception:", error);
+      return departures
+        .filter((f: any) => f.arrival?.airport?.iata?.toUpperCase() === arrIata.toUpperCase())
+        .map(mapFlight)
+        .sort((a, b) => a.departureTime.localeCompare(b.departureTime));
+    } catch (error: any) {
+      console.error("AeroDataBox Route Search Exception:", error?.response?.data || error?.message || error);
       return [];
     }
   }
