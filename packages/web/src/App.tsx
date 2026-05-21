@@ -38,6 +38,9 @@ function App() {
   const [searchResults, setSearchResults] = useState<FlightData[]>([]);
   const [selectedFlight, setSelectedFlight] = useState<FlightData | null>(null);
   const [homeAddress, setHomeAddress] = useState('');
+  const [searchMode, setSearchMode] = useState<'flight' | 'route'>('flight');
+  const [depAirport, setDepAirport] = useState('');
+  const [arrAirport, setArrAirport] = useState('');
 
   const [view, setView] = useState<'add' | 'list' | 'profile'>('list');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -78,8 +81,14 @@ function App() {
     setLoading(true);
 
     const form = new FormData(e.target as HTMLFormElement);
-    const flightNum = (form.get('flightNumber') as string).toUpperCase();
+    const flightNumRaw = form.get('flightNumber') as string;
     const address = form.get('homeAddress') as string;
+    const depRaw = form.get('depAirport') as string;
+    const arrRaw = form.get('arrAirport') as string;
+
+    const flightNum = flightNumRaw ? flightNumRaw.toUpperCase() : '';
+    const dep = depRaw ? depRaw.toUpperCase() : '';
+    const arr = arrRaw ? arrRaw.toUpperCase() : '';
 
     setHomeAddress(address);
 
@@ -87,32 +96,46 @@ function App() {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
 
+      let params: any = {};
+
+      if (searchMode === 'flight') {
+        if (!flightNum) {
+          showToast("Please enter a flight number.", "error");
+          setLoading(false);
+          return;
+        }
+        params.flightNumber = flightNum;
+        if (selectedDate) {
+          params.date = selectedDate.toISOString().split('T')[0];
+        }
+      } else {
+        // Route mode
+        if (!dep || !arr || !selectedDate) {
+          showToast("Please enter departure, destination airports, and date.", "error");
+          setLoading(false);
+          return;
+        }
+        params.depIata = dep;
+        params.arrIata = arr;
+        params.date = selectedDate.toISOString().split('T')[0];
+      }
+
       const res = await axios.get(`${Config.API_URL}/flights/search`, {
-        params: {flightNumber: flightNum},
+        params,
         headers: {Authorization: `Bearer ${token}`}
       });
 
       const flights = res.data;
 
       if (flights && flights.length > 0) {
-        let matches = flights;
-
-        // FILTER: If user picked a date, filter by it
-        if (selectedDate) {
-          const dateStr = selectedDate.toISOString().split('T')[0];
-          matches = flights.filter((f: any) => f.departureTime.startsWith(dateStr));
-
-          // If strict filtering removed everything, fallback to original list (or show empty)
-          if (matches.length === 0) {
-            showToast(`Showing all flights found on ${selectedDate.toLocaleDateString()}. `, "success");
-            matches = flights;
-          }
-        }
-
-        setSearchResults(matches);
+        setSearchResults(flights);
         setStep('select');
       } else {
-        showToast(`Flight ${flightNum} not found.`, "error");
+        if (searchMode === 'flight') {
+          showToast(`Flight ${flightNum} not found.`, "error");
+        } else {
+          showToast(`No flights found from ${dep} to ${arr} on ${selectedDate?.toLocaleDateString()}.`, "error");
+        }
       }
     } catch (err) {
       console.error(err);
@@ -167,6 +190,9 @@ function App() {
       setHomeAddress('');
       setSelectedDate(null); // Reset date
       setEditingTrip(null);
+      setSearchMode('flight');
+      setDepAirport('');
+      setArrAirport('');
       setView('list');
     } catch (err) {
       console.error(err);
@@ -180,6 +206,9 @@ function App() {
     setStep('input');
     setSearchResults([]);
     setEditingTrip(null);
+    setSearchMode('flight');
+    setDepAirport('');
+    setArrAirport('');
   };
 
   const handleEdit = (trip: Trip) => {
@@ -261,25 +290,89 @@ function App() {
                               <form onSubmit={handleLookup} className="space-y-4">
                                 <div>
                                   <label
-                                      className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
-                                    Flight Info
+                                      className="block text-xs uppercase tracking-wider text-gray-500 mb-2 font-semibold">
+                                    Search By
                                   </label>
                                   <div className="flex gap-2">
-                                    <input
-                                        name="flightNumber"
-                                        placeholder="e.g. AA123"
-                                        required
-                                        defaultValue={editingTrip?.flightNumber}
-                                        className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
-                                    />
-
-                                    <CustomDatePicker
-                                        selected={selectedDate}
-                                        onChange={(date) => setSelectedDate(date)}
-                                        placeholder="Date (Opt)"
-                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setSearchMode('flight')}
+                                        className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
+                                            searchMode === 'flight'
+                                                ? 'bg-green-700 text-white'
+                                                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                        }`}
+                                    >
+                                      Flight Number
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setSearchMode('route')}
+                                        className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
+                                            searchMode === 'route'
+                                                ? 'bg-green-700 text-white'
+                                                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                        }`}
+                                    >
+                                      Airports
+                                    </button>
                                   </div>
                                 </div>
+
+                                {searchMode === 'flight' ? (
+                                    <div>
+                                      <label
+                                          className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
+                                        Flight Info
+                                      </label>
+                                      <div className="flex gap-2">
+                                        <input
+                                            name="flightNumber"
+                                            placeholder="e.g. AA123"
+                                            required
+                                            defaultValue={editingTrip?.flightNumber}
+                                            className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
+                                        />
+
+                                        <CustomDatePicker
+                                            selected={selectedDate}
+                                            onChange={(date) => setSelectedDate(date)}
+                                            placeholder="Date (Opt)"
+                                        />
+                                      </div>
+                                    </div>
+                                ) : (
+                                    <div>
+                                      <label
+                                          className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
+                                        Route Info
+                                      </label>
+                                      <div className="flex gap-2 mb-2">
+                                        <input
+                                            name="depAirport"
+                                            placeholder="From (e.g. JFK)"
+                                            required
+                                            value={depAirport}
+                                            onChange={(e) => setDepAirport(e.target.value.toUpperCase())}
+                                            className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
+                                        />
+                                        <input
+                                            name="arrAirport"
+                                            placeholder="To (e.g. LAX)"
+                                            required
+                                            value={arrAirport}
+                                            onChange={(e) => setArrAirport(e.target.value.toUpperCase())}
+                                            className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
+                                        />
+                                      </div>
+                                      <CustomDatePicker
+                                          selected={selectedDate}
+                                          onChange={(date) => setSelectedDate(date)}
+                                          placeholder="Date (Required)"
+                                          required
+                                      />
+                                    </div>
+                                )}
 
                                 <div>
                                   <label
