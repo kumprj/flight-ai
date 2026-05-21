@@ -5,9 +5,11 @@ import {DynamoDBDocument} from "@aws-sdk/lib-dynamodb";
 import {Resource} from "sst";
 import {GoogleMaps} from "@flight-ai/core/maps";
 import {SchedulerPayload} from "@flight-ai/core/types";
+import twilio from "twilio";
 
 const ses = new SESClient({});
 const dynamodb = DynamoDBDocument.from(new DynamoDB({}));
+const twilioClient = twilio(process.env.TWILIO_SID!, process.env.TWILIO_TOKEN!);
 
 export const handler: SchedulerHandler = async (event) => {
   console.log("Worker triggered:", JSON.stringify(event, null, 2));
@@ -104,11 +106,15 @@ export const handler: SchedulerHandler = async (event) => {
       timeZone: timezone
     })}.\n\nSafe travels!`;
 
-// 4. Send SMS (disabled for testing)
+// 4. Send SMS
     if (profile.Item?.phoneNumber && profile.Item?.phoneVerified) {
-      console.log("SMS would be sent to:", profile.Item.phoneNumber);
-      console.log("SMS message:", message);
-      // await Messenger.sendSms(profile.Item.phoneNumber, message);
+      console.log("Sending SMS to:", profile.Item.phoneNumber);
+      await twilioClient.messages.create({
+        body: message,
+        from: process.env.TWILIO_FROM_NUMBER!,
+        to: profile.Item.phoneNumber,
+      });
+      console.log("SMS sent successfully");
     } else {
       console.log("No verified phone number, skipping SMS");
     }
