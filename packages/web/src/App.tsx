@@ -9,6 +9,8 @@ import Toast, {type ToastType} from './Toast';
 import CustomDatePicker from './DatePicker';
 import {formatFlightDate, formatFlightTimeOnly} from './utils/flightTimes';
 import Profile from './Profile';
+import CalendarImport from './CalendarImport';
+import type { CalendarFlight } from './utils/googleCalendar';
 
 interface FlightData {
   flightNumber: string;
@@ -46,6 +48,88 @@ function App() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
+  const [showCalendarImport, setShowCalendarImport] = useState(false);
+
+  const handleCalendarImport = async (flights: CalendarFlight[]) => {
+    setShowCalendarImport(false);
+    if (flights.length === 0) return;
+
+    setLoading(true);
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+
+      // Ensure home address is loaded
+      let address = homeAddress;
+      if (!address) {
+        try {
+          const profileRes = await axios.get(`${Config.API_URL}/profile`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          address = profileRes.data?.homeAddress ?? '';
+          setHomeAddress(address);
+        } catch {}
+      }
+
+      let imported = 0;
+      const ambiguous: Array<{ flight: CalendarFlight; results: FlightData[] }> = [];
+      const notFound: string[] = [];
+
+      for (const calFlight of flights) {
+        try {
+          const res = await axios.get(`${Config.API_URL}/flights/search`, {
+            params: { flightNumber: calFlight.flightNumber, date: calFlight.date },
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const results: FlightData[] = res.data ?? [];
+
+          if (results.length === 0) {
+            notFound.push(calFlight.flightNumber);
+          } else if (results.length === 1) {
+            await axios.post(`${Config.API_URL}/trips`, {
+              flightNumber: results[0].flightNumber,
+              date: results[0].departureTime,
+              originAirport: results[0].origin,
+              destinationAirport: results[0].destination,
+              homeAddress: address,
+            }, { headers: { Authorization: `Bearer ${token}` } });
+            imported++;
+          } else {
+            ambiguous.push({ flight: calFlight, results });
+          }
+        } catch {
+          notFound.push(calFlight.flightNumber);
+        }
+      }
+
+      if (imported > 0) {
+        showToast(`${imported} flight${imported !== 1 ? 's' : ''} imported successfully!`, 'success');
+      }
+      if (notFound.length > 0) {
+        showToast(`Could not find: ${notFound.join(', ')}`, 'error');
+      }
+
+      // If any flights had multiple results, prompt for the first one manually
+      if (ambiguous.length > 0) {
+        const first = ambiguous[0];
+        setSearchMode('flight');
+        setSelectedDate(new Date(first.flight.date + 'T12:00:00'));
+        setSearchResults(first.results);
+        setView('add');
+        setStep('select');
+        if (ambiguous.length > 1) {
+          showToast(`${first.flight.flightNumber} has multiple results — please select one. ${ambiguous.length - 1} more need manual selection.`, 'success');
+        }
+      } else if (imported > 0) {
+        setView('list');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Calendar import failed.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const showToast = (msg: string, type: ToastType = 'success') => {
     setToast({msg, type});
@@ -292,6 +376,17 @@ function App() {
                                 </button>
                               </div>
 
+                              <button
+                                  type="button"
+                                  onClick={() => setShowCalendarImport(true)}
+                                  className="w-full mb-4 py-2.5 px-4 border border-dashed border-green-600/50 hover:border-green-600 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+                              >
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                Import from Google Calendar
+                              </button>
+
                               <form onSubmit={handleLookup} className="space-y-4">
                                 <div>
                                   <label
@@ -498,6 +593,13 @@ function App() {
               </div>
           )}
         </Authenticator>
+
+        {showCalendarImport && (
+            <CalendarImport
+                onImport={handleCalendarImport}
+                onClose={() => setShowCalendarImport(false)}
+            />
+        )}
       </div>
   );
 }
