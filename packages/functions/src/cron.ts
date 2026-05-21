@@ -58,7 +58,7 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
             tripId: item.sk,
             userId: userId,
             homeAddress: item.homeAddress,
-            airportCode: item.airportCode,
+            airportCode: item.originAirport,
           }),
         }));
 
