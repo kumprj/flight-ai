@@ -49,25 +49,59 @@ export const handler: SchedulerHandler = async (event) => {
 
     console.log("User profile:", JSON.stringify(profile.Item, null, 2));
 
-// 3. Calculate Travel Time
+// 3. Resolve airport timezone and convert naive date string to true UTC
+    const airportTimezones: Record<string, string> = {
+      'JFK': 'America/New_York', 'LGA': 'America/New_York', 'EWR': 'America/New_York',
+      'BOS': 'America/New_York', 'PHL': 'America/New_York', 'DCA': 'America/New_York',
+      'IAD': 'America/New_York', 'BWI': 'America/New_York', 'ATL': 'America/New_York',
+      'MIA': 'America/New_York', 'FLL': 'America/New_York', 'MCO': 'America/New_York',
+      'TPA': 'America/New_York', 'CLT': 'America/New_York', 'DTW': 'America/New_York',
+      'ORD': 'America/Chicago', 'MDW': 'America/Chicago', 'DFW': 'America/Chicago',
+      'IAH': 'America/Chicago', 'MSP': 'America/Chicago', 'STL': 'America/Chicago',
+      'MCI': 'America/Chicago', 'MSY': 'America/Chicago', 'MKE': 'America/Chicago',
+      'OMA': 'America/Chicago', 'DSM': 'America/Chicago',
+      'DEN': 'America/Denver', 'SLC': 'America/Denver', 'ABQ': 'America/Denver',
+      'PHX': 'America/Phoenix', 'TUS': 'America/Phoenix',
+      'LAX': 'America/Los_Angeles', 'SFO': 'America/Los_Angeles', 'SAN': 'America/Los_Angeles',
+      'SEA': 'America/Los_Angeles', 'PDX': 'America/Los_Angeles', 'LAS': 'America/Los_Angeles',
+      'HNL': 'Pacific/Honolulu', 'OGG': 'Pacific/Honolulu',
+      'ANC': 'America/Anchorage',
+    };
+    const timezone = airportTimezones[trip.Item.originAirport?.toUpperCase()] || trip.Item.timezone || 'America/Chicago';
+
+    // trip.date is a naive local time string — convert to true UTC via timezone offset
+    const naiveDateStr = trip.Item.date.split('+')[0].split('Z')[0];
+    const naiveAsUTC = new Date(naiveDateStr + 'Z');
+    const tzFormatter = new Intl.DateTimeFormat('en-US', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    const utcFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    const tzDateParsed = new Date(tzFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
+    const utcDateParsed = new Date(utcFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
+    const offsetMs = tzDateParsed.getTime() - utcDateParsed.getTime();
+    const flightUTC = new Date(naiveAsUTC.getTime() - offsetMs);
+
+    const arrivalPreference = profile.Item?.arrivalPreference || 2;
+
+    // Estimate leave time (arrivalPreference hours before flight) as departure time for Google Maps traffic prediction
+    const estimatedLeaveUTC = new Date(flightUTC.getTime() - (arrivalPreference * 60 * 60 * 1000));
+
+// 4. Calculate Travel Time using predicted traffic at estimated leave time
     const travelInfo = await GoogleMaps.getTravelTime(
         payload.homeAddress,
         payload.airportCode,
-        new Date()
+        estimatedLeaveUTC
     );
 
     console.log("Travel time calculated:", travelInfo);
 
-// Calculate when to leave based on arrival preference
-    const arrivalPreference = profile.Item?.arrivalPreference || 2; // Default 2 hours
+// Calculate final leave time
     const travelTimeMinutes = Math.ceil(travelInfo.durationSeconds / 60);
     const totalMinutesNeeded = travelTimeMinutes + (arrivalPreference * 60);
-    const leaveTime = new Date(new Date(trip.Item.date).getTime() - (totalMinutesNeeded * 60 * 1000));
+    const leaveTimeUTC = new Date(flightUTC.getTime() - (totalMinutesNeeded * 60 * 1000));
 
-    const message = `✈️ Flight Alert for ${trip.Item.flightNumber}!\n\nCurrent travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelInfo.durationText}.\n\nIn order to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your flight, you should leave at ${leaveTime.toLocaleTimeString('en-US', {
+    const message = `✈️ Flight Alert for ${trip.Item.flightNumber}!\n\nExpected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelInfo.durationText}.\n\nIn order to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your flight, you should leave at ${leaveTimeUTC.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
-      timeZone: 'America/Chicago'
+      timeZone: timezone
     })}.\n\nSafe travels!`;
 
 // 4. Send SMS (disabled for testing)
@@ -123,10 +157,10 @@ export const handler: SchedulerHandler = async (event) => {
           To arrive <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong>, you should leave at:
         </p>
         <p style="color: #15803d; font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
-          ${leaveTime.toLocaleTimeString('en-US', {
+          ${leaveTimeUTC.toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',
-            timeZone: 'America/Chicago'
+            timeZone: timezone
           })}
         </p>
       </div>

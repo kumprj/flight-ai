@@ -21,9 +21,10 @@ export const GoogleMaps = {
         ROUTES_API_URL,
         {
           origin: {address: origin},
-          destination: {address: destinationAddress}, // Use the formatted address
+          destination: {address: destinationAddress},
           travelMode: "DRIVE",
           routingPreference: "TRAFFIC_AWARE",
+          departureTime: arrivalTime.toISOString(),
         },
         {
           headers: {

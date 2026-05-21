@@ -39,17 +39,17 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
         Key: { pk: item.pk, sk: "PROFILE" },
       });
 
-      const arrivalPreference = profile.Item?.arrivalPreference || 2; // Default 2 hours
-
-      // Calculate notification window (assume max 2 hour travel + arrival preference)
-      const notificationWindow = arrivalPreference + 2;
+      const arrivalPreference = profile.Item?.arrivalPreference || 2;
       const hoursUntilFlight = (flightDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
       console.log(`Trip ${item.sk}: Flight in ${hoursUntilFlight.toFixed(2)} hours`);
 
-      // Trigger notification if flight is within the notification window
-      if (hoursUntilFlight > 0 && hoursUntilFlight <= notificationWindow) {
-        console.log(`Triggering notification for ${item.flightNumber}`);
+      const notify12h = hoursUntilFlight > 11 && hoursUntilFlight <= 12;
+      const notifyPreference = hoursUntilFlight > (arrivalPreference + 1) && hoursUntilFlight <= (arrivalPreference + 2);
+
+      if (notify12h || notifyPreference) {
+        const reason = notify12h ? '12-hour advance notice' : `${arrivalPreference + 2}-hour departure window`;
+        console.log(`Triggering notification for ${item.flightNumber} (${reason})`);
 
         await lambda.send(new InvokeCommand({
           FunctionName: process.env.WORKER_ARN!,
