@@ -15,20 +15,27 @@ const ses = new SESClient({});
 const twilioClient = twilio(process.env.TWILIO_SID!, process.env.TWILIO_TOKEN!);
 
 /**
- * Helper to generate a consistent User ID from the email claim.
- * e.g., "rkump24@gmail.com" -> "rkump24_gmail_com"
+ * Decode the Bearer token manually and return a stable userId from the email claim.
+ * Works for both Cognito email/password and Google OAuth users.
  */
-const getUserIdFromClaims = (claims: any): string | null => {
-  if (!claims || !claims.email) return null;
-  return (claims.email as string).replace(/[@.]/g, "_");
+const getUserIdFromToken = (event: any): string | null => {
+  const authHeader = event.headers?.Authorization || event.headers?.authorization;
+  if (!authHeader) return null;
+  const parts = authHeader.replace('Bearer ', '').split('.');
+  if (parts.length !== 3) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    const email = payload.email;
+    if (!email) return null;
+    return (email as string).replace(/[@.]/g, '_');
+  } catch {
+    return null;
+  }
 };
 
 
 export const create: APIGatewayProxyHandlerV2 = async (event) => {
-  // 1. Get User ID from the valid Token
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
-
+  const userId = getUserIdFromToken(event);
   if (!userId) {
     console.error("Unauthorized: Missing email claim");
     return { statusCode: 401, body: "Unauthorized" };
@@ -67,10 +74,7 @@ export const create: APIGatewayProxyHandlerV2 = async (event) => {
 };
 
 export const list: APIGatewayProxyHandlerV2 = async (event) => {
-  const authorizer = event.requestContext.authorizer;
-  const claims = (authorizer as any)?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
-
+  const userId = getUserIdFromToken(event);
   if (!userId) {
     console.error("Unauthorized: No valid email claim found");
     return { statusCode: 401, body: "Unauthorized" };
@@ -86,9 +90,7 @@ export const list: APIGatewayProxyHandlerV2 = async (event) => {
 };
 
 export const update: APIGatewayProxyHandlerV2 = async (event) => {
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  const userId = getUserIdFromClaims(claims);
-
+  const userId = getUserIdFromToken(event);
   if (!userId) {
     console.error("Unauthorized: Missing email claim");
     return { statusCode: 401, body: "Unauthorized" };

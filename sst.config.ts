@@ -171,11 +171,6 @@ export default $config({
       permissions: [
         {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
-      auth: {
-        jwt: {
-          authorizer: authorizer.id,
-        }
-      }
     });
 
     api.route("GET /trips", {
@@ -184,11 +179,6 @@ export default $config({
       permissions: [
         {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
-      auth: {
-        jwt: {
-          authorizer: authorizer.id,
-        }
-      }
     });
 
     api.route("PUT /trips", {
@@ -197,11 +187,6 @@ export default $config({
       permissions: [
         {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
-      auth: {
-        jwt: {
-          authorizer: authorizer.id,
-        }
-      }
     });
 
     api.route("DELETE /trips", {
@@ -228,11 +213,6 @@ export default $config({
 // Flight Search Route - using same auth pattern
     api.route("GET /flights/search", {
       handler: "packages/functions/src/flight.search",
-      auth: {
-        jwt: {
-          authorizer: authorizer.id,
-        }
-      }
     });
 
 // Profile Routes - no authorizer, we'll decode the JWT ourselves
