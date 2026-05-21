@@ -64,14 +64,7 @@ export const Flights = {
         timezone: f.departure.timezone || 'UTC'
       }));
 
-      // Filter by date if provided
-      if (date && mapped.length > 0) {
-        const filtered = mapped.filter((f: FlightResult) =>
-            f.departureTime.startsWith(date)
-        );
-        return filtered.length > 0 ? filtered : mapped;
-      }
-
+      // Don't filter by date - let the API handle it via flight_date parameter
       return mapped;
 
     } catch (error) {

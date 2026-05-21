@@ -166,11 +166,15 @@ export default $config({
     // Secure the routes with this authorizer
     api.route("POST /trips", {
       handler: "packages/functions/src/trip.create",
-      authorizer: authorizer.id,
       link: [table],
       permissions: [
         {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
+      auth: {
+        jwt: {
+          authorizer: authorizer.id,
+        }
+      }
     });
 
     api.route("GET /trips", {
@@ -188,11 +192,46 @@ export default $config({
 
     api.route("PUT /trips", {
       handler: "packages/functions/src/trip.update",
+      link: [table],
+      permissions: [
+        {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
+      ],
+      auth: {
+        jwt: {
+          authorizer: authorizer.id,
+        }
+      }
+    });
+
+    api.route("DELETE /trips", {
+      handler: "packages/functions/src/trip.remove",
       authorizer: authorizer.id,
       link: [table],
       permissions: [
         {actions: ["scheduler:*", "iam:PassRole"], resources: ["*"]}
       ],
+    });
+
+    api.route("POST /trips/test-notify", {
+      handler: "packages/functions/src/trip.testNotify",
+      link: [table],
+      permissions: [
+        {actions: ["ses:*"], resources: ["*"]}
+      ],
+      auth: {
+        jwt: {
+          authorizer: authorizer.id,
+        }
+      }
+    });
+
+    api.route("POST /trips/travel-time", {
+      handler: "packages/functions/src/trip.getTravelTime",
+      authorizer: authorizer.id,
+      link: [table],
+      environment: {
+        GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY!,
+      },
     });
 
 // Flight Search Route - using same auth pattern

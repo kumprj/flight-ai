@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Resource } from "sst"; // <--- Important for SST v3
-import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -34,5 +34,24 @@ export const Database = {
       }
     }));
     return result.Item;
+  },
+  get: async (userId: string, sk: string) => {
+    const result = await docClient.send(new GetCommand({
+      TableName: Resource.Table.name,
+      Key: {
+        pk: `USER#${userId}`,
+        sk
+      }
+    }));
+    return result.Item;
+  },
+  delete: async (userId: string, sk: string) => {
+    await docClient.send(new DeleteCommand({
+      TableName: Resource.Table.name,
+      Key: {
+        pk: `USER#${userId}`,
+        sk
+      }
+    }));
   }
 };

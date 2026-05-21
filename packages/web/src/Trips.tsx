@@ -16,6 +16,8 @@ interface Trip {
 export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (trip: Trip) => void }) {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
+  const [testNotifying, setTestNotifying] = useState<string | null>(null);
+  const [travelTimes, setTravelTimes] = useState<Record<string, { durationText: string; durationSeconds: number }>>({});
 
   useEffect(() => {
     loadTrips();
@@ -35,11 +37,49 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         return dateA - dateB;
       });
       setTrips(sortedTrips);
+
+      // Load travel times for each trip
+      loadTravelTimes(sortedTrips);
     } catch (err) {
       console.error(err);
       alert("Failed to load trips");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadTravelTimes = async (trips: Trip[]) => {
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+
+      const travelTimePromises = trips.map(async (trip) => {
+        try {
+          const res = await axios.post(`${Config.API_URL}/trips/travel-time`, {
+            homeAddress: trip.homeAddress,
+            airportCode: trip.originAirport
+          }, {
+            headers: {Authorization: `Bearer ${token}`}
+          });
+          return { tripId: trip.sk, data: res.data };
+        } catch (err) {
+          console.error(`Failed to get travel time for trip ${trip.sk}:`, err);
+          return { tripId: trip.sk, data: null };
+        }
+      });
+
+      const results = await Promise.all(travelTimePromises);
+
+      const travelTimesMap: Record<string, { durationText: string; durationSeconds: number }> = {};
+      results.forEach(({ tripId, data }) => {
+        if (data) {
+          travelTimesMap[tripId] = data;
+        }
+      });
+
+      setTravelTimes(travelTimesMap);
+    } catch (err) {
+      console.error("Failed to load travel times:", err);
     }
   };
 
@@ -76,6 +116,43 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     const twoDaysAgo = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
     return tripDate < twoDaysAgo;
+  };
+
+  const handleTestNotify = async (trip: Trip) => {
+    setTestNotifying(trip.sk);
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+      await axios.post(`${Config.API_URL}/trips/test-notify`, { tripId: trip.sk }, {
+        headers: {Authorization: `Bearer ${token}`}
+      });
+      alert("Test notification sent! Check your email.");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to send test notification.");
+    } finally {
+      setTestNotifying(null);
+    }
+  };
+
+  const handleDelete = async (trip: Trip) => {
+    if (!confirm(`Are you sure you want to delete trip ${trip.flightNumber}?`)) {
+      return;
+    }
+
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+      await axios.delete(`${Config.API_URL}/trips`, {
+        data: { tripId: trip.sk },
+        headers: {Authorization: `Bearer ${token}`}
+      });
+      alert("Trip deleted successfully.");
+      loadTrips(); // Reload trips
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete trip.");
+    }
   };
 
   const getAirportCity = (airportCode: string): string => {
@@ -551,8 +628,35 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                           <p className="font-bold text-gray-700 dark:text-gray-300 mt-1">{trip.homeAddress}</p>
                           <p className="mt-1">to</p>
                           <p className="font-bold text-gray-700 dark:text-gray-300 mt-1">{trip.originAirport} airport</p>
+                          {travelTimes[trip.sk] && (
+                            <p className="mt-2 text-amber-600 dark:text-amber-500 font-semibold">
+                              🚗 Drive time: {travelTimes[trip.sk].durationText}
+                            </p>
+                          )}
                         </div>
-                        <div className="flex justify-end mt-4">
+                        <div className="flex justify-end mt-4 gap-2">
+                          <button
+                              onClick={() => handleTestNotify(trip)}
+                              disabled={testNotifying === trip.sk || old}
+                              className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
+                                testNotifying === trip.sk || old
+                                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed opacity-50'
+                                  : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-600 hover:bg-amber-100 dark:hover:bg-amber-900/50 border-amber-200 dark:border-amber-800'
+                              }`}
+                          >
+                            {testNotifying === trip.sk ? 'Sending...' : 'Test Notify'}
+                          </button>
+                          <button
+                              onClick={() => handleDelete(trip)}
+                              disabled={old}
+                              className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
+                                old
+                                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed opacity-50'
+                                  : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 border-red-200 dark:border-red-800'
+                              }`}
+                          >
+                            Delete
+                          </button>
                           <button
                               onClick={() => onEdit(trip)}
                               disabled={old}
