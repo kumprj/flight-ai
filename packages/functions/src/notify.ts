@@ -84,7 +84,7 @@ export const handler: SchedulerHandler = async (event) => {
     const totalMinutesNeeded = travelTimeMinutes + (arrivalPreference * 60);
     const leaveTimeUTC = new Date(flightUTC.getTime() - (totalMinutesNeeded * 60 * 1000));
 
-    const message = `✈️ Flight Alert for ${trip.Item.flightNumber}!\n\nExpected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelInfo.durationText}.\n\nIn order to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your flight, you should leave at ${leaveTimeUTC.toLocaleTimeString('en-US', {
+    const message = `✈️ Flight Alert for ${trip.Item.flightNumber}!\n\nExpected travel time from ${payload.homeAddress} to ${payload.airportCode} airport is ${travelInfo.durationText}.\n\nIn order to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your flight, you should leave at ${leaveTimeUTC.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       timeZone: timezone
@@ -137,7 +137,7 @@ export const handler: SchedulerHandler = async (event) => {
       <div style="margin-bottom: 24px;">
         <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Travel Time</p>
         <p style="color: #1f2937; font-size: 16px; margin: 0; line-height: 1.6;">
-          From <strong>${payload.homeAddress}</strong> to <strong>${payload.airportCode}</strong>
+          From <strong>${payload.homeAddress}</strong> to <strong>${payload.airportCode} airport</strong>
         </p>
         <p style="color: #15803d; font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${travelInfo.durationText}</p>
       </div>
