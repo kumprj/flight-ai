@@ -632,7 +632,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                           <p className="font-bold text-gray-700 dark:text-gray-300 mt-1">{trip.originAirport} airport</p>
                           {travelTimes[trip.sk] && (
                             <p className="mt-2 text-amber-600 dark:text-amber-500 font-semibold">
-                              🚗 Drive time: {travelTimes[trip.sk].durationText}
+                              🚗 Current drive time: {travelTimes[trip.sk].durationText}
                             </p>
                           )}
                         </div>
