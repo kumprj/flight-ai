@@ -31,6 +31,7 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
     const now = new Date();
 
     for (const item of result.Items) {
+      try {
       const userId = item.pk.replace("USER#", "");
 
       // Get user profile for arrival preference
@@ -78,6 +79,9 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
         console.log(`Flight ${item.flightNumber} has already departed`);
       } else {
         console.log(`Flight ${item.flightNumber} is too far away (${hoursUntilFlight.toFixed(2)} hours)`);
+      }
+      } catch (tripError) {
+        console.error(`Failed to process trip ${item.sk}:`, tripError);
       }
     }
 
