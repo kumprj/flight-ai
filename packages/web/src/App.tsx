@@ -170,7 +170,7 @@ function App() {
     const depRaw = form.get('depAirport') as string;
     const arrRaw = form.get('arrAirport') as string;
 
-    const flightNum = flightNumRaw ? flightNumRaw.toUpperCase() : '';
+    const flightNum = flightNumRaw ? flightNumRaw.toUpperCase().replace(/\s/g, '') : '';
     const dep = depRaw ? depRaw.toUpperCase() : '';
     const arr = arrRaw ? arrRaw.toUpperCase() : '';
 
@@ -188,8 +188,8 @@ function App() {
           setLoading(false);
           return;
         }
-        if (!/^[A-Z]{2}\d{2,4}$/.test(flightNum)) {
-          showToast("Invalid flight number. Expected format: 2 letters followed by 2–4 digits (e.g. UA123).", "error");
+        if (!/^[A-Z]{2}\d{1,4}$/.test(flightNum)) {
+          showToast("Invalid flight number. Expected format: 2 letters followed by 1–4 digits (e.g. UA123 or DL 2806).", "error");
           setLoading(false);
           return;
         }
@@ -465,7 +465,7 @@ function App() {
                                             name="flightNumber"
                                             placeholder="e.g. AA123"
                                             required
-                                            maxLength={6}
+                                            maxLength={8}
                                             defaultValue={editingTrip?.flightNumber}
                                             className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
                                         />
