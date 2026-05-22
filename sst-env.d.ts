@@ -13,6 +13,14 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Function"
     }
+    "FACEBOOK_APP_ID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "FACEBOOK_APP_SECRET": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "GOOGLE_CLIENT_ID": {
       "type": "sst.sst.Secret"
       "value": string

@@ -25,7 +25,7 @@ export const handler: SchedulerHandler = async (event) => {
     // Commenting real trip for now.
     const trip = await dynamodb.get({
       TableName: Resource.Table.name,
-      Key: { pk: `USER#${payload.userId}`, sk: payload.tripId },
+      Key: {pk: `USER#${payload.userId}`, sk: payload.tripId},
     });
     // const trip = {
     //   Item: {
@@ -58,8 +58,26 @@ export const handler: SchedulerHandler = async (event) => {
     // trip.date is a naive local time string — convert to true UTC via timezone offset
     const naiveDateStr = trip.Item.date.split('+')[0].split('Z')[0];
     const naiveAsUTC = new Date(naiveDateStr + 'Z');
-    const tzFormatter = new Intl.DateTimeFormat('en-US', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-    const utcFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    const tzFormatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    const utcFormatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
     const tzDateParsed = new Date(tzFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
     const utcDateParsed = new Date(utcFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
     const offsetMs = tzDateParsed.getTime() - utcDateParsed.getTime();
@@ -148,10 +166,10 @@ export const handler: SchedulerHandler = async (event) => {
         </p>
         <p style="color: #15803d; font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
           ${leaveTimeUTC.toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: '2-digit',
-            timeZone: timezone
-          })}
+              hour: 'numeric',
+              minute: '2-digit',
+              timeZone: timezone
+            })}
         </p>
       </div>
       

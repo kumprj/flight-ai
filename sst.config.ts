@@ -39,7 +39,25 @@ export default $config({
       },
     });
 
-    // 2b. Auth: User Pool Client (Raw AWS Resource)
+    // 2b. Auth: Facebook Identity Provider
+    const facebookProvider = new aws.cognito.IdentityProvider("FacebookProvider", {
+      userPoolId: userPool.id,
+      providerName: "Facebook",
+      providerType: "Facebook",
+      providerDetails: {
+        client_id: new sst.Secret("FACEBOOK_APP_ID").value,
+        client_secret: new sst.Secret("FACEBOOK_APP_SECRET").value,
+        authorize_scopes: "email,public_profile",
+      },
+      attributeMapping: {
+        email: "email",
+        given_name: "first_name",
+        family_name: "last_name",
+        picture: "picture",
+      },
+    });
+
+    // 2c. Auth: User Pool Client (Raw AWS Resource)
     // We use this instead of userPool.addClient to ensure we can use 'dependsOn'
     const client = new aws.cognito.UserPoolClient("WebClient", {
       userPoolId: userPool.id,
@@ -49,13 +67,13 @@ export default $config({
       logoutUrls: ["http://localhost:5173"],
 
       // Link Providers
-      supportedIdentityProviders: ["COGNITO", "Google"],
+      supportedIdentityProviders: ["COGNITO", "Google", "Facebook"],
 
       // OAuth Flows
       allowedOauthFlows: ["code"],
       allowedOauthScopes: ["email", "profile", "openid"],
       allowedOauthFlowsUserPoolClient: true,
-    }, {dependsOn: [googleProvider]}); // <--- EXPLICIT DEPENDENCY HERE
+    }, {dependsOn: [googleProvider, facebookProvider]}); // <--- EXPLICIT DEPENDENCY HERE
 
     // 2c. Auth: Domain
     const domain = new aws.cognito.UserPoolDomain("AuthDomain", {
