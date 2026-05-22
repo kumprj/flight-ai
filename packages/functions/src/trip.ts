@@ -44,8 +44,8 @@ export const create: APIGatewayProxyHandlerV2 = async (event) => {
   const body = JSON.parse(event.body || "{}");
   const tripId = `${body.date}#${body.flightNumber}`;
 
-  // Get timezone for the destination airport
-  const timezone = getAirportTimezone(body.destinationAirport);
+  // Get timezone for the origin airport
+  const timezone = getAirportTimezone(body.originAirport);
 
   // 2. Save to Database with timezone
   try {
@@ -99,8 +99,8 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
   const body = JSON.parse(event.body || "{}");
   const tripId = `${body.date}#${body.flightNumber}`;
 
-  // Get timezone for the destination airport
-  const timezone = getAirportTimezone(body.destinationAirport);
+  // Get timezone for the origin airport
+  const timezone = getAirportTimezone(body.originAirport);
 
   try {
     await Database.put({

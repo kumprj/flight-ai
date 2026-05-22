@@ -273,7 +273,7 @@ export const AIRPORTS: Record<string, AirportInfo> = {
 };
 
 export const getAirportTimezone = (iata: string): string =>
-  AIRPORTS[iata.toUpperCase()]?.timezone ?? 'America/Chicago';
+  iata ? AIRPORTS[iata.toUpperCase()]?.timezone ?? 'America/Chicago' : 'America/Chicago';
 
 export const getAirportAddress = (iata: string): string => {
   const info = AIRPORTS[iata.toUpperCase()];
