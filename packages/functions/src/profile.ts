@@ -165,7 +165,7 @@ export const sendVerification: APIGatewayProxyHandlerV2 = async (event) => {
   // Send SMS via Twilio
   try {
     await twilioClient.messages.create({
-      body: `Your Flight AI verification code is: ${code}`,
+      body: `Your Make My Flight verification code is: ${code}`,
       from: process.env.TWILIO_FROM_NUMBER!,
       to: phoneNumber,
     });

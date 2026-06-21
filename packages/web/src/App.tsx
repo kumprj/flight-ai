@@ -358,7 +358,7 @@ function App() {
         {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
         <div className="w-full max-w-sm text-center">
           <div className="mb-8">
-            <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent mb-2">Flight AI</h1>
+            <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent mb-2">Make My Flight</h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm">Get notified when it&apos;s time to leave for your flight.</p>
           </div>
           <div className="space-y-3">
@@ -414,7 +414,7 @@ function App() {
                 <header
                     className="w-full max-w-md flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800">
                   <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent">
-                    Flight AI
+                    Make My Flight
                   </h1>
                   <div className="flex gap-4 text-sm font-medium">
                     <button

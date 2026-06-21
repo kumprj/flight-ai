@@ -175,7 +175,7 @@ export const handler: SchedulerHandler = async (event) => {
       
       <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: center;">
         <p style="color: #9ca3af; font-size: 14px; margin: 0;">Safe travels! 🛫</p>
-        <p style="color: #d1d5db; font-size: 12px; margin: 8px 0 0 0;">Powered by Flight AI</p>
+        <p style="color: #d1d5db; font-size: 12px; margin: 8px 0 0 0;">Powered by Make My Flight</p>
       </div>
     </div>
   </div>

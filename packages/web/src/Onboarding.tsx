@@ -164,7 +164,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent">
-              Welcome to Flight AI
+              Welcome to Make My Flight
             </h1>
             <span className="text-sm text-gray-500">Step {step} of {totalSteps}</span>
           </div>
