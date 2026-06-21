@@ -9,6 +9,7 @@ import CustomDatePicker from './DatePicker';
 import {formatFlightDate, formatFlightTimeOnly} from './utils/flightTimes';
 import Profile from './Profile';
 import CalendarImport from './CalendarImport';
+import Onboarding from './Onboarding';
 import type { CalendarFlight } from './utils/googleCalendar';
 
 interface FlightData {
@@ -49,6 +50,7 @@ function App() {
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [showCalendarImport, setShowCalendarImport] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = loading
+  const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null); // null = loading
 
   const handleCalendarImport = async (flights: CalendarFlight[], address: string): Promise<void> => {
     if (flights.length === 0) { setShowCalendarImport(false); return; }
@@ -125,15 +127,50 @@ function App() {
 
   useEffect(() => {
     getCurrentUser()
-      .then(() => setIsAuthenticated(true))
+      .then(() => {
+        setIsAuthenticated(true);
+        checkOnboardingStatus();
+      })
       .catch(() => setIsAuthenticated(false));
 
     const unsubscribe = Hub.listen('auth', ({ payload }) => {
-      if (payload.event === 'signedIn') setIsAuthenticated(true);
-      if (payload.event === 'signedOut') setIsAuthenticated(false);
+      if (payload.event === 'signedIn') {
+        setIsAuthenticated(true);
+        checkOnboardingStatus();
+      }
+      if (payload.event === 'signedOut') {
+        setIsAuthenticated(false);
+        setNeedsOnboarding(null);
+      }
     });
     return unsubscribe;
   }, []);
+
+  const checkOnboardingStatus = async () => {
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+
+      const res = await axios.get(`${Config.API_URL}/profile`, {
+        headers: {Authorization: `Bearer ${token}`}
+      });
+
+      // If profile exists and has homeAddress, user has completed onboarding
+      if (res.data && res.data.homeAddress) {
+        setNeedsOnboarding(false);
+      } else {
+        setNeedsOnboarding(true);
+      }
+    } catch (err: any) {
+      // Profile doesn't exist yet, needs onboarding
+      if (err.response?.status === 404) {
+        setNeedsOnboarding(true);
+      } else {
+        console.error('Error checking onboarding status:', err);
+        setNeedsOnboarding(true);
+      }
+    }
+  };
 
   const loadUserProfile = async () => {
     try {
@@ -307,7 +344,7 @@ function App() {
     setView('add');
   };
 
-  if (isAuthenticated === null) {
+  if (isAuthenticated === null || (isAuthenticated && needsOnboarding === null)) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
@@ -349,6 +386,15 @@ function App() {
           </div>
         </div>
       </div>
+    );
+  }
+
+  if (needsOnboarding) {
+    return (
+      <Onboarding onComplete={() => {
+        setNeedsOnboarding(false);
+        setView('list');
+      }} />
     );
   }
 

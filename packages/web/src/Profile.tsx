@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Config } from './config';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import Toast, { type ToastType } from './Toast';
+import AddressAutocomplete from './AddressAutocomplete';
 
 interface UserProfile {
   phoneNumber: string;
@@ -271,12 +272,10 @@ export default function Profile({ onBack }: ProfileProps) {
                 <label className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
                   Default Home Address
                 </label>
-                <input
-                    type="text"
-                    placeholder="123 Main St, Chicago, IL 60601"
+                <AddressAutocomplete
                     value={profile.homeAddress}
-                    onChange={(e) => setProfile({ ...profile, homeAddress: e.target.value })}
-                    className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                    onChange={(value) => setProfile({ ...profile, homeAddress: value })}
+                    placeholder="123 Main St, Chicago, IL 60601"
                 />
                 <p className="text-xs text-gray-400 mt-1">This will be pre-filled when tracking flights</p>
               </div>
