@@ -153,6 +153,11 @@ export default function CalendarImport({ onImport, onClose, homeAddress = '' }: 
                             <div className="min-w-0">
                               <p className="font-semibold text-gray-900 dark:text-white text-sm">
                                 {flight.flightNumber}
+                                {flight.route && (
+                                  <span className="ml-2 text-gray-500 dark:text-gray-400 font-normal">
+                                    {flight.route.from} → {flight.route.to}
+                                  </span>
+                                )}
                                 <span className="ml-2 text-green-700 dark:text-green-400 font-medium">
                                   {new Date(flight.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>

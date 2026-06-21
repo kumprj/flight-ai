@@ -6,6 +6,8 @@ export interface CalendarFlight {
   eventTitle: string;
   eventId: string;
   address?: string;
+  description?: string;
+  route?: { from: string; to: string };
 }
 
 declare global {
@@ -46,6 +48,7 @@ function cacheToken(token: string, expiresIn: number) {
 }
 
 const FLIGHT_REGEX = /\b([A-Z]{2})\s?(\d{2,4})\b/g;
+const AIRPORT_REGEX = /\b([A-Z]{3})\b/g;
 const CALENDAR_SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
 
 function waitForGIS(): Promise<void> {
@@ -111,12 +114,41 @@ async function fetchCalendarEvents(accessToken: string): Promise<any[]> {
   return data.items ?? [];
 }
 
+function parseRoute(text: string): { from: string; to: string } | undefined {
+  // Pattern 1: United/airline format: "City, ST ABC time - City DEF time"
+  // Example: "Chicago, IL ORD 2:35pm (local time) - Charleston CRW 5:30pm"
+  const airlinePattern = /([A-Z]{3})\s+\d{1,2}:\d{2}\s*[ap]m.*?-.*?([A-Z]{3})\s+\d{1,2}:\d{2}\s*[ap]m/i;
+  let match = text.match(airlinePattern);
+  if (match) {
+    return { from: match[1].toUpperCase(), to: match[2].toUpperCase() };
+  }
+  
+  // Pattern 2: Simple patterns like "SFO to ORD", "SFO-ORD", "SFO → ORD"
+  const simplePattern = /\b([A-Z]{3})\s*(?:to|-|→)\s*([A-Z]{3})\b/i;
+  match = text.match(simplePattern);
+  if (match) {
+    return { from: match[1].toUpperCase(), to: match[2].toUpperCase() };
+  }
+  
+  // Pattern 3: Look for airport codes near time patterns
+  // Match 3-letter codes that appear before time patterns like "2:35pm" or "14:35"
+  const timePattern = /\b([A-Z]{3})\s+\d{1,2}:\d{2}/gi;
+  const timeMatches = [...text.matchAll(timePattern)];
+  if (timeMatches.length >= 2) {
+    return { from: timeMatches[0][1].toUpperCase(), to: timeMatches[1][1].toUpperCase() };
+  }
+  
+  return undefined;
+}
+
 function parseFlightsFromEvents(events: any[]): CalendarFlight[] {
   const found: CalendarFlight[] = [];
   const seen = new Set<string>();
 
   for (const event of events) {
-    const text = `${event.summary ?? ''} ${event.description ?? ''}`.toUpperCase();
+    const summary = event.summary ?? '';
+    const description = event.description ?? '';
+    const text = `${summary} ${description}`.toUpperCase();
     const matches = [...text.matchAll(FLIGHT_REGEX)];
 
     const dateStr: string =
@@ -127,17 +159,35 @@ function parseFlightsFromEvents(events: any[]): CalendarFlight[] {
       const key = `${flightNumber}::${dateStr}`;
       if (!seen.has(key) && dateStr) {
         seen.add(key);
+        const route = parseRoute(text);
         found.push({
           flightNumber,
           date: dateStr,
-          eventTitle: event.summary ?? '',
+          eventTitle: summary,
+          description,
           eventId: event.id,
+          route,
         });
       }
     }
   }
 
-  return found.sort((a, b) => a.date.localeCompare(b.date));
+  // Separate past and future flights
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // Start of today
+  const todayStr = now.toISOString().split('T')[0];
+  
+  const pastFlights = found.filter(f => f.date < todayStr);
+  const futureFlights = found.filter(f => f.date >= todayStr);
+  
+  // Sort future flights by date ascending (earliest first)
+  futureFlights.sort((a, b) => a.date.localeCompare(b.date));
+  
+  // Sort past flights by date descending (most recent first)
+  pastFlights.sort((a, b) => b.date.localeCompare(a.date));
+  
+  // Return future flights first, then past flights
+  return [...futureFlights, ...pastFlights];
 }
 
 export async function scanCalendarForFlights(): Promise<CalendarFlight[]> {
