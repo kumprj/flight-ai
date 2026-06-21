@@ -2,6 +2,10 @@ import axios from "axios";
 
 const AERODATABOX_BASE_URL = "https://aerodatabox.p.rapidapi.com";
 
+// Simple in-memory cache to avoid rate limiting
+const cache = new Map<string, { data: FlightResult[]; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 export interface FlightResult {
   flightNumber: string;
   airline: string;
@@ -52,6 +56,15 @@ export const Flights = {
   search: async (flightIata: string, date?: string): Promise<FlightResult[]> => {
     const today = new Date().toISOString().split('T')[0];
     const searchDate = date || today;
+    const cacheKey = `flight:${flightIata}:${searchDate}`;
+    
+    // Check cache first
+    const cached = cache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      console.log(`Returning cached results for flight: ${flightIata} on ${searchDate}`);
+      return cached.data;
+    }
+
     console.log(`Searching AeroDataBox for flight: ${flightIata} on ${searchDate}`);
 
     try {
@@ -62,7 +75,12 @@ export const Flights = {
 
       const data: any[] = Array.isArray(res.data) ? res.data : [];
       console.log(`AeroDataBox returned ${data.length} results`);
-      return data.map(mapFlight);
+      const results = data.map(mapFlight);
+      
+      // Cache the results
+      cache.set(cacheKey, { data: results, timestamp: Date.now() });
+      
+      return results;
     } catch (error: any) {
       console.error("AeroDataBox Flight Search Exception:", error?.response?.data || error?.message || error);
       return [];
@@ -70,6 +88,15 @@ export const Flights = {
   },
 
   searchByRoute: async (depIata: string, arrIata: string, date: string): Promise<FlightResult[]> => {
+    const cacheKey = `route:${depIata}:${arrIata}:${date}`;
+    
+    // Check cache first
+    const cached = cache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      console.log(`Returning cached results for route: ${depIata} -> ${arrIata} on ${date}`);
+      return cached.data;
+    }
+
     console.log(`Searching AeroDataBox for route: ${depIata} -> ${arrIata} on ${date}`);
 
     try {
@@ -92,10 +119,15 @@ export const Flights = {
 
       console.log(`AeroDataBox route search returned ${departures.length} total departures`);
 
-      return departures
+      const results = departures
         .filter((f: any) => f.arrival?.airport?.iata?.toUpperCase() === arrIata.toUpperCase())
         .map(mapFlight)
         .sort((a, b) => a.departureTime.localeCompare(b.departureTime));
+      
+      // Cache the results
+      cache.set(cacheKey, { data: results, timestamp: Date.now() });
+      
+      return results;
     } catch (error: any) {
       console.error("AeroDataBox Route Search Exception:", error?.response?.data || error?.message || error);
       return [];

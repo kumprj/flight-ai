@@ -244,12 +244,15 @@ function App() {
         params.depIata = dep;
         params.arrIata = arr;
         params.date = selectedDate.toISOString().split('T')[0];
+        console.log('Route search params:', params);
       }
 
+      console.log('Sending flight search request with params:', params);
       const res = await axios.get(`${Config.API_URL}/flights/search`, {
         params,
         headers: {Authorization: `Bearer ${token}`}
       });
+      console.log('Flight search response:', res.status, res.data);
 
       const flights = res.data;
 
@@ -258,9 +261,13 @@ function App() {
         setStep('select');
       } else {
         if (searchMode === 'flight') {
-          showToast(`Flight ${flightNum} not found.`, "error");
+          showToast(`Flight ${flightNum} not found. Airlines typically publish schedules 6-11 months in advance.`, "error");
         } else {
-          showToast(`No flights found from ${dep} to ${arr} on ${selectedDate?.toLocaleDateString()}.`, "error");
+          const monthsOut = selectedDate ? Math.floor((selectedDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30)) : 0;
+          const message = monthsOut > 11 
+            ? `No flights found from ${dep} to ${arr} on ${selectedDate?.toLocaleDateString()}. This date is ${monthsOut} months away - airlines typically publish schedules only 6-11 months in advance. Try using Google Calendar Import for future flights.`
+            : `No flights found from ${dep} to ${arr} on ${selectedDate?.toLocaleDateString()}.`;
+          showToast(message, "error");
         }
       }
     } catch (err) {
