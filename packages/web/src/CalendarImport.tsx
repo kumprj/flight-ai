@@ -84,7 +84,7 @@ export default function CalendarImport({ onImport, onClose, homeAddress = '' }: 
           {state === 'idle' && (
             <div className="text-center py-4">
               <p className="text-gray-500 dark:text-gray-400 text-sm mb-5">
-                Scan your Google Calendar for events containing flight numbers over the next 60 days.
+                Scan your Google Calendar for events containing flight numbers over the next 12 months.
               </p>
               <button
                 onClick={scan}
@@ -122,7 +122,7 @@ export default function CalendarImport({ onImport, onClose, homeAddress = '' }: 
               {flights.length === 0 ? (
                 <div className="text-center py-6">
                   <p className="text-gray-500 dark:text-gray-400 text-sm">
-                    No flight numbers found in your calendar events for the next 60 days.
+                    No flight numbers found in your calendar events for the next 12 months.
                   </p>
                 </div>
               ) : (

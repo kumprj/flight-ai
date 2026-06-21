@@ -91,11 +91,11 @@ function getAccessToken(): Promise<string> {
 
 async function fetchCalendarEvents(accessToken: string): Promise<any[]> {
   const now = new Date();
-  const in60Days = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+  const in12Months = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
 
   const params = new URLSearchParams({
     timeMin: now.toISOString(),
-    timeMax: in60Days.toISOString(),
+    timeMax: in12Months.toISOString(),
     maxResults: '100',
     singleEvents: 'true',
     orderBy: 'startTime',
