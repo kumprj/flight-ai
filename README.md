@@ -1,16 +1,18 @@
-# Flight AI
+# Make My Flight
 
 A smart flight tracking application that uses your home address and historical/present traffic data to alert you when to depart for your flight. Set your preferences for arrival time, and receive email and SMS alerts about drive times - sent the night before and a few hours before departure.
 
 ## Features
 
-- **Trip Management**: Create and manage flight trips with departure times and preferences
-- **Smart Departure Alerts**: Get notified about optimal departure times based on traffic analysis
-- **Flight Search**: Search for flights using the Aviation Stack API
-- **Profile Management**: Set your home address, phone number, and notification preferences
-- **Multi-channel Alerts**: Receive notifications via email (AWS SES) and SMS (Twilio)
-- **Authentication**: Secure authentication via AWS Cognito with Google OAuth support
-- **Real-time Traffic Analysis**: Uses Google Maps API for accurate drive time estimates
+- **Trip Management**: Create, edit, and manage flight trips with departure times and preferences
+- **Smart Departure Alerts**: Get notified about optimal departure times based on live and predicted traffic
+- **Flight Search**: Search for flights by flight number or route using AeroDataBox (RapidAPI)
+- **Google Calendar Import**: Automatically scan and import flights from your connected Google Calendar
+- **Profile Management**: Set your default home address, phone number, arrival buffer (default 2 hrs), and notification preferences
+- **Multi-channel Alerts**: Receive notifications via email (AWS SES) and SMS (Twilio) with opt-in/opt-out toggles
+- **Authentication**: Secure authentication via AWS Cognito with Google and Facebook OAuth support
+- **Real-time Traffic Analysis**: Uses Google Maps Routes API for accurate traffic-aware drive time estimates
+- **Multi-Modal Transit Alerts**: Compare Drive vs. Public Transit departure times with live service alerts (Chicago CTA Blue/Orange Lines to ORD/MDW via Ventra, NYC MTA Subway/AirTrain to JFK/LGA/EWR via OMNY)
 
 ## Architecture
 
@@ -57,8 +59,8 @@ This is a monorepo built with SST (Serverless Stack) using AWS serverless servic
 
 ### APIs
 - Google Maps API (traffic & directions)
-- Aviation Stack API (flight data)
-- Twilio API (SMS)
+- AeroDataBox API via RapidAPI (flight schedule and route data)
+- Twilio API (SMS verification & alerts)
 
 ## Getting Started
 
@@ -68,7 +70,7 @@ This is a monorepo built with SST (Serverless Stack) using AWS serverless servic
 - AWS account with appropriate permissions
 - Google Cloud account (for OAuth and Maps)
 - Twilio account (for SMS)
-- Aviation Stack API key
+- AeroDataBox (RapidAPI) API key
 
 ### Environment Variables
 
@@ -78,11 +80,13 @@ Create a `.env` file in the root directory with:
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_MAPS_KEY=your_google_maps_api_key
+VITE_GOOGLE_MAPS_KEY=your_google_maps_client_key
 TWILIO_SID=your_twilio_sid
 TWILIO_TOKEN=your_twilio_token
 TWILIO_FROM_NUMBER=your_twilio_phone_number
-MY_PHONE_NUMBER=your_phone_number
-AVIATION_STACK_KEY=your_aviation_stack_key
+AERODATABOX_API_KEY=your_aerodatabox_key
+FACEBOOK_APP_ID=your_facebook_app_id
+FACEBOOK_APP_SECRET=your_facebook_app_secret
 ```
 
 ### Installation

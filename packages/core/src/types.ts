@@ -30,6 +30,7 @@ export interface Profile {
   arrivalPreference: number;
   emailEnabled: boolean;
   smsEnabled: boolean;
+  transitEnabled?: boolean;
   updatedAt?: string;
 }
 
@@ -47,4 +48,82 @@ export interface SchedulerPayload {
 export interface NotificationPreferences {
   emailEnabled: boolean;
   smsEnabled: boolean;
+  transitEnabled?: boolean;
 }
+
+export interface TransitStep {
+  instruction?: string;
+  distanceMeters?: number;
+  durationSeconds?: number;
+  transitLine?: string;
+  transitAgency?: string;
+  stopName?: string;
+  vehicleType?: string;
+  numStops?: number;
+}
+
+export interface TravelTimeInfo {
+  durationSeconds: number;
+  durationText: string;
+  distanceMeters?: number;
+  mode: "DRIVE" | "TRANSIT";
+  transitLine?: string;
+  transitAgency?: string;
+  summary?: string;
+  transitSteps?: TransitStep[];
+}
+
+export interface CtaAlert {
+  id: string;
+  headline: string;
+  shortDescription: string;
+  impact: string;
+  severityScore: number;
+  isMajor: boolean;
+  routeId: string;
+  serviceName: string;
+  url?: string;
+}
+
+export interface CtaStationInfo {
+  agency: "CTA";
+  airportCode: "ORD" | "MDW";
+  name: string;
+  line: string;
+  lineColor: string;
+  stationLocation: string;
+  fareDescription: string;
+  mapId: string;
+}
+
+export interface MtaAlert {
+  id: string;
+  headline: string;
+  shortDescription: string;
+  routeId: string;
+  agency?: string;
+  isMajor?: boolean;
+  url?: string;
+}
+
+export interface NycTransitStationInfo {
+  agency: "MTA";
+  airportCode: "JFK" | "LGA" | "EWR";
+  name: string;
+  line: string;
+  lineColor: string;
+  primaryLines: string[];
+  stationLocation: string;
+  fareDescription: string;
+}
+
+export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo;
+
+export interface MultiModalTravelTime {
+  drive: TravelTimeInfo;
+  transit?: TravelTimeInfo;
+  ctaAlerts?: CtaAlert[];
+  mtaAlerts?: MtaAlert[];
+  stationInfo?: TransitStationInfo;
+}
+

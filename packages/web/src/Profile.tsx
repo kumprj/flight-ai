@@ -13,6 +13,7 @@ interface UserProfile {
   arrivalPreference: number;
   emailEnabled: boolean;
   smsEnabled: boolean;
+  transitEnabled?: boolean;
 }
 
 interface ProfileProps {
@@ -34,6 +35,7 @@ export default function Profile({ onBack }: ProfileProps) {
     arrivalPreference: 2,
     emailEnabled: true,
     smsEnabled: false,
+    transitEnabled: false,
   });
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
@@ -332,6 +334,49 @@ export default function Profile({ onBack }: ProfileProps) {
                   </label>
                 </div>
                 <p className="text-xs text-gray-400 mt-2">Choose how you want to receive departure alerts</p>
+              </div>
+
+              {/* Transportation Modes for Alerts */}
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-gray-500 mb-3 font-semibold">
+                  Transportation Modes for Alerts
+                </label>
+                <div className="space-y-3">
+                  <label className="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800 cursor-not-allowed opacity-90">
+                    <input
+                        type="checkbox"
+                        checked={true}
+                        disabled={true}
+                        className="w-4 h-4 text-green-600 rounded cursor-not-allowed"
+                    />
+                    <div className="ml-3">
+                      <span className="text-sm font-medium">🚗 Drive (Live Traffic)</span>
+                      <p className="text-xs text-gray-400">Always calculated for departure alerts</p>
+                    </div>
+                  </label>
+                  <label className="flex items-start p-3 rounded-lg bg-gray-50 dark:bg-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <input
+                        type="checkbox"
+                        checked={Boolean(profile.transitEnabled)}
+                        onChange={(e) => setProfile({ ...profile, transitEnabled: e.target.checked })}
+                        className="w-4 h-4 mt-0.5 text-blue-600 focus:ring-2 focus:ring-blue-500 rounded"
+                    />
+                    <div className="ml-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">🚆 Public Transportation</span>
+                        <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 rounded">
+                          Chicago CTA & NYC MTA
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        Get comparative alerts showing both Drive and Transit travel times (Blue/Orange Line to ORD/MDW via Ventra, Subway/AirTrain to JFK/LGA/EWR via OMNY) plus live service delays.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+                <p className="text-xs text-gray-400 mt-2">
+                  When enabled, departure notifications include both Drive vs. Public Transit estimates.
+                </p>
               </div>
 
               <button

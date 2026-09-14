@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import axios from 'axios';
 import {Config} from './config';
 import {fetchAuthSession} from 'aws-amplify/auth';
-import Toast, {type ToastType} from './Toast';
+import Toast, { type ToastType } from './Toast';
 
 interface Trip {
   sk: string;
@@ -21,7 +21,14 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [testNotifying, setTestNotifying] = useState<string | null>(null);
-  const [travelTimes, setTravelTimes] = useState<Record<string, { durationText: string; durationSeconds: number }>>({})
+  const [travelTimes, setTravelTimes] = useState<Record<string, {
+    durationText: string;
+    durationSeconds: number;
+    transit?: { durationText: string; durationSeconds: number; transitLine?: string; transitAgency?: string; transitSteps?: Array<{ instruction?: string; stopName?: string; vehicleType?: string; numStops?: number; distanceMeters?: number; durationSeconds?: number }> };
+    ctaAlerts?: any[];
+    mtaAlerts?: any[];
+    stationInfo?: { agency?: string; line?: string; fareDescription?: string };
+  }>>({});
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
@@ -656,9 +663,42 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                           <p className="mt-1">to</p>
                           <p className="font-bold text-gray-700 dark:text-gray-300 mt-1">{trip.originAirport} airport</p>
                           {travelTimes[trip.sk] && (
-                            <p className="mt-2 text-amber-600 dark:text-amber-500 font-semibold">
-                              🚗 Current drive time: {travelTimes[trip.sk].durationText}
-                            </p>
+                            <div className="mt-2 space-y-1">
+                              <p className="text-amber-600 dark:text-amber-500 font-semibold text-xs">
+                                🚗 Current drive time: {travelTimes[trip.sk].durationText}
+                              </p>
+                              {travelTimes[trip.sk].transit && (
+                                <div className="text-blue-600 dark:text-blue-400 font-semibold text-xs">
+                                  <div className="flex items-center gap-1.5">
+                                    <span>
+                                      🚆 {travelTimes[trip.sk].stationInfo?.agency || travelTimes[trip.sk].transit?.transitAgency || "Transit"}: {travelTimes[trip.sk].transit?.durationText}
+                                    </span>
+                                  </div>
+                                  {travelTimes[trip.sk].transit?.transitSteps && travelTimes[trip.sk].transit.transitSteps.length > 0 && (
+                                    <div className="mt-1.5 text-[10px] text-gray-600 dark:text-gray-400 leading-tight">
+                                      {travelTimes[trip.sk].transit.transitSteps
+                                        .filter(step => step.transitLine)
+                                        .map((step, idx) => {
+                                          const vehicleType = typeof step.vehicleType === 'string'
+                                            ? step.vehicleType.toLowerCase()
+                                            : step.vehicleType?.text?.toLowerCase() || '';
+                                          let icon = '';
+                                          if (vehicleType.includes('subway') || vehicleType.includes('train')) {
+                                            icon = '🚇';
+                                          } else if (vehicleType.includes('bus')) {
+                                            icon = '🚌';
+                                          } else if (vehicleType.includes('light rail')) {
+                                            icon = '🚃';
+                                          }
+                                          return (
+                                            <div key={idx}>{icon} {step.transitLine}</div>
+                                          );
+                                        })}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
                           )}
                         </div>
                         <div className="flex justify-end mt-4 gap-2">
