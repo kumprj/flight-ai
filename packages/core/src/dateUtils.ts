@@ -1,5 +1,5 @@
 import { formatInTimeZone, fromZonedTime } from 'date-fns-tz';
-import { getAirportTimezone } from './timezones';
+import { getAirportTimezone } from './airports';
 
 /**
  * Resolve an airport code (e.g. "ORD") or IANA timezone name (e.g. "America/Chicago")
@@ -33,7 +33,10 @@ export const parseFlightTimeToUTC = (
 
   const timezone = resolveTimezone(airportCodeOrTimezone);
   // Strip any existing offset or 'Z' suffix to treat as naive local time
-  const cleanStr = naiveIsoString.split('+')[0].split('Z')[0];
+  // Strip any existing offset or 'Z' suffix to treat as naive local time
+  const [datePart, timePartRaw] = naiveIsoString.split('T');
+  const timePart = timePartRaw ? timePartRaw.split('+')[0].split('-')[0].split('Z')[0] : '';
+  const cleanStr = timePart ? `${datePart}T${timePart}` : datePart;
 
   const parsed = fromZonedTime(cleanStr, timezone);
   if (isNaN(parsed.getTime())) {

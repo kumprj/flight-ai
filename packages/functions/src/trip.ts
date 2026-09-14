@@ -234,7 +234,7 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
       }
       message += `\nThis is a test notification. Safe travels!`;
     } else {
-      message = `✈️ TEST Flight Alert for ${trip.flightNumber}!\n\nCurrent travel time from ${trip.homeAddress} to ${trip.originAirport} is ${travelEstimate.drive.durationText}.\n\nIn order to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your flight, you should leave at ${driveLeaveFormatted}.\n\nThis is a test notification. Safe travels!`;
+      message = `✈️ TEST Flight Alert for ${trip.flightNumber}!\n\nCurrent travel time from ${trip.homeAddress} to ${trip.originAirport} is ${travelEstimate.drive.durationText}.\n\nIn order to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your flight, you should leave at ${driveLeaveFormatted}.${profile?.transitEnabled ? "\\n\\nNote: Public transit directions are currently unavailable for this route at the targeted time." : ""}\n\nThis is a test notification. Safe travels!`;
     }
 
     // Send email
@@ -305,6 +305,12 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
       </div>` : ''}
       ` : ''}
 
+${profile?.transitEnabled && (!travelEstimate.transit || !transitLeaveFormatted) ? `
+      <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+        <p style="color: #991b1b; font-size: 13px; margin: 0; font-weight: 600;">
+          ⚠️ Public transit directions are currently unavailable for this route.
+        </p>
+      </div>` : ''}
       <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: center;">
         <p style="color: #9ca3af; font-size: 14px; margin: 0;">This is a test notification 🧪</p>
         <p style="color: #d1d5db; font-size: 12px; margin: 8px 0 0 0;">Powered by Make My Flight${transitAgency !== "Public Transit" ? ` & ${transitAgency}` : ''}</p>

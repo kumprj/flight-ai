@@ -1,11 +1,17 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
+    "target": "es2020",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
     "baseUrl": ".",
     "paths": {
+      "@flight-ai/core": ["../core/src/index.ts"],
       "@flight-ai/core/*": ["../core/src/*"]
     }
-  }
+  },
+  "include": ["src/**/*", "../../sst-env.d.ts"]
 }

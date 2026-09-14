@@ -123,27 +123,3 @@ export const formatCtaAlertsSummary = (
 /**
  * Fetch real-time train arrival predictions if a CTA Train Tracker API key is configured.
  */
-export const getLiveTrainArrivals = async (
-  mapId: string,
-  apiKey: string = process.env.CTA_API_KEY || process.env.CTA_TRAIN_TRACKER_KEY || ""
-) => {
-  if (!apiKey) {
-    return null;
-  }
-
-  try {
-    const response = await axios.get(CTA_TRAIN_TRACKER_URL, {
-      params: {
-        key: apiKey,
-        mapid: mapId,
-        outputType: "JSON",
-      },
-      timeout: 4000,
-    });
-
-    return response.data?.ctatt?.eta || [];
-  } catch (err) {
-    console.error("CTA Train Tracker API error:", err);
-    return null;
-  }
-};

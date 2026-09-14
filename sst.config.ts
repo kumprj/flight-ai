@@ -121,6 +121,7 @@ export default $config({
       link: [table, notifyWorker],
       environment: {
         WORKER_ARN: notifyWorker.arn,
+        AERODATABOX_API_KEY: process.env.AERODATABOX_API_KEY!,
       },
       permissions: [
         {actions: ["lambda:InvokeFunction"], resources: [notifyWorker.arn]}
