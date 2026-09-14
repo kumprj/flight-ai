@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import axios from 'axios';
 import {Config} from './config';
 import {fetchAuthSession} from 'aws-amplify/auth';
-import Toast, {type ToastType} from './Toast';
+import Toast, { type ToastType } from './Toast';
 
 interface Trip {
   sk: string;
@@ -30,6 +30,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     stationInfo?: { agency?: string; line?: string; fareDescription?: string };
   }>>({});
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
   const showToast = (msg: string, type: ToastType = 'success') => setToast({ msg, type });
 
