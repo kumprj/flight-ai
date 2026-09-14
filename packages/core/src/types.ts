@@ -51,6 +51,17 @@ export interface NotificationPreferences {
   transitEnabled?: boolean;
 }
 
+export interface TransitStep {
+  instruction?: string;
+  distanceMeters?: number;
+  durationSeconds?: number;
+  transitLine?: string;
+  transitAgency?: string;
+  stopName?: string;
+  vehicleType?: string;
+  numStops?: number;
+}
+
 export interface TravelTimeInfo {
   durationSeconds: number;
   durationText: string;
@@ -59,6 +70,7 @@ export interface TravelTimeInfo {
   transitLine?: string;
   transitAgency?: string;
   summary?: string;
+  transitSteps?: TransitStep[];
 }
 
 export interface CtaAlert {

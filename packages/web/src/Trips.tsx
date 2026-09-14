@@ -24,7 +24,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
   const [travelTimes, setTravelTimes] = useState<Record<string, {
     durationText: string;
     durationSeconds: number;
-    transit?: { durationText: string; durationSeconds: number; transitLine?: string; transitAgency?: string };
+    transit?: { durationText: string; durationSeconds: number; transitLine?: string; transitAgency?: string; transitSteps?: Array<{ instruction?: string; stopName?: string; vehicleType?: string; numStops?: number; distanceMeters?: number; durationSeconds?: number }> };
     ctaAlerts?: any[];
     mtaAlerts?: any[];
     stationInfo?: { agency?: string; line?: string; fareDescription?: string };
@@ -668,16 +668,21 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                                 🚗 Current drive time: {travelTimes[trip.sk].durationText}
                               </p>
                               {travelTimes[trip.sk].transit && (
-                                <p className="text-blue-600 dark:text-blue-400 font-semibold text-xs flex items-center gap-1.5">
-                                  <span>
-                                    🚆 {travelTimes[trip.sk].stationInfo?.agency || travelTimes[trip.sk].transit?.transitAgency || "Transit"}: {travelTimes[trip.sk].transit?.durationText}
-                                  </span>
-                                  {travelTimes[trip.sk].transit?.transitLine && (
-                                    <span className="px-1.5 py-0.5 text-[10px] bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 rounded font-bold">
-                                      {travelTimes[trip.sk].transit?.transitLine}
+                                <div className="text-blue-600 dark:text-blue-400 font-semibold text-xs">
+                                  <div className="flex items-center gap-1.5">
+                                    <span>
+                                      🚆 {travelTimes[trip.sk].stationInfo?.agency || travelTimes[trip.sk].transit?.transitAgency || "Transit"}: {travelTimes[trip.sk].transit?.durationText}
                                     </span>
+                                  </div>
+                                  {travelTimes[trip.sk].transit?.transitSteps && travelTimes[trip.sk].transit.transitSteps.length > 0 && (
+                                    <div className="mt-1.5 text-[10px] text-gray-600 dark:text-gray-400 leading-tight">
+                                      {travelTimes[trip.sk].transit.transitSteps
+                                        .filter(step => step.transitLine)
+                                        .map(step => step.transitLine)
+                                        .join(' + ')}
+                                    </div>
                                   )}
-                                </p>
+                                </div>
                               )}
                             </div>
                           )}

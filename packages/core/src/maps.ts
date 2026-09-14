@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getAirportAddress } from "./airports";
-import { TravelTimeInfo, MultiModalTravelTime } from "./types";
+import { TravelTimeInfo, MultiModalTravelTime, TransitStep } from "./types";
 import { isChicagoAirport, getCtaAlerts, getCtaStationInfo } from "./cta";
 import { isNycAirport, getMtaAlerts, getNycStationInfo } from "./mta";
 
@@ -38,7 +38,7 @@ export const GoogleMaps = {
     }
 
     const fieldMask = mode === "TRANSIT"
-      ? "routes.duration,routes.distanceMeters,routes.legs.steps.transitDetails"
+      ? "routes.duration,routes.distanceMeters,routes.legs.steps,routes.legs.steps.transitDetails,routes.legs.steps.transitDetails.transitLine,routes.legs.steps.transitDetails.stopDetails"
       : "routes.duration,routes.distanceMeters,routes.staticDuration";
 
     const response = await axios.post(
@@ -58,26 +58,58 @@ export const GoogleMaps = {
       throw new Error(`No ${mode.toLowerCase()} route found`);
     }
 
+
     const durationSeconds = parseInt(route.duration?.replace("s", "") || "0", 10);
 
     let transitLine: string | undefined;
     let transitAgency: string | undefined;
+    let transitSteps: TransitStep[] | undefined;
 
     if (mode === "TRANSIT" && route.legs) {
+      transitSteps = [];
+      const transitLines: string[] = [];
       for (const leg of route.legs) {
         if (leg.steps) {
           for (const step of leg.steps) {
-            if (step.transitDetails?.transitLine) {
+            // Extract step details for full route
+            const stepInfo: TransitStep = {
+              instruction: step.instruction,
+              distanceMeters: step.distanceMeters,
+              durationSeconds: parseInt(step.duration?.replace("s", "") || "0", 10),
+            };
+
+            if (step.transitDetails) {
               const line = step.transitDetails.transitLine;
-              transitLine = line.name || line.nameShort;
-              transitAgency = line.agencies?.[0]?.name;
-              break;
+              const lineName = line?.name || line?.nameShort;
+              if (!transitLine && lineName) {
+                transitLine = lineName;
+                transitAgency = line.agencies?.[0]?.name;
+              }
+
+              // Collect all unique transit lines for the full route
+              if (lineName && !transitLines.includes(lineName)) {
+                transitLines.push(lineName);
+              }
+
+              stepInfo.transitLine = lineName;
+              stepInfo.transitAgency = line?.agencies?.[0]?.name;
+              stepInfo.stopName = step.transitDetails.stopDetails?.name;
+              stepInfo.vehicleType = line?.vehicle?.name;
+              stepInfo.numStops = step.transitDetails.numStops;
             }
+
+            // Add all steps for now to debug
+            transitSteps.push(stepInfo);
           }
         }
-        if (transitLine) break;
+      }
+
+      // Create a combined route string like "7 / E / F / M / R Subway + LaGuardia Link Q70-SBS"
+      if (transitLines.length > 0) {
+        transitLine = transitLines.join(' / ');
       }
     }
+
 
     return {
       durationSeconds,
@@ -87,6 +119,7 @@ export const GoogleMaps = {
       transitLine,
       transitAgency,
       summary: transitLine ? `${transitLine} (${transitAgency || "CTA"})` : undefined,
+      transitSteps,
     };
   },
 
