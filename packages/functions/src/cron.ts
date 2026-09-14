@@ -3,7 +3,11 @@ import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import { Resource } from "sst";
-import { getAirportTimezone } from "@flight-ai/core/airports";
+import {
+  parseFlightTimeToUTC,
+  calculateHoursUntilFlight,
+  Flights,
+} from "@flight-ai/core";
 
 const dynamodb = DynamoDBDocument.from(new DynamoDB({}));
 const lambda = new LambdaClient({});
@@ -32,54 +36,140 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
 
     for (const item of result.Items) {
       try {
-      const userId = item.pk.replace("USER#", "");
+        const userId = item.pk.replace("USER#", "");
 
-      // Get user profile for arrival preference
-      const profile = await dynamodb.get({
-        TableName: Resource.Table.name,
-        Key: { pk: item.pk, sk: "PROFILE" },
-      });
+        // 1. Get user profile for arrival preference
+        const profile = await dynamodb.get({
+          TableName: Resource.Table.name,
+          Key: { pk: item.pk, sk: "PROFILE" },
+        });
 
-      const arrivalPreference = profile.Item?.arrivalPreference || 2;
+        const arrivalPreference = profile.Item?.arrivalPreference || 2;
 
-      // Convert naive local date string to true UTC using the origin airport's timezone
-      const timezone = getAirportTimezone(item.originAirport) || item.timezone || 'America/Chicago';
-      const naiveDateStr = (item.date as string).split('+')[0].split('Z')[0];
-      const naiveAsUTC = new Date(naiveDateStr + 'Z');
-      const tzFormatter = new Intl.DateTimeFormat('en-US', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-      const utcFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-      const tzParsed = new Date(tzFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
-      const utcParsed = new Date(utcFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
-      const flightDate = new Date(naiveAsUTC.getTime() - (tzParsed.getTime() - utcParsed.getTime()));
+        // 2. Initial flight time calculation
+        let effectiveDateStr = item.revisedDate || item.date;
+        let flightDateUTC = parseFlightTimeToUTC(effectiveDateStr, item.originAirport || item.timezone);
+        let hoursUntilFlight = calculateHoursUntilFlight(flightDateUTC, now);
 
-      const hoursUntilFlight = (flightDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+        console.log(`Trip ${item.sk}: Initial flight in ${hoursUntilFlight.toFixed(2)} hours`);
 
-      console.log(`Trip ${item.sk}: Flight in ${hoursUntilFlight.toFixed(2)} hours`);
+        // 3. Check live status if flight is within 24 hours (and not departed)
+        // Rate-limit checks to at most once every 30 minutes per active trip
+        const timeSinceLastCheck = item.lastStatusCheck ? (now.getTime() - item.lastStatusCheck) : Infinity;
+        const shouldCheckStatus = hoursUntilFlight > 0 && hoursUntilFlight <= 24 && timeSinceLastCheck >= 30 * 60 * 1000;
 
-      const notify12h = hoursUntilFlight > 11 && hoursUntilFlight <= 12;
-      const notifyPreference = hoursUntilFlight > (arrivalPreference + 1) && hoursUntilFlight <= (arrivalPreference + 2);
+        if (shouldCheckStatus) {
+          console.log(`Checking live flight status for ${item.flightNumber} on ${item.date}...`);
+          const flightStatus = await Flights.checkStatus(item.flightNumber, item.date);
 
-      if (notify12h || notifyPreference) {
-        const reason = notify12h ? '12-hour advance notice' : `${arrivalPreference + 2}-hour departure window`;
-        console.log(`Triggering notification for ${item.flightNumber} (${reason})`);
+          if (flightStatus) {
+            console.log(`Live status for ${item.flightNumber}:`, JSON.stringify(flightStatus));
 
-        await lambda.send(new InvokeCommand({
-          FunctionName: process.env.WORKER_ARN!,
-          InvocationType: "Event",
-          Payload: JSON.stringify({
-            tripId: item.sk,
-            userId: userId,
-            homeAddress: item.homeAddress,
-            airportCode: item.originAirport,
-          }),
-        }));
+            // Case A: Canceled flight
+            if (flightStatus.status === 'Canceled') {
+              console.warn(`Flight ${item.flightNumber} has been CANCELED`);
+              await dynamodb.update({
+                TableName: Resource.Table.name,
+                Key: { pk: item.pk, sk: item.sk },
+                UpdateExpression: "SET #status = :status, lastStatusCheck = :lastCheck, updatedAt = :updatedAt",
+                ExpressionAttributeNames: { "#status": "status" },
+                ExpressionAttributeValues: {
+                  ":status": "Canceled",
+                  ":lastCheck": now.getTime(),
+                  ":updatedAt": now.getTime(),
+                },
+              });
 
-        console.log(`Notification triggered for ${item.flightNumber}`);
-      } else if (hoursUntilFlight <= 0) {
-        console.log(`Flight ${item.flightNumber} has already departed`);
-      } else {
-        console.log(`Flight ${item.flightNumber} is too far away (${hoursUntilFlight.toFixed(2)} hours)`);
-      }
+              // Trigger immediate cancellation alert if not previously alerted
+              if (item.status !== 'Canceled') {
+                await lambda.send(new InvokeCommand({
+                  FunctionName: process.env.WORKER_ARN!,
+                  InvocationType: "Event",
+                  Payload: JSON.stringify({
+                    tripId: item.sk,
+                    userId: userId,
+                    homeAddress: item.homeAddress,
+                    airportCode: item.originAirport,
+                    isCanceled: true,
+                  }),
+                }));
+              }
+              continue; // Skip normal leave notification
+            }
+
+            // Case B: Delayed flight
+            if (flightStatus.revisedDepartureTime && flightStatus.revisedDepartureTime !== item.date) {
+              const delayMins = flightStatus.delayMinutes || 0;
+              console.log(`Flight ${item.flightNumber} is delayed by ${delayMins}m. New departure: ${flightStatus.revisedDepartureTime}`);
+
+              effectiveDateStr = flightStatus.revisedDepartureTime;
+              flightDateUTC = parseFlightTimeToUTC(effectiveDateStr, item.originAirport || item.timezone);
+              hoursUntilFlight = calculateHoursUntilFlight(flightDateUTC, now);
+
+              await dynamodb.update({
+                TableName: Resource.Table.name,
+                Key: { pk: item.pk, sk: item.sk },
+                UpdateExpression: "SET revisedDate = :revDate, delayMinutes = :delayMins, #status = :status, lastStatusCheck = :lastCheck, updatedAt = :updatedAt",
+                ExpressionAttributeNames: { "#status": "status" },
+                ExpressionAttributeValues: {
+                  ":revDate": flightStatus.revisedDepartureTime,
+                  ":delayMins": delayMins,
+                  ":status": "Delayed",
+                  ":lastCheck": now.getTime(),
+                  ":updatedAt": now.getTime(),
+                },
+              });
+
+              item.revisedDate = flightStatus.revisedDepartureTime;
+              item.delayMinutes = delayMins;
+              item.status = "Delayed";
+            } else {
+              // Case C: On time / scheduled
+              await dynamodb.update({
+                TableName: Resource.Table.name,
+                Key: { pk: item.pk, sk: item.sk },
+                UpdateExpression: "SET #status = :status, lastStatusCheck = :lastCheck, updatedAt = :updatedAt",
+                ExpressionAttributeNames: { "#status": "status" },
+                ExpressionAttributeValues: {
+                  ":status": flightStatus.status || "Scheduled",
+                  ":lastCheck": now.getTime(),
+                  ":updatedAt": now.getTime(),
+                },
+              });
+            }
+          }
+        }
+
+        console.log(`Trip ${item.sk}: Effective flight in ${hoursUntilFlight.toFixed(2)} hours`);
+
+        // 4. Notification window evaluation based on effective departure time
+        const notify12h = hoursUntilFlight > 11 && hoursUntilFlight <= 12;
+        const notifyPreference = hoursUntilFlight > (arrivalPreference + 1) && hoursUntilFlight <= (arrivalPreference + 2);
+
+        if (notify12h || notifyPreference) {
+          const reason = notify12h ? '12-hour advance notice' : `${arrivalPreference + 2}-hour departure window`;
+          const isDelayed = item.status === 'Delayed' || Boolean(item.revisedDate);
+          console.log(`Triggering notification for ${item.flightNumber} (${reason}, Delayed: ${isDelayed})`);
+
+          await lambda.send(new InvokeCommand({
+            FunctionName: process.env.WORKER_ARN!,
+            InvocationType: "Event",
+            Payload: JSON.stringify({
+              tripId: item.sk,
+              userId: userId,
+              homeAddress: item.homeAddress,
+              airportCode: item.originAirport,
+              isDelayed,
+              delayMinutes: item.delayMinutes || 0,
+            }),
+          }));
+
+          console.log(`Notification triggered for ${item.flightNumber}`);
+        } else if (hoursUntilFlight <= 0) {
+          console.log(`Flight ${item.flightNumber} has already departed`);
+        } else {
+          console.log(`Flight ${item.flightNumber} is outside notification window (${hoursUntilFlight.toFixed(2)} hours)`);
+        }
       } catch (tripError) {
         console.error(`Failed to process trip ${item.sk}:`, tripError);
       }

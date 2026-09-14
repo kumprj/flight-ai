@@ -11,6 +11,9 @@ interface Trip {
   originAirport: string;
   destinationAirport: string;
   homeAddress: string;
+  status?: string;
+  revisedDate?: string;
+  delayMinutes?: number;
   createdAt?: number;
 }
 
@@ -37,8 +40,8 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       });
 
       const sortedTrips = res.data.sort((b: Trip, a: Trip) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
+        const dateA = new Date(a.revisedDate || a.date).getTime();
+        const dateB = new Date(b.revisedDate || b.date).getTime();
         return dateA - dateB;
       });
       setTrips(sortedTrips);
@@ -584,8 +587,13 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         ) : (
             <div className="space-y-4">
               {trips.map((trip) => {
-                const formatted = formatDate(trip.date);
-                const old = isOldTrip(trip.date);
+                const effectiveDate = trip.revisedDate || trip.date;
+                const formatted = formatDate(effectiveDate);
+                const originalFormatted = trip.revisedDate && trip.revisedDate !== trip.date ? formatDate(trip.date) : null;
+                const old = isOldTrip(effectiveDate);
+                const isCanceled = trip.status === 'Canceled';
+                const isDelayed = !isCanceled && (trip.status === 'Delayed' || Boolean(trip.revisedDate && trip.revisedDate !== trip.date));
+
                 return (
                     <div
                         key={trip.sk}
@@ -593,9 +601,21 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
-                          <h2 className="text-2xl font-bold text-green-700 dark:text-green-600 mb-1">
-                            {trip.flightNumber}
-                          </h2>
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h2 className="text-2xl font-bold text-green-700 dark:text-green-600">
+                              {trip.flightNumber}
+                            </h2>
+                            {isCanceled && (
+                              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300">
+                                ❌ Canceled
+                              </span>
+                            )}
+                            {isDelayed && (
+                              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                                ⚠️ Delayed {trip.delayMinutes ? `(+${trip.delayMinutes}m)` : ''}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">
                             {trip.originAirport} → {trip.destinationAirport}
                           </p>
@@ -608,9 +628,14 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                             {formatted.monthDay}
                           </div>
                           <div
-                              className="text-lg font-semibold text-green-700 dark:text-green-600 mt-2">
+                              className={`text-lg font-semibold mt-2 ${isCanceled ? 'text-red-600 line-through' : (isDelayed ? 'text-amber-600 dark:text-amber-500' : 'text-green-700 dark:text-green-600')}`}>
                             {formatted.time}
                           </div>
+                          {originalFormatted && !isCanceled && (
+                            <div className="text-xs text-gray-400 dark:text-gray-500 line-through">
+                              Was {originalFormatted.time}
+                            </div>
+                          )}
                         </div>
                       </div>
                       
