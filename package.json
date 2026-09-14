@@ -9,18 +9,23 @@
     "deploy": "sst deploy",
     "remove": "sst remove"
   },
+  "overrides": {
+    "@xstate/react": {
+      "react": "^19.0.0"
+    }
+  },
   "devDependencies": {
-    "@types/node": "^26.8.0",
-    "dotenv": "^17.2.3",
+    "@types/node": "^26.0.0",
+    "dotenv": "^17.4.2",
     "sst": "^4.17.1",
     "sst-darwin-arm64": "^4.17.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.0.0"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.972.0",
-    "@types/react-datepicker": "^6.2.0",
-    "date-fns": "^4.1.0",
+    "@aws-sdk/client-ses": "^3.1132.0",
+    "@types/react-datepicker": "^7.0.0",
+    "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
     "react-datepicker": "^9.1.0"
   }
