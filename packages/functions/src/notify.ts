@@ -4,8 +4,14 @@ import {DynamoDB} from "@aws-sdk/client-dynamodb";
 import {DynamoDBDocument} from "@aws-sdk/lib-dynamodb";
 import {Resource} from "sst";
 import {GoogleMaps} from "@flight-ai/core/maps";
-import {SchedulerPayload} from "@flight-ai/core/types";
-import {getAirportTimezone} from "@flight-ai/core/airports";
+import {
+  SchedulerPayload,
+  parseFlightTimeToUTC,
+  calculateLeaveTime,
+  formatLeaveTime,
+  formatCtaAlertsSummary,
+  formatMtaAlertsSummary
+} from "@flight-ai/core";
 import twilio from "twilio";
 
 const ses = new SESClient({});
@@ -52,61 +58,70 @@ export const handler: SchedulerHandler = async (event) => {
 
     console.log("User profile:", JSON.stringify(profile.Item, null, 2));
 
-// 3. Resolve airport timezone and convert naive date string to true UTC
-    const timezone = getAirportTimezone(trip.Item.originAirport) || trip.Item.timezone || 'America/Chicago';
-
-    // trip.date is a naive local time string — convert to true UTC via timezone offset
-    const naiveDateStr = trip.Item.date.split('+')[0].split('Z')[0];
-    const naiveAsUTC = new Date(naiveDateStr + 'Z');
-    const tzFormatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: timezone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    });
-    const utcFormatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'UTC',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    });
-    const tzDateParsed = new Date(tzFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
-    const utcDateParsed = new Date(utcFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
-    const offsetMs = tzDateParsed.getTime() - utcDateParsed.getTime();
-    const flightUTC = new Date(naiveAsUTC.getTime() - offsetMs);
-
+    // 3. Resolve airport timezone and convert naive date string to true UTC
+    const flightUTC = parseFlightTimeToUTC(trip.Item.date, trip.Item.originAirport || trip.Item.timezone);
     const arrivalPreference = profile.Item?.arrivalPreference || 2;
 
     // Estimate leave time (arrivalPreference hours before flight) as departure time for Google Maps traffic prediction
     const estimatedLeaveUTC = new Date(flightUTC.getTime() - (arrivalPreference * 60 * 60 * 1000));
 
-// 4. Calculate Travel Time using predicted traffic at estimated leave time
-    const travelInfo = await GoogleMaps.getTravelTime(
-        payload.homeAddress,
-        payload.airportCode,
-        estimatedLeaveUTC
+    // 4. Calculate Travel Time (Multi-modal if transitEnabled)
+    const transitEnabled = Boolean(profile.Item?.transitEnabled);
+    const travelEstimate = await GoogleMaps.getMultiModalTravelTime(
+      payload.homeAddress,
+      payload.airportCode,
+      estimatedLeaveUTC,
+      transitEnabled
     );
 
-    console.log("Travel time calculated:", travelInfo);
+    console.log("Travel estimate calculated:", JSON.stringify(travelEstimate, null, 2));
 
-// Calculate final leave time
-    const travelTimeMinutes = Math.ceil(travelInfo.durationSeconds / 60);
-    const totalMinutesNeeded = travelTimeMinutes + (arrivalPreference * 60);
-    const leaveTimeUTC = new Date(flightUTC.getTime() - (totalMinutesNeeded * 60 * 1000));
+    // Calculate final drive leave time
+    const driveMinutes = Math.ceil(travelEstimate.drive.durationSeconds / 60);
+    const driveLeaveUTC = calculateLeaveTime(flightUTC, driveMinutes, arrivalPreference);
+    const driveLeaveFormatted = formatLeaveTime(driveLeaveUTC, trip.Item.originAirport || trip.Item.timezone);
 
-    const message = `✈️ Flight Alert for ${trip.Item.flightNumber}!\n\nExpected travel time from ${payload.homeAddress} to ${payload.airportCode} airport is ${travelInfo.durationText}.\n\nIn order to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your flight, you should leave at ${leaveTimeUTC.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: timezone
-    })}.\n\nSafe travels!`;
+    // Calculate transit leave time if available
+    let transitLeaveFormatted: string | undefined;
+    let transitAlertsSummary: string | undefined;
+
+    if (travelEstimate.transit) {
+      const transitMinutes = Math.ceil(travelEstimate.transit.durationSeconds / 60);
+      const transitLeaveUTC = calculateLeaveTime(flightUTC, transitMinutes, arrivalPreference);
+      transitLeaveFormatted = formatLeaveTime(transitLeaveUTC, trip.Item.originAirport || trip.Item.timezone);
+
+      if (travelEstimate.ctaAlerts && travelEstimate.ctaAlerts.length > 0) {
+        transitAlertsSummary = formatCtaAlertsSummary(
+          travelEstimate.ctaAlerts,
+          travelEstimate.stationInfo?.line || "CTA Transit"
+        );
+      } else if (travelEstimate.mtaAlerts && travelEstimate.mtaAlerts.length > 0) {
+        transitAlertsSummary = formatMtaAlertsSummary(
+          travelEstimate.mtaAlerts,
+          travelEstimate.stationInfo?.line || "MTA Transit"
+        );
+      }
+    }
+
+    const transitAgency = travelEstimate.stationInfo?.agency || (travelEstimate.ctaAlerts ? "CTA" : travelEstimate.mtaAlerts ? "MTA" : "Public Transit");
+    const transitLineName = travelEstimate.stationInfo?.line || (travelEstimate.transit?.transitLine ? `${travelEstimate.transit.transitLine} (${transitAgency})` : `${transitAgency} Public Transit`);
+
+    // Build multi-modal message
+    let message: string;
+    if (travelEstimate.transit && transitLeaveFormatted) {
+      message = `✈️ Flight Alert for ${trip.Item.flightNumber}!\n\nOptions to arrive ${arrivalPreference}h early at ${payload.airportCode}:\n` +
+        `🚗 Drive: ${travelEstimate.drive.durationText} (Leave by ${driveLeaveFormatted})\n` +
+        `🚆 ${transitLineName}: ${travelEstimate.transit.durationText} (Leave by ${transitLeaveFormatted})\n`;
+      if (transitAlertsSummary) {
+        message += `\n${transitAlertsSummary}\n`;
+      }
+      if (travelEstimate.stationInfo?.fareDescription) {
+        message += `Fare: ${travelEstimate.stationInfo.fareDescription}\n`;
+      }
+      message += `\nSafe travels!`;
+    } else {
+      message = `✈️ Flight Alert for ${trip.Item.flightNumber}!\n\nExpected travel time from ${payload.homeAddress} to ${payload.airportCode} airport is ${travelEstimate.drive.durationText}.\n\nIn order to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your flight, you should leave at ${driveLeaveFormatted}.\n\nSafe travels!`;
+    }
 
 // 4. Send SMS
     if (profile.Item?.phoneNumber && profile.Item?.phoneVerified) {
@@ -127,15 +142,7 @@ export const handler: SchedulerHandler = async (event) => {
 
     console.log("Sending email from:", senderEmail, "to:", recipientEmail);
 
-    await ses.send(new SendEmailCommand({
-      Source: senderEmail,
-      Destination: {ToAddresses: [recipientEmail]},
-      Message: {
-        Subject: {Data: `⏰ Time to Leave for Flight ${trip.Item.flightNumber}!`},
-        Body: {
-          Text: {Data: message},
-          Html: {
-            Data: `
+    const emailHtml = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -153,38 +160,75 @@ export const handler: SchedulerHandler = async (event) => {
     
     <div style="background: white; border-radius: 16px; padding: 32px; margin-top: 24px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
       <div style="margin-bottom: 24px;">
-        <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Travel Time</p>
+        <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Trip Details</p>
         <p style="color: #1f2937; font-size: 16px; margin: 0; line-height: 1.6;">
           From <strong>${payload.homeAddress}</strong> to <strong>${payload.airportCode} airport</strong>
         </p>
-        <p style="color: #15803d; font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${travelInfo.durationText}</p>
-      </div>
-      
-      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 12px; padding: 24px; border-left: 4px solid #15803d;">
-        <p style="color: #4b5563; font-size: 15px; margin: 0 0 12px 0; line-height: 1.6;">
-          To arrive <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong>, you should leave at:
-        </p>
-        <p style="color: #15803d; font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
-          ${leaveTimeUTC.toLocaleTimeString('en-US', {
-              hour: 'numeric',
-              minute: '2-digit',
-              timeZone: timezone
-            })}
+        <p style="color: #4b5563; font-size: 14px; margin: 4px 0 0 0;">
+          Target arrival: <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong>
         </p>
       </div>
+
+      <!-- Drive Option -->
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 12px; padding: 20px; border-left: 4px solid #15803d; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-weight: 700; color: #166534; font-size: 16px;">🚗 Drive (Live Traffic)</span>
+          <span style="font-weight: 700; color: #15803d; font-size: 18px;">${travelEstimate.drive.durationText}</span>
+        </div>
+        <p style="color: #4b5563; font-size: 14px; margin: 0 0 6px 0;">Leave by:</p>
+        <p style="color: #15803d; font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
+          ${driveLeaveFormatted}
+        </p>
+      </div>
+
+      ${travelEstimate.transit && transitLeaveFormatted ? `
+      <!-- Public Transit Option -->
+      <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 12px; padding: 20px; border-left: 4px solid #2563eb; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-weight: 700; color: #1e40af; font-size: 16px;">
+            🚆 ${transitLineName}
+          </span>
+          <span style="font-weight: 700; color: #2563eb; font-size: 18px;">${travelEstimate.transit.durationText}</span>
+        </div>
+        <p style="color: #4b5563; font-size: 14px; margin: 0 0 6px 0;">Leave by:</p>
+        <p style="color: #2563eb; font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
+          ${transitLeaveFormatted}
+        </p>
+        ${travelEstimate.stationInfo?.fareDescription ? `
+        <p style="color: #6b7280; font-size: 12px; margin: 8px 0 0 0;">
+          💳 Fare: ${travelEstimate.stationInfo.fareDescription}
+        </p>` : ''}
+      </div>
+
+      ${transitAlertsSummary ? `
+      <!-- Transit Alerts Banner -->
+      <div style="background-color: #fefce8; border: 1px solid #fde047; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+        <p style="color: #854d0e; font-size: 13px; margin: 0; font-weight: 600;">
+          ${transitAlertsSummary}
+        </p>
+      </div>` : ''}
+      ` : ''}
       
       <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: center;">
         <p style="color: #9ca3af; font-size: 14px; margin: 0;">Safe travels! 🛫</p>
-        <p style="color: #d1d5db; font-size: 12px; margin: 8px 0 0 0;">Powered by Make My Flight</p>
+        <p style="color: #d1d5db; font-size: 12px; margin: 8px 0 0 0;">Powered by Make My Flight${transitAgency !== "Public Transit" ? ` & ${transitAgency}` : ''}</p>
       </div>
     </div>
   </div>
 </body>
 </html>
-        `
-          }
-        }
-      }
+    `;
+
+    await ses.send(new SendEmailCommand({
+      Source: senderEmail,
+      Destination: {ToAddresses: [recipientEmail]},
+      Message: {
+        Subject: {Data: `⏰ Time to Leave for Flight ${trip.Item.flightNumber}!`},
+        Body: {
+          Text: {Data: message},
+          Html: {Data: emailHtml},
+        },
+      },
     }));
 
     console.log("Email sent successfully!");

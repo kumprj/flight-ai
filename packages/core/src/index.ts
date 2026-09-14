@@ -5,3 +5,6 @@ export * from "./types";
 export * from "./flights";
 export * from "./dateUtils";
 export * from "./timezones";
+export * from "./airports";
+export * from "./cta";
+export * from "./mta";

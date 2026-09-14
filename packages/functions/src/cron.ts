@@ -3,7 +3,7 @@ import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import { Resource } from "sst";
-import { getAirportTimezone } from "@flight-ai/core/airports";
+import { parseFlightTimeToUTC, calculateHoursUntilFlight } from "@flight-ai/core";
 
 const dynamodb = DynamoDBDocument.from(new DynamoDB({}));
 const lambda = new LambdaClient({});
@@ -43,16 +43,8 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
       const arrivalPreference = profile.Item?.arrivalPreference || 2;
 
       // Convert naive local date string to true UTC using the origin airport's timezone
-      const timezone = getAirportTimezone(item.originAirport) || item.timezone || 'America/Chicago';
-      const naiveDateStr = (item.date as string).split('+')[0].split('Z')[0];
-      const naiveAsUTC = new Date(naiveDateStr + 'Z');
-      const tzFormatter = new Intl.DateTimeFormat('en-US', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-      const utcFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-      const tzParsed = new Date(tzFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
-      const utcParsed = new Date(utcFormatter.format(naiveAsUTC).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2'));
-      const flightDate = new Date(naiveAsUTC.getTime() - (tzParsed.getTime() - utcParsed.getTime()));
-
-      const hoursUntilFlight = (flightDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+      const flightDate = parseFlightTimeToUTC(item.date, item.originAirport || item.timezone);
+      const hoursUntilFlight = calculateHoursUntilFlight(flightDate, now);
 
       console.log(`Trip ${item.sk}: Flight in ${hoursUntilFlight.toFixed(2)} hours`);
 

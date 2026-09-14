@@ -18,9 +18,15 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [testNotifying, setTestNotifying] = useState<string | null>(null);
-  const [travelTimes, setTravelTimes] = useState<Record<string, { durationText: string; durationSeconds: number }>>({})
+  const [travelTimes, setTravelTimes] = useState<Record<string, {
+    durationText: string;
+    durationSeconds: number;
+    transit?: { durationText: string; durationSeconds: number; transitLine?: string; transitAgency?: string };
+    ctaAlerts?: any[];
+    mtaAlerts?: any[];
+    stationInfo?: { agency?: string; line?: string; fareDescription?: string };
+  }>>({});
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
   const showToast = (msg: string, type: ToastType = 'success') => setToast({ msg, type });
 
@@ -631,9 +637,23 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                           <p className="mt-1">to</p>
                           <p className="font-bold text-gray-700 dark:text-gray-300 mt-1">{trip.originAirport} airport</p>
                           {travelTimes[trip.sk] && (
-                            <p className="mt-2 text-amber-600 dark:text-amber-500 font-semibold">
-                              🚗 Current drive time: {travelTimes[trip.sk].durationText}
-                            </p>
+                            <div className="mt-2 space-y-1">
+                              <p className="text-amber-600 dark:text-amber-500 font-semibold text-xs">
+                                🚗 Current drive time: {travelTimes[trip.sk].durationText}
+                              </p>
+                              {travelTimes[trip.sk].transit && (
+                                <p className="text-blue-600 dark:text-blue-400 font-semibold text-xs flex items-center gap-1.5">
+                                  <span>
+                                    🚆 {travelTimes[trip.sk].stationInfo?.agency || travelTimes[trip.sk].transit?.transitAgency || "Transit"}: {travelTimes[trip.sk].transit?.durationText}
+                                  </span>
+                                  {travelTimes[trip.sk].transit?.transitLine && (
+                                    <span className="px-1.5 py-0.5 text-[10px] bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 rounded font-bold">
+                                      {travelTimes[trip.sk].transit?.transitLine}
+                                    </span>
+                                  )}
+                                </p>
+                              )}
+                            </div>
                           )}
                         </div>
                         <div className="flex justify-end mt-4 gap-2">
