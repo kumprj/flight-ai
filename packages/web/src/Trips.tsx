@@ -678,8 +678,22 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                                     <div className="mt-1.5 text-[10px] text-gray-600 dark:text-gray-400 leading-tight">
                                       {travelTimes[trip.sk].transit.transitSteps
                                         .filter(step => step.transitLine)
-                                        .map(step => step.transitLine)
-                                        .join(' + ')}
+                                        .map((step, idx) => {
+                                          const vehicleType = typeof step.vehicleType === 'string'
+                                            ? step.vehicleType.toLowerCase()
+                                            : step.vehicleType?.text?.toLowerCase() || '';
+                                          let icon = '';
+                                          if (vehicleType.includes('subway') || vehicleType.includes('train')) {
+                                            icon = '🚇';
+                                          } else if (vehicleType.includes('bus')) {
+                                            icon = '🚌';
+                                          } else if (vehicleType.includes('light rail')) {
+                                            icon = '🚃';
+                                          }
+                                          return (
+                                            <div key={idx}>{icon} {step.transitLine}</div>
+                                          );
+                                        })}
                                     </div>
                                   )}
                                 </div>
