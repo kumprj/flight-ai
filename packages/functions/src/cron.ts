@@ -100,7 +100,9 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
             // Case B: Delayed flight
             if (flightStatus.revisedDepartureTime && flightStatus.revisedDepartureTime !== item.date) {
               const delayMins = flightStatus.delayMinutes || 0;
-              console.log(`Flight ${item.flightNumber} is delayed by ${delayMins}m. New departure: ${flightStatus.revisedDepartureTime}`);
+              const previousRevisedDate = item.revisedDate;
+              const delayChanged = previousRevisedDate && previousRevisedDate !== flightStatus.revisedDepartureTime;
+              console.log(`Flight ${item.flightNumber} is delayed by ${delayMins}m. New departure: ${flightStatus.revisedDepartureTime}${delayChanged ? ` (changed from ${previousRevisedDate})` : ''}`);
 
               effectiveDateStr = flightStatus.revisedDepartureTime;
               flightDateUTC = parseFlightTimeToUTC(effectiveDateStr, item.originAirport || item.timezone);
@@ -123,6 +125,77 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
               item.revisedDate = flightStatus.revisedDepartureTime;
               item.delayMinutes = delayMins;
               item.status = "Delayed";
+
+              // Trigger delay-change re-notification if user was already notified AND
+              // the delay amount has materially changed (different revisedDate or >=15m shift)
+              const alreadyNotified = Boolean(item.notified12h || item.notifiedDeparture);
+              const lastNotifiedDelay = item.lastDelayNotifiedMinutes ?? -1;
+              const significantChange = Math.abs(delayMins - lastNotifiedDelay) >= 15;
+
+              if (delayChanged && alreadyNotified && significantChange) {
+                console.log(`Delay changed significantly for ${item.flightNumber}: ${lastNotifiedDelay}m → ${delayMins}m. Sending update notification.`);
+                await lambda.send(new InvokeCommand({
+                  FunctionName: process.env.WORKER_ARN!,
+                  InvocationType: "Event",
+                  Payload: JSON.stringify({
+                    tripId: item.sk,
+                    userId: userId,
+                    homeAddress: item.homeAddress,
+                    airportCode: item.originAirport,
+                    isDelayed: true,
+                    delayMinutes: delayMins,
+                    isUpdate: true,
+                  }),
+                }));
+
+                // Record that we notified at this delay level
+                await dynamodb.update({
+                  TableName: Resource.Table.name,
+                  Key: { pk: item.pk, sk: item.sk },
+                  UpdateExpression: "SET lastDelayNotifiedMinutes = :ldnm",
+                  ExpressionAttributeValues: { ":ldnm": delayMins },
+                });
+              }
+            } else if (item.status === 'Delayed' && !flightStatus.revisedDepartureTime) {
+              // Case B2: Flight was delayed but is now back on schedule
+              console.log(`Flight ${item.flightNumber} is back on schedule (was delayed by ${item.delayMinutes}m)`);
+              await dynamodb.update({
+                TableName: Resource.Table.name,
+                Key: { pk: item.pk, sk: item.sk },
+                UpdateExpression: "SET #status = :status, lastStatusCheck = :lastCheck, updatedAt = :updatedAt REMOVE revisedDate, delayMinutes, lastDelayNotifiedMinutes",
+                ExpressionAttributeNames: { "#status": "status" },
+                ExpressionAttributeValues: {
+                  ":status": flightStatus.status || "Scheduled",
+                  ":lastCheck": now.getTime(),
+                  ":updatedAt": now.getTime(),
+                },
+              });
+
+              // Notify user of the good news if they were previously notified about a delay
+              const wasNotifiedAboutDelay = Boolean(item.notified12h || item.notifiedDeparture);
+              if (wasNotifiedAboutDelay) {
+                console.log(`Sending back-on-schedule notification for ${item.flightNumber}`);
+                await lambda.send(new InvokeCommand({
+                  FunctionName: process.env.WORKER_ARN!,
+                  InvocationType: "Event",
+                  Payload: JSON.stringify({
+                    tripId: item.sk,
+                    userId: userId,
+                    homeAddress: item.homeAddress,
+                    airportCode: item.originAirport,
+                    isDelayed: false,
+                    delayMinutes: 0,
+                    isUpdate: true,
+                  }),
+                }));
+              }
+
+              effectiveDateStr = item.date;
+              flightDateUTC = parseFlightTimeToUTC(effectiveDateStr, item.originAirport || item.timezone);
+              hoursUntilFlight = calculateHoursUntilFlight(flightDateUTC, now);
+              item.revisedDate = undefined;
+              item.delayMinutes = 0;
+              item.status = flightStatus.status || "Scheduled";
             } else {
               // Case C: On time / scheduled
               await dynamodb.update({
@@ -146,8 +219,14 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
         const notify12h = hoursUntilFlight > 11 && hoursUntilFlight <= 12;
         const notifyPreference = hoursUntilFlight > (arrivalPreference + 1) && hoursUntilFlight <= (arrivalPreference + 2);
 
-        if (notify12h || notifyPreference) {
-          const reason = notify12h ? '12-hour advance notice' : `${arrivalPreference + 2}-hour departure window`;
+        // De-duplication: skip if this window was already notified
+        const already12h = Boolean(item.notified12h);
+        const alreadyDeparture = Boolean(item.notifiedDeparture);
+        const should12h = notify12h && !already12h;
+        const shouldDeparture = notifyPreference && !alreadyDeparture;
+
+        if (should12h || shouldDeparture) {
+          const reason = should12h ? '12-hour advance notice' : `${arrivalPreference + 2}-hour departure window`;
           const isDelayed = item.status === 'Delayed' || Boolean(item.revisedDate);
           console.log(`Triggering notification for ${item.flightNumber} (${reason}, Delayed: ${isDelayed})`);
 
@@ -164,7 +243,36 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
             }),
           }));
 
-          console.log(`Notification triggered for ${item.flightNumber}`);
+          // Mark this window as notified so it won't fire again
+          const updateParts: string[] = ['updatedAt = :updatedAt'];
+          const exprValues: Record<string, any> = { ':updatedAt': now.getTime() };
+
+          if (should12h) {
+            updateParts.push('notified12h = :n12h');
+            exprValues[':n12h'] = now.getTime();
+          }
+          if (shouldDeparture) {
+            updateParts.push('notifiedDeparture = :nDep');
+            exprValues[':nDep'] = now.getTime();
+          }
+          // Track delay level at time of notification for change detection
+          if (isDelayed && item.delayMinutes) {
+            updateParts.push('lastDelayNotifiedMinutes = :ldnm');
+            exprValues[':ldnm'] = item.delayMinutes;
+          }
+
+          await dynamodb.update({
+            TableName: Resource.Table.name,
+            Key: { pk: item.pk, sk: item.sk },
+            UpdateExpression: `SET ${updateParts.join(', ')}`,
+            ExpressionAttributeValues: exprValues,
+          });
+
+          console.log(`Notification triggered for ${item.flightNumber} (${reason})`);
+        } else if (notify12h && already12h) {
+          console.log(`Skipping 12h notification for ${item.flightNumber} — already sent`);
+        } else if (notifyPreference && alreadyDeparture) {
+          console.log(`Skipping departure notification for ${item.flightNumber} — already sent`);
         } else if (hoursUntilFlight <= 0) {
           console.log(`Flight ${item.flightNumber} has already departed`);
         } else {

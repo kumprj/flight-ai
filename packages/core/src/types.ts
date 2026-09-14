@@ -11,7 +11,11 @@ export interface Trip {
   revisedDate?: string; // ISO 8601 naive local departure time if delayed/revised
   delayMinutes?: number; // Minutes delayed (positive value)
   lastStatusCheck?: number; // Epoch timestamp of last live status check
-  notifiedAt?: number; // Epoch timestamp of notification sent
+  // Notification de-duplication (epoch timestamps per window)
+  notified12h?: number; // Epoch when 12-hour advance notification was sent
+  notifiedDeparture?: number; // Epoch when departure-window notification was sent
+  // Delay-change re-notification tracking
+  lastDelayNotifiedMinutes?: number; // The delayMinutes value when the last delay-change update was sent
   createdAt?: number;
   updatedAt?: number;
 }
@@ -37,6 +41,7 @@ export interface SchedulerPayload {
   isDelayed?: boolean;
   delayMinutes?: number;
   isCanceled?: boolean;
+  isUpdate?: boolean; // True when this is a re-notification due to a delay change
 }
 
 export interface NotificationPreferences {

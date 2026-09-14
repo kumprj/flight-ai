@@ -149,7 +149,28 @@ export const handler: Handler = async (event) => {
     let message: string;
     let subject: string;
 
-    if (isDelayed) {
+    const isUpdate = Boolean(payload.isUpdate);
+
+    if (isUpdate && !isDelayed) {
+      // Back on schedule — delay removed
+      subject = `✅ UPDATE: Flight ${trip.Item.flightNumber} Back on Schedule!`;
+      message = `✈️ Good News for ${trip.Item.flightNumber}!\n\n` +
+        `Your flight is now back on its original schedule.\n` +
+        `• Departure: ${schedDepartureFormatted}\n\n` +
+        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelInfo.durationText}.\n\n` +
+        `To arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early, leave at ${leaveTimeFormatted}.\n\n` +
+        `Safe travels!`;
+    } else if (isUpdate && isDelayed) {
+      // Delay increased/changed — updated leave time
+      subject = `⏰ UPDATE: Flight ${trip.Item.flightNumber} Delay Changed (+${delayMinutes}m)`;
+      message = `⏰ UPDATED Leave Time for ${trip.Item.flightNumber}!\n\n` +
+        `Your flight delay has changed to ${delayMinutes} minutes.\n` +
+        `• Original: ${schedDepartureFormatted}\n` +
+        `• New Departure: ${effectiveDepartureFormatted}\n\n` +
+        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelInfo.durationText}.\n\n` +
+        `Updated leave time: ${leaveTimeFormatted}\n\n` +
+        `Safe travels!`;
+    } else if (isDelayed) {
       subject = `⚠️ Flight DELAYED (+${delayMinutes}m): Time to Leave for Flight ${trip.Item.flightNumber}!`;
       message = `✈️ Flight DELAY Alert for ${trip.Item.flightNumber}!\n\n` +
         `Your flight is delayed by ${delayMinutes} minutes.\n` +
@@ -182,24 +203,68 @@ export const handler: Handler = async (event) => {
     // 7. Send Email
     console.log("Sending email from:", senderEmail, "to:", recipientEmail);
 
+    // Compute email theme based on notification type
+    const emailTitle = isUpdate && !isDelayed ? 'Flight Back on Schedule'
+      : isUpdate && isDelayed ? 'Updated Leave Time'
+      : isDelayed ? 'Flight Delayed'
+      : 'Flight Alert';
+    const emailIcon = isUpdate && !isDelayed ? '✅'
+      : isUpdate && isDelayed ? '⏰'
+      : isDelayed ? '⚠️'
+      : '✈️';
+    const bannerGradient = isUpdate && !isDelayed ? 'linear-gradient(135deg, #15803d 0%, #166534 100%)'
+      : isUpdate && isDelayed ? 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'
+      : isDelayed ? 'linear-gradient(135deg, #d97706 0%, #b45309 100%)'
+      : 'linear-gradient(135deg, #15803d 0%, #166534 100%)';
+    const accentColor = isUpdate && !isDelayed ? '#15803d'
+      : isUpdate && isDelayed ? '#2563eb'
+      : isDelayed ? '#d97706'
+      : '#15803d';
+    const leaveBoxBg = isUpdate && isDelayed ? 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)'
+      : isDelayed ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)'
+      : 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)';
+    const leaveTimeColor = isUpdate && isDelayed ? '#1d4ed8'
+      : isDelayed ? '#b45309'
+      : '#15803d';
+
     const emailHtml = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${isDelayed ? 'Flight Delayed Alert' : 'Flight Alert'}</title>
+  <title>${emailTitle}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background-color: #f3f4f6;">
   <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-    <div style="background: ${isDelayed ? 'linear-gradient(135deg, #d97706 0%, #b45309 100%)' : 'linear-gradient(135deg, #15803d 0%, #166534 100%)'}; border-radius: 16px; padding: 40px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);">
-      <div style="font-size: 48px; margin-bottom: 16px;">${isDelayed ? '⚠️' : '✈️'}</div>
-      <h1 style="color: white; margin: 0 0 8px 0; font-size: 28px; font-weight: 700;">${isDelayed ? 'Flight Delayed' : 'Flight Alert'}</h1>
+    <div style="background: ${bannerGradient}; border-radius: 16px; padding: 40px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);">
+      <div style="font-size: 48px; margin-bottom: 16px;">${emailIcon}</div>
+      <h1 style="color: white; margin: 0 0 8px 0; font-size: 28px; font-weight: 700;">${emailTitle}</h1>
       <p style="color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 18px;">Flight ${trip.Item.flightNumber}</p>
     </div>
     
     <div style="background: white; border-radius: 16px; padding: 32px; margin-top: 24px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
-      ${isDelayed ? `
+      ${isUpdate && !isDelayed ? `
+      <!-- Back on Schedule Banner -->
+      <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
+        <p style="color: #166534; font-size: 15px; font-weight: 700; margin: 0 0 6px 0;">
+          ✅ Your flight is back on its original schedule
+        </p>
+        <p style="color: #15803d; font-size: 14px; margin: 0;">
+          Departure: <strong>${schedDepartureFormatted}</strong>
+        </p>
+      </div>` : ''}
+      ${isUpdate && isDelayed ? `
+      <!-- Delay Update Banner -->
+      <div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
+        <p style="color: #1e40af; font-size: 15px; font-weight: 700; margin: 0 0 6px 0;">
+          ⏰ Delay Updated (+${delayMinutes} mins)
+        </p>
+        <p style="color: #1e3a8a; font-size: 14px; margin: 0;">
+          Scheduled: <strong>${schedDepartureFormatted}</strong> &nbsp;→&nbsp; New Departure: <strong>${effectiveDepartureFormatted}</strong>
+        </p>
+      </div>` : ''}
+      ${!isUpdate && isDelayed ? `
       <!-- Delay Notice Banner -->
       <div style="background-color: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
         <p style="color: #92400e; font-size: 15px; font-weight: 700; margin: 0 0 6px 0;">
@@ -215,14 +280,14 @@ export const handler: Handler = async (event) => {
         <p style="color: #1f2937; font-size: 16px; margin: 0; line-height: 1.6;">
           From <strong>${payload.homeAddress}</strong> to <strong>${payload.airportCode} airport</strong>
         </p>
-        <p style="color: ${isDelayed ? '#d97706' : '#15803d'}; font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${travelInfo.durationText}</p>
+        <p style="color: ${accentColor}; font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${travelInfo.durationText}</p>
       </div>
       
-      <div style="background: ${isDelayed ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)'}; border-radius: 12px; padding: 24px; border-left: 4px solid ${isDelayed ? '#d97706' : '#15803d'};">
+      <div style="background: ${leaveBoxBg}; border-radius: 12px; padding: 24px; border-left: 4px solid ${accentColor};">
         <p style="color: #4b5563; font-size: 15px; margin: 0 0 12px 0; line-height: 1.6;">
-          To arrive <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong> for your ${isDelayed ? 'delayed ' : ''}flight, you should leave at:
+          To arrive <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong> for your ${isUpdate ? 'updated ' : ''}${isDelayed ? 'delayed ' : ''}flight, you should leave at:
         </p>
-        <p style="color: ${isDelayed ? '#b45309' : '#15803d'}; font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
+        <p style="color: ${leaveTimeColor}; font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
           ${leaveTimeFormatted}
         </p>
       </div>
