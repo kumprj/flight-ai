@@ -19,6 +19,16 @@ interface Trip {
   createdAt?: number;
 }
 
+export interface DayConnectionInfo {
+  isConnecting: boolean;
+  legIndex: number; // 0 = Leg 1, 1 = Leg 2, etc.
+  totalLegs: number;
+  allLegs: Trip[];
+  previousFlight?: Trip;
+  nextFlight?: Trip;
+  layoverMinutes?: number;
+}
+
 interface TransitStep {
   instruction?: string;
   stopName?: string;
@@ -44,8 +54,96 @@ interface TravelTimeData {
   };
   ctaAlerts?: any[];
   mtaAlerts?: any[];
+  tflAlerts?: any[];
   stationInfo?: { agency?: string; line?: string; fareDescription?: string };
 }
+
+// Pure helper function to detect day-of connections across independent trips
+export const getDayConnectionInfo = (trip: Trip, allTrips: Trip[]): DayConnectionInfo => {
+  const tripTime = new Date(trip.revisedDate || trip.date).getTime();
+
+  // Find candidate flights within 24 hours of this trip
+  const candidateFlights = allTrips
+    .filter((other) => {
+      const otherTime = new Date(other.revisedDate || other.date).getTime();
+      return Math.abs(tripTime - otherTime) <= 24 * 60 * 60 * 1000;
+    })
+    .sort((a, b) => new Date(a.revisedDate || a.date).getTime() - new Date(b.revisedDate || b.date).getTime());
+
+  // Build connecting chains: where current destination airport matches next origin airport
+  const chains: Trip[][] = [];
+  const used = new Set<string>();
+
+  for (const candidate of candidateFlights) {
+    if (used.has(candidate.sk)) continue;
+
+    const currentChain: Trip[] = [candidate];
+    used.add(candidate.sk);
+
+    let current = candidate;
+    let foundNext = true;
+
+    while (foundNext) {
+      foundNext = false;
+      const currentArrTime = new Date(current.revisedArrivalTime || current.arrivalTime || current.date).getTime();
+
+      for (const other of candidateFlights) {
+        if (used.has(other.sk)) continue;
+        const otherDepTime = new Date(other.revisedDate || other.date).getTime();
+
+        // Destination of current matches origin of other, departing after arrival (within 14h window)
+        if (
+          current.destinationAirport === other.originAirport &&
+          otherDepTime >= currentArrTime - 30 * 60 * 1000 &&
+          otherDepTime - currentArrTime <= 14 * 60 * 60 * 1000
+        ) {
+          currentChain.push(other);
+          used.add(other.sk);
+          current = other;
+          foundNext = true;
+          break;
+        }
+      }
+    }
+
+    if (currentChain.length > 1) {
+      chains.push(currentChain);
+    }
+  }
+
+  // Check if our trip belongs to any chain
+  for (const chain of chains) {
+    const idx = chain.findIndex((f) => f.sk === trip.sk);
+    if (idx !== -1) {
+      const prev = chain[idx - 1];
+      const next = chain[idx + 1];
+      let layoverMins: number | undefined;
+
+      if (prev) {
+        const prevArr = new Date(prev.revisedArrivalTime || prev.arrivalTime || prev.date).getTime();
+        const thisDep = new Date(trip.revisedDate || trip.date).getTime();
+        layoverMins = Math.max(0, Math.round((thisDep - prevArr) / 60000));
+      }
+
+      return {
+        isConnecting: true,
+        legIndex: idx,
+        totalLegs: chain.length,
+        allLegs: chain,
+        previousFlight: prev,
+        nextFlight: next,
+        layoverMinutes: layoverMins,
+      };
+    }
+  }
+
+  return {
+    isConnecting: false,
+    legIndex: 0,
+    totalLegs: 1,
+    allLegs: [trip],
+  };
+};
 
 export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (trip: Trip) => void }) {
   const [trips, setTrips] = useState<Trip[]>([]);
@@ -107,14 +205,14 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         }
       });
 
-      // Active flights: sort by soonest date first (next flight as first tile)
+      // Active flights: sort soonest date first
       activeTrips.sort((a, b) => {
         const timeA = new Date(a.revisedDate || a.date).getTime();
         const timeB = new Date(b.revisedDate || b.date).getTime();
         return timeA - timeB;
       });
 
-      // Past flights: leave sorted order as is (most recent past flight first)
+      // Past flights: most recent past flight first
       pastTrips.sort((a, b) => {
         const timeA = new Date(a.revisedDate || a.date).getTime();
         const timeB = new Date(b.revisedDate || b.date).getTime();
@@ -124,7 +222,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       const sortedTrips = [...activeTrips, ...pastTrips];
       setTrips(sortedTrips);
 
-      // Load travel times for each trip
+      // Load travel times only for flights departing from home (not intermediate connection layovers)
       loadTravelTimes(sortedTrips);
     } catch (err) {
       console.error(err);
@@ -134,81 +232,44 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     }
   };
 
-  const loadTravelTimes = async (trips: Trip[]) => {
+  const loadTravelTimes = async (allTripsList: Trip[]) => {
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
 
-      const travelTimePromises = trips.filter(trip => !isOldTrip(trip.revisedDate || trip.date)).map(async (trip) => {
-        try {
-          const res = await axios.post(`${Config.API_URL}/trips/travel-time`, {
-            homeAddress: trip.homeAddress,
-            airportCode: trip.originAirport
-          }, {
-            headers: {Authorization: `Bearer ${token}`}
-          });
-          return { tripId: trip.sk, data: res.data };
-        } catch (err) {
-          console.error(`Failed to get travel time for trip ${trip.sk}:`, err);
-          return { tripId: trip.sk, data: null };
-        }
-      });
+      // Only compute travel time from home for active flights that originate from home (Leg 1)
+      const travelTimePromises = allTripsList
+        .filter((trip) => {
+          if (isOldTrip(trip.revisedDate || trip.date)) return false;
+          const conn = getDayConnectionInfo(trip, allTripsList);
+          return conn.legIndex === 0;
+        })
+        .map(async (trip) => {
+          try {
+            const res = await axios.post(`${Config.API_URL}/trips/travel-time`, {
+              homeAddress: trip.homeAddress,
+              airportCode: trip.originAirport
+            }, {
+              headers: {Authorization: `Bearer ${token}`}
+            });
+            return { tripId: trip.sk, data: res.data };
+          } catch (err) {
+            console.error(`Failed to get travel time for trip ${trip.sk}:`, err);
+            return { tripId: trip.sk, data: null };
+          }
+        });
 
       const results = await Promise.all(travelTimePromises);
-
-      const travelTimesMap: Record<string, TravelTimeData> = {};
-      results.forEach(({ tripId, data }) => {
-        if (data) {
-          travelTimesMap[tripId] = data;
+      const newTravelTimes: Record<string, TravelTimeData> = {};
+      results.forEach(result => {
+        if (result.data) {
+          newTravelTimes[result.tripId] = result.data;
         }
       });
-
-      setTravelTimes(travelTimesMap);
+      setTravelTimes(newTravelTimes);
     } catch (err) {
       console.error("Failed to load travel times:", err);
     }
-  };
-
-  const formatDate = (dateStr: string, timezone?: string) => {
-    // Parse the ISO string (handles +00:00 UTC format)
-    const date = new Date(dateStr);
-
-    // Use the timezone from the trip data
-    const options: Intl.DateTimeFormatOptions = timezone
-        ? {timeZone: timezone}
-        : {};
-
-    return {
-      dayOfWeek: date.toLocaleDateString('en-US', {
-        weekday: 'short',
-        ...options
-      }),
-      monthDay: date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        ...options
-      }),
-      time: date.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-        ...options
-      })
-    };
-  };
-
-  const getArrivalFormatted = (trip: Trip) => {
-    const arrivalStr = trip.revisedArrivalTime || trip.arrivalTime;
-    if (arrivalStr) {
-      return formatDate(arrivalStr);
-    }
-    // Fallback: estimate arrival from departure time + typical flight duration (~2h 15m)
-    const depDate = new Date(trip.revisedDate || trip.date);
-    if (isNaN(depDate.getTime())) {
-      return { dayOfWeek: '', monthDay: '', time: '--:--' };
-    }
-    const estimatedDate = new Date(depDate.getTime() + 135 * 60 * 1000);
-    return formatDate(estimatedDate.toISOString());
   };
 
   const handleTestNotify = async (trip: Trip) => {
@@ -216,13 +277,17 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
-      await axios.post(`${Config.API_URL}/trips/test-notify`, { tripId: trip.sk }, {
+      await axios.post(`${Config.API_URL}/trips/notify`, {
+        tripId: trip.sk,
+        type: 'both'
+      }, {
         headers: {Authorization: `Bearer ${token}`}
       });
-      alert("Test notification sent! Check your email.");
-    } catch (err) {
+      showToast("Test notification sent! Check your SMS/Email.", "success");
+    } catch (err: any) {
       console.error(err);
-      showToast("Failed to send test notification.", "error");
+      const errorMsg = err.response?.data?.error || "Failed to send test notification.";
+      showToast(errorMsg, "error");
     } finally {
       setTestNotifying(null);
     }
@@ -237,14 +302,36 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         data: { tripId: trip.sk },
         headers: {Authorization: `Bearer ${token}`}
       });
-      showToast(`${trip.flightNumber} removed.`);
+      showToast("Flight deleted successfully", "success");
       if (expandedTrip?.sk === trip.sk) {
         setExpandedTrip(null);
       }
       loadTrips();
     } catch (err) {
       console.error(err);
-      showToast("Failed to delete trip.", "error");
+      showToast("Failed to delete flight", "error");
+    }
+  };
+
+  const handleDeleteAllLegs = async (legs: Trip[]) => {
+    setConfirmDeleteId(null);
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+      await Promise.all(
+        legs.map((leg) =>
+          axios.delete(`${Config.API_URL}/trips`, {
+            data: { tripId: leg.sk },
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        )
+      );
+      showToast(`All ${legs.length} itinerary flights deleted`, "success");
+      setExpandedTrip(null);
+      loadTrips();
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to delete itinerary flights", "error");
     }
   };
 
@@ -259,384 +346,401 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       'JFK': 'New York, NY',
       'SFO': 'San Francisco, CA',
       'SEA': 'Seattle, WA',
-      'MIA': 'Miami, FL',
+      'LAS': 'Las Vegas, NV',
+      'MCO': 'Orlando, FL',
       'EWR': 'Newark, NJ',
-      'BOS': 'Boston, MA',
-      'PHL': 'Philadelphia, PA',
+      'CLT': 'Charlotte, NC',
       'PHX': 'Phoenix, AZ',
       'IAH': 'Houston, TX',
+      'MIA': 'Miami, FL',
+      'BOS': 'Boston, MA',
       'MSP': 'Minneapolis, MN',
       'DTW': 'Detroit, MI',
-      'CLT': 'Charlotte, NC',
-      'LAS': 'Las Vegas, NV',
-      'LGA': 'New York, NY',
       'FLL': 'Fort Lauderdale, FL',
-      'SAN': 'San Diego, CA',
-      'IAD': 'Washington, DC',
-      'TPA': 'Tampa, FL',
-      'MDW': 'Chicago, IL',
+      'PHL': 'Philadelphia, PA',
+      'LGA': 'New York, NY',
       'BWI': 'Baltimore, MD',
       'SLC': 'Salt Lake City, UT',
-      'HNL': 'Honolulu, HI',
-      'PDX': 'Portland, OR',
-      'MCO': 'Orlando, FL',
+      'SAN': 'San Diego, CA',
+      'IAD': 'Washington, DC',
       'DCA': 'Washington, DC',
+      'MDW': 'Chicago, IL',
+      'TPA': 'Tampa, FL',
+      'PDX': 'Portland, OR',
+      'HNL': 'Honolulu, HI',
       'STL': 'St. Louis, MO',
       'BNA': 'Nashville, TN',
       'AUS': 'Austin, TX',
-      'SJU': 'San Juan, PR',
-      'SJC': 'San Jose, CA',
-      'OAK': 'Oakland, CA',
-      'SMF': 'Sacramento, CA',
-      'SNA': 'Orange County, CA',
-      'MCI': 'Kansas City, MO',
-      'RDU': 'Raleigh, NC',
-      'CLE': 'Cleveland, OH',
-      'IND': 'Indianapolis, IN',
-      'PIT': 'Pittsburgh, PA',
-      'CMH': 'Columbus, OH',
-      'CVG': 'Cincinnati, OH',
-      'BDL': 'Hartford, CT',
-      'PBI': 'West Palm Beach, FL',
-      'RSW': 'Fort Myers, FL',
-      'JAX': 'Jacksonville, FL',
-      'OKC': 'Oklahoma City, OK',
-      'ABQ': 'Albuquerque, NM',
-      'OMA': 'Omaha, NE',
-      'BUR': 'Burbank, CA',
-      'SDF': 'Louisville, KY',
-      'HOU': 'Houston, TX',
       'DAL': 'Dallas, TX',
-      'SAT': 'San Antonio, TX',
+      'RDU': 'Raleigh, NC',
+      'HOU': 'Houston, TX',
+      'OAK': 'Oakland, CA',
       'MSY': 'New Orleans, LA',
-      'RNO': 'Reno, NV',
-      'PVD': 'Providence, RI',
-      'MEM': 'Memphis, TN',
-      'ALB': 'Albany, NY',
-      'TUS': 'Tucson, AZ',
-      'ELP': 'El Paso, TX',
-      'ONT': 'Ontario, CA',
+      'SMF': 'Sacramento, CA',
+      'SNA': 'Santa Ana, CA',
+      'SJC': 'San Jose, CA',
+      'PIT': 'Pittsburgh, PA',
+      'SAT': 'San Antonio, TX',
+      'IND': 'Indianapolis, IN',
+      'CLE': 'Cleveland, OH',
+      'CMH': 'Columbus, OH',
       'MKE': 'Milwaukee, WI',
+      'BDL': 'Hartford, CT',
+      'JAX': 'Jacksonville, FL',
+      'RSW': 'Fort Myers, FL',
+      'PBI': 'West Palm Beach, FL',
+      'OGG': 'Kahului, HI',
+      'ABQ': 'Albuquerque, NM',
+      'BUR': 'Burbank, CA',
       'BUF': 'Buffalo, NY',
-      'ROC': 'Rochester, NY',
+      'OMA': 'Omaha, NE',
+      'MEM': 'Memphis, TN',
       'RIC': 'Richmond, VA',
-      'GSO': 'Greensboro, NC',
-      'PNS': 'Pensacola, FL',
-      'ORF': 'Norfolk, VA',
+      'OKC': 'Oklahoma City, OK',
       'CHS': 'Charleston, SC',
-      'SAV': 'Savannah, GA',
-      'MYR': 'Myrtle Beach, SC',
-      'PSP': 'Palm Springs, CA',
-      'LGB': 'Long Beach, CA',
-      'ISP': 'Islip, NY',
-      'HPN': 'White Plains, NY',
-      'SWF': 'Newburgh, NY',
-      'ALO': 'Waterloo, IA',
-      'DSM': 'Des Moines, IA',
-      'CID': 'Cedar Rapids, IA',
-      'MLI': 'Moline, IL',
-      'PIA': 'Peoria, IL',
-      'SPI': 'Springfield, IL',
-      'DEC': 'Decatur, IL',
-      'BMI': 'Bloomington, IL',
-      'CMI': 'Champaign, IL',
-      'EVV': 'Evansville, IN',
-      'FWA': 'Fort Wayne, IN',
-      'SBN': 'South Bend, IN',
-      'TOL': 'Toledo, OH',
-      'DAY': 'Dayton, OH',
-      'CAK': 'Akron, OH',
-      'LAN': 'Lansing, MI',
+      'TUS': 'Tucson, AZ',
+      'ORF': 'Norfolk, VA',
+      'SDF': 'Louisville, KY',
+      'BOI': 'Boise, ID',
       'GRR': 'Grand Rapids, MI',
-      'MBS': 'Saginaw, MI',
-      'PLN': 'Pellston, MI',
-      'ESC': 'Escanaba, MI',
-      'MQT': 'Marquette, MI',
-      'IMT': 'Iron Mountain, MI',
-      'AZO': 'Kalamazoo, MI',
-      'BTL': 'Battle Creek, MI',
-      'FNT': 'Flint, MI',
-      'DET': 'Detroit, MI',
-      'MKG': 'Muskegon, MI',
-      'TVC': 'Traverse City, MI',
-      'JLN': 'Joplin, MO',
-      'COU': 'Columbia, MO',
-      'SGF': 'Springfield, MO',
-      'TBN': 'Branson, MO',
+      'RNO': 'Reno, NV',
+      'BHM': 'Birmingham, AL',
+      'PVD': 'Providence, RI',
+      'SAV': 'Savannah, GA',
+      'SYR': 'Syracuse, NY',
+      'TYS': 'Knoxville, TN',
+      'GSO': 'Greensboro, NC',
+      'PWM': 'Portland, ME',
+      'ROC': 'Rochester, NY',
+      'DAY': 'Dayton, OH',
+      'LIT': 'Little Rock, AR',
+      'TUL': 'Tulsa, OK',
+      'ALB': 'Albany, NY',
+      'FAT': 'Fresno, CA',
+      'MYR': 'Myrtle Beach, SC',
+      'COS': 'Colorado Springs, CO',
+      'CAE': 'Columbia, SC',
+      'BTV': 'Burlington, VT',
+      'ICT': 'Wichita, KS',
+      'HSV': 'Huntsville, AL',
+      'MHT': 'Manchester, NH',
+      'CAK': 'Akron, OH',
+      'LEX': 'Lexington, KY',
+      'ILM': 'Wilmington, NC',
+      'ROA': 'Roanoke, VA',
       'MSN': 'Madison, WI',
-      'GRB': 'Green Bay, WI',
-      'EAU': 'Eau Claire, WI',
-      'LSE': 'La Crosse, WI',
-      'CWA': 'Wausau, WI',
-      'RST': 'Rochester, MN',
-      'DLH': 'Duluth, MN',
-      'BRD': 'Brainerd, MN',
-      'INL': 'International Falls, MN',
+      'FWA': 'Fort Wayne, IN',
+      'PIA': 'Peoria, IL',
+      'BMI': 'Bloomington, IL',
+      'MLI': 'Moline, IL',
+      'CID': 'Cedar Rapids, IA',
+      'DSM': 'Des Moines, IA',
+      'SGF': 'Springfield, MO',
+      'FSD': 'Sioux Falls, SD',
       'FAR': 'Fargo, ND',
       'BIS': 'Bismarck, ND',
-      'MOT': 'Minot, ND',
-      'RAP': 'Rapid City, SD',
-      'PIR': 'Pierre, SD',
-      'FSD': 'Sioux Falls, SD',
-      'ABR': 'Aberdeen, SD',
-      'LNK': 'Lincoln, NE',
-      'GRI': 'Grand Island, NE',
-      'LBF': 'North Platte, NE',
-      'CPR': 'Casper, WY',
-      'JAC': 'Jackson Hole, WY',
       'BIL': 'Billings, MT',
-      'GTF': 'Great Falls, MT',
+      'BZN': 'Bozeman, MT',
       'MSO': 'Missoula, MT',
-      'BOI': 'Boise, ID',
-      'PIH': 'Pocatello, ID',
-      'SUN': 'Hailey, ID',
+      'JAC': 'Jackson Hole, WY',
+      'CPR': 'Casper, WY',
+      'GTF': 'Great Falls, MT',
+      'RAP': 'Rapid City, SD',
+      'EUG': 'Eugene, OR',
       'GEG': 'Spokane, WA',
       'PSC': 'Pasco, WA',
-      'ALW': 'Walla Walla, WA',
-      'EAT': 'Wenatchee, WA',
+      'BLI': 'Bellingham, WA',
       'YKM': 'Yakima, WA',
-      'EUG': 'Eugene, OR',
-      'MFR': 'Medford, OR',
-      'RDM': 'Redmond, OR',
-      'LMT': 'Klamath Falls, OR',
-      'FAT': 'Fresno, CA',
+      'RDD': 'Redding, CA',
       'BFL': 'Bakersfield, CA',
-      'SBA': 'Santa Barbara, CA',
-      'SMX': 'Santa Maria, CA',
       'MRY': 'Monterey, CA',
+      'SBP': 'San Luis Obispo, CA',
+      'SBA': 'Santa Barbara, CA',
+      'PSP': 'Palm Springs, CA',
+      'IPL': 'Imperial, CA',
+      'YUM': 'Yuma, AZ',
+      'FLG': 'Flagstaff, AZ',
+      'GJT': 'Grand Junction, CO',
+      'DRO': 'Durango, CO',
+      'ASE': 'Aspen, CO',
+      'EGE': 'Vail, CO',
+      'GUC': 'Gunnison, CO',
+      'HDN': 'Hayden, CO',
+      'MTJ': 'Montrose, CO',
+      'SAF': 'Santa Fe, NM',
+      'ROW': 'Roswell, NM',
+      'HOB': 'Hobbs, NM',
+      'ELP': 'El Paso, TX',
       'MAF': 'Midland, TX',
       'LBB': 'Lubbock, TX',
       'AMA': 'Amarillo, TX',
-      'BTR': 'Baton Rouge, LA',
-      'LFT': 'Lafayette, LA',
+      'ABI': 'Abilene, TX',
+      'SJT': 'San Angelo, TX',
+      'ACT': 'Waco, TX',
+      'TYR': 'Tyler, TX',
+      'GGG': 'Longview, TX',
+      'TXK': 'Texarkana, TX/AR',
+      'CLL': 'College Station, TX',
+      'BPT': 'Beaumont, TX',
+      'CRP': 'Corpus Christi, TX',
+      'MFE': 'McAllen, TX',
+      'HRL': 'Harlingen, TX',
+      'BRO': 'Brownsville, TX',
+      'LRD': 'Laredo, TX',
       'SHV': 'Shreveport, LA',
-      'LIT': 'Little Rock, AR',
-      'XNA': 'Fayetteville, AR',
-      'TUL': 'Tulsa, OK',
-      'ICT': 'Wichita, KS',
+      'MLU': 'Monroe, LA',
+      'AEX': 'Alexandria, LA',
+      'LFT': 'Lafayette, LA',
+      'LCH': 'Lake Charles, LA',
+      'BTR': 'Baton Rouge, LA',
+      'GPT': 'Gulfport, MS',
+      'HBG': 'Hattiesburg, MS',
+      'JAN': 'Jackson, MS',
+      'GTR': 'Columbus, MS',
+      'TUP': 'Tupelo, MS',
+      'MGM': 'Montgomery, AL',
+      'MOB': 'Mobile, AL',
+      'DHN': 'Dothan, AL',
+      'CSG': 'Columbus, GA',
+      'MCN': 'Macon, GA',
+      'ABY': 'Albany, GA',
+      'VLD': 'Valdosta, GA',
+      'BQK': 'Brunswick, GA',
+      'AGS': 'Augusta, GA',
+      'HHH': 'Hilton Head, SC',
+      'FLO': 'Florence, SC',
+      'FAY': 'Fayetteville, NC',
+      'OAJ': 'Jacksonville, NC',
+      'EWN': 'New Bern, NC',
+      'PGV': 'Greenville, NC',
+      'ISO': 'Kinston, NC',
+      'RWI': 'Rocky Mount, NC',
+      'CHO': 'Charlottesville, VA',
+      'SHD': 'Staunton, VA',
+      'LYH': 'Lynchburg, VA',
+      'TRI': 'Blountville, TN',
       'CHA': 'Chattanooga, TN',
-      'TYS': 'Knoxville, TN',
-      'TRI': 'Bristol, TN',
-      'AVL': 'Asheville, NC',
-      'CAE': 'Columbia, SC',
-      'GSP': 'Greenville, SC',
-      'VPS': 'Destin, FL',
-      'TLH': 'Tallahassee, FL',
-      'EYW': 'Key West, FL',
-      'BQN': 'Aguadilla, PR',
-      'SDQ': 'Santo Domingo, Dominican Republic',
-      'PUJ': 'Punta Cana, Dominican Republic',
-      'CUN': 'Cancun, Mexico',
-      'SJD': 'San Jose del Cabo, Mexico',
-      'MEX': 'Mexico City, Mexico',
-      'PVR': 'Puerto Vallarta, Mexico',
-      'GDL': 'Guadalajara, Mexico',
-      'MTY': 'Monterrey, Mexico',
-      
-      // Canada
-      'YYZ': 'Toronto, Canada',
-      'YVR': 'Vancouver, Canada',
-      'YUL': 'Montreal, Canada',
-      'YYC': 'Calgary, Canada',
-      'YEG': 'Edmonton, Canada',
-      'YOW': 'Ottawa, Canada',
-      'YWG': 'Winnipeg, Canada',
-      'YXE': 'Saskatoon, Canada',
-      'YQR': 'Regina, Canada',
-      'YHZ': 'Halifax, Canada',
-      'YQB': 'Quebec City, Canada',
-      'YKA': 'Kamloops, Canada',
-      'YYJ': 'Victoria, Canada',
-      'YXS': 'Prince George, Canada',
-      'YXY': 'Whitehorse, Canada',
-      'YZF': 'Yellowknife, Canada',
-      'YFB': 'Iqaluit, Canada',
-      
-      // Europe
-      'LHR': 'London, UK',
-      'LGW': 'London, UK',
-      'STN': 'London, UK',
-      'LTN': 'London, UK',
-      'MAN': 'Manchester, UK',
-      'BHX': 'Birmingham, UK',
-      'EDI': 'Edinburgh, UK',
-      'GLA': 'Glasgow, UK',
-      'BFS': 'Belfast, UK',
-      'DUB': 'Dublin, Ireland',
-      'SNN': 'Shannon, Ireland',
-      'CDG': 'Paris, France',
-      'ORY': 'Paris, France',
-      'NCE': 'Nice, France',
-      'LYS': 'Lyon, France',
-      'MRS': 'Marseille, France',
-      'TLS': 'Toulouse, France',
+      'PAH': 'Paducah, KY',
+      'OWB': 'Owensboro, KY',
+      'EVV': 'Evansville, IN',
+      'SBN': 'South Bend, IN',
+      'LAN': 'Lansing, MI',
+      'FNT': 'Flint, MI',
+      'MBS': 'Saginaw, MI',
+      'AZO': 'Kalamazoo, MI',
+      'MKG': 'Muskegon, MI',
+      'TVC': 'Traverse City, MI',
+      'APN': 'Alpena, MI',
+      'CIU': 'Sault Ste. Marie, MI',
+      'PLN': 'Pellston, MI',
+      'MQT': 'Marquette, MI',
+      'IMT': 'Iron Mountain, MI',
+      'ESC': 'Escanaba, MI',
+      'RHI': 'Rhinelander, WI',
+      'CWA': 'Mosinee, WI',
+      'ATW': 'Appleton, WI',
+      'GRB': 'Green Bay, WI',
+      'EAU': 'Eau Claire, WI',
+      'LSE': 'La Crosse, WI',
+      'DBQ': 'Dubuque, IA',
+      'ALO': 'Waterloo, IA',
+      'MCW': 'Mason City, IA',
+      'SUX': 'Sioux City, IA',
+      'BRL': 'Burlington, IA',
+      'IRK': 'Kirksville, MO',
+      'UIN': 'Quincy, IL',
+      'DEC': 'Decatur, IL',
+      'CMI': 'Champaign, IL',
+      'MWA': 'Marion, IL',
+      'CGI': 'Cape Girardeau, MO',
+      'JLN': 'Joplin, MO',
+      'COU': 'Columbia, MO',
+      'XNA': 'Fayetteville, AR',
+      'FSM': 'Fort Smith, AR',
+      'ELD': 'El Dorado, AR',
+      'HOT': 'Hot Springs, AR',
+      'JBR': 'Jonesboro, AR',
+      'GRI': 'Grand Island, NE',
+      'LNK': 'Lincoln, NE',
+      'EAR': 'Kearney, NE',
+      'BFF': 'Scottsbluff, NE',
+      'LBF': 'North Platte, NE',
+      'HYS': 'Hays, KS',
+      'GCK': 'Garden City, KS',
+      'DDC': 'Dodge City, KS',
+      'LBL': 'Liberal, KS',
+      'SLN': 'Salina, KS',
+      'MHK': 'Manhattan, KS',
+      'FOE': 'Topeka, KS',
+      'PIR': 'Pierre, SD',
+      'ATY': 'Watertown, SD',
+      'ABR': 'Aberdeen, SD',
+      'HON': 'Huron, SD',
+      'BKX': 'Brookings, SD',
+      'MBG': 'Mobridge, SD',
+      'GFK': 'Grand Forks, ND',
+      'MOT': 'Minot, ND',
+      'ISN': 'Williston, ND',
+      'DIK': 'Dickinson, ND',
+      'JMS': 'Jamestown, ND',
+      'DVL': 'Devils Lake, ND',
+      'BTM': 'Butte, MT',
+      'HLN': 'Helena, MT',
+      'FCA': 'Kalispell, MT',
+      'GPI': 'Kalispell, MT',
+      'WYS': 'West Yellowstone, MT',
+      'COD': 'Cody, WY',
+      'RKS': 'Rock Springs, WY',
+      'LAR': 'Laramie, WY',
+      'GCC': 'Gillette, WY',
+      'SHR': 'Sheridan, WY',
+      'WRL': 'Worland, WY',
+      'RIW': 'Riverton, WY',
+      'IDA': 'Idaho Falls, ID',
+      'PIH': 'Pocatello, ID',
+      'TWF': 'Twin Falls, ID',
+      'LWS': 'Lewiston, ID',
+      'SUN': 'Sun Valley, ID',
+      'ALW': 'Walla Walla, WA',
+      'EAT': 'Wenatchee, WA',
+      'PUW': 'Pullman, WA',
+      'CLM': 'Port Angeles, WA',
+      'AST': 'Astoria, OR',
+      'ONP': 'Newport, OR',
+      'OTH': 'North Bend, OR',
+      'LMT': 'Klamath Falls, OR',
+      'MFR': 'Medford, OR',
+      'RDM': 'Redmond, OR',
+      'PDT': 'Pendleton, OR',
+      'EKO': 'Elko, NV',
+      'ENV': 'Wendover, NV',
+      'ELY': 'Ely, NV',
+      'TPH': 'Tonopah, NV',
+      'CDC': 'Cedar City, UT',
+      'SGU': 'St. George, UT',
+      'CNY': 'Moab, UT',
+      'VEL': 'Vernal, UT',
+      'PRC': 'Prescott, AZ',
+      'GCN': 'Grand Canyon, AZ',
+      'PGA': 'Page, AZ',
+      'IFP': 'Bullhead City, AZ',
+      'INW': 'Winslow, AZ',
+      'SOW': 'Show Low, AZ',
+      'DUG': 'Douglas, AZ',
+      'FMN': 'Farmington, NM',
+      'GUP': 'Gallup, NM',
+      'SVC': 'Silver City, NM',
+      'ALM': 'Alamogordo, NM',
+      'CNM': 'Carlsbad, NM',
+      'CVN': 'Clovis, NM',
+      'TCC': 'Tucumcari, NM',
+      'PUB': 'Pueblo, CO',
+      'ALS': 'Alamosa, CO',
+      'STC': 'St. Cloud, MN',
+      'BRD': 'Brainerd, MN',
+      'BJI': 'Bemidji, MN',
+      'HIB': 'Hibbing, MN',
+      'INL': 'International Falls, MN',
+      'DLH': 'Duluth, MN',
+      'RST': 'Rochester, MN',
+      // International
+      'LHR': 'London Heathrow, UK',
+      'LGW': 'London Gatwick, UK',
+      'CDG': 'Paris Charles de Gaulle, France',
+      'ORY': 'Paris Orly, France',
       'FRA': 'Frankfurt, Germany',
       'MUC': 'Munich, Germany',
-      'DUS': 'Dusseldorf, Germany',
-      'HAM': 'Hamburg, Germany',
-      'BER': 'Berlin, Germany',
-      'CGN': 'Cologne, Germany',
-      'STR': 'Stuttgart, Germany',
       'AMS': 'Amsterdam, Netherlands',
-      'BRU': 'Brussels, Belgium',
-      'ZRH': 'Zurich, Switzerland',
-      'GVA': 'Geneva, Switzerland',
-      'BSL': 'Basel, Switzerland',
-      'VIE': 'Vienna, Austria',
-      'MXP': 'Milan, Italy',
-      'FCO': 'Rome, Italy',
-      'VCE': 'Venice, Italy',
-      'NAP': 'Naples, Italy',
-      'FLR': 'Florence, Italy',
-      'BLQ': 'Bologna, Italy',
       'MAD': 'Madrid, Spain',
       'BCN': 'Barcelona, Spain',
-      'AGP': 'Malaga, Spain',
-      'PMI': 'Palma de Mallorca, Spain',
-      'LIS': 'Lisbon, Portugal',
-      'OPO': 'Porto, Portugal',
+      'FCO': 'Rome Fiumicino, Italy',
+      'MXP': 'Milan Malpensa, Italy',
+      'ZRH': 'Zurich, Switzerland',
+      'GVA': 'Geneva, Switzerland',
+      'VIE': 'Vienna, Austria',
+      'BRU': 'Brussels, Belgium',
+      'DUB': 'Dublin, Ireland',
       'CPH': 'Copenhagen, Denmark',
-      'ARN': 'Stockholm, Sweden',
+      'ARN': 'Stockholm Arlanda, Sweden',
       'OSL': 'Oslo, Norway',
       'HEL': 'Helsinki, Finland',
-      'LED': 'St. Petersburg, Russia',
-      'SVO': 'Moscow, Russia',
+      'LIS': 'Lisbon, Portugal',
+      'ATH': 'Athens, Greece',
+      'IST': 'Istanbul, Turkey',
       'WAW': 'Warsaw, Poland',
       'PRG': 'Prague, Czech Republic',
       'BUD': 'Budapest, Hungary',
-      'ATH': 'Athens, Greece',
-      'IST': 'Istanbul, Turkey',
-      'SAW': 'Istanbul, Turkey',
-      'ESB': 'Ankara, Turkey',
-      'OTP': 'Bucharest, Romania',
-      'SOF': 'Sofia, Bulgaria',
-      'BEG': 'Belgrade, Serbia',
-      'ZAG': 'Zagreb, Croatia',
-      'LJU': 'Ljubljana, Slovenia',
-      'SKG': 'Thessaloniki, Greece',
-      'HER': 'Heraklion, Greece',
-      'MLA': 'Malta, Malta',
-      
-      // Asia
-      'NRT': 'Tokyo, Japan',
-      'HND': 'Tokyo, Japan',
-      'KIX': 'Osaka, Japan',
-      'NGO': 'Nagoya, Japan',
-      'CTS': 'Sapporo, Japan',
-      'FUK': 'Fukuoka, Japan',
-      'ICN': 'Seoul, South Korea',
-      'GMP': 'Seoul, South Korea',
-      'PUS': 'Busan, South Korea',
-      'PEK': 'Beijing, China',
-      'PVG': 'Shanghai, China',
+      'YYZ': 'Toronto Pearson, Canada',
+      'YVR': 'Vancouver, Canada',
+      'YUL': 'Montreal Trudeau, Canada',
+      'YYC': 'Calgary, Canada',
+      'YOW': 'Ottawa, Canada',
+      'MEX': 'Mexico City, Mexico',
+      'CUN': 'Cancun, Mexico',
+      'GDL': 'Guadalajara, Mexico',
+      'MTY': 'Monterrey, Mexico',
+      'TIJ': 'Tijuana, Mexico',
+      'SJD': 'San Jose del Cabo, Mexico',
+      'PVR': 'Puerto Vallarta, Mexico',
+      'NRT': 'Tokyo Narita, Japan',
+      'HND': 'Tokyo Haneda, Japan',
+      'KIX': 'Osaka Kansai, Japan',
+      'ICN': 'Seoul Incheon, South Korea',
+      'PEK': 'Beijing Capital, China',
+      'PKX': 'Beijing Daxing, China',
+      'PVG': 'Shanghai Pudong, China',
+      'SHA': 'Shanghai Hongqiao, China',
       'CAN': 'Guangzhou, China',
-      'SZX': 'Shenzhen, China',
-      'CTU': 'Chengdu, China',
       'HKG': 'Hong Kong',
-      'MFM': 'Macau',
-      'TPE': 'Taipei, Taiwan',
-      'KHH': 'Kaohsiung, Taiwan',
-      'MNL': 'Manila, Philippines',
-      'CEB': 'Cebu, Philippines',
-      'DVO': 'Davao, Philippines',
-      'SIN': 'Singapore',
+      'TPE': 'Taipei Taoyuan, Taiwan',
+      'SIN': 'Singapore Changi, Singapore',
+      'BKK': 'Bangkok Suvarnabhumi, Thailand',
+      'DMK': 'Bangkok Don Mueang, Thailand',
       'KUL': 'Kuala Lumpur, Malaysia',
-      'BKK': 'Bangkok, Thailand',
-      'DMK': 'Bangkok, Thailand',
-      'HKT': 'Phuket, Thailand',
-      'CGK': 'Jakarta, Indonesia',
-      'DPS': 'Bali, Indonesia',
-      'SUB': 'Surabaya, Indonesia',
+      'CGK': 'Jakarta Soekarno-Hatta, Indonesia',
+      'MNL': 'Manila Ninoy Aquino, Philippines',
       'SGN': 'Ho Chi Minh City, Vietnam',
-      'HAN': 'Hanoi, Vietnam',
-      'DAD': 'Da Nang, Vietnam',
-      'PNH': 'Phnom Penh, Cambodia',
-      'REP': 'Siem Reap, Cambodia',
-      'BWN': 'Bandar Seri Begawan, Brunei',
-      'VTE': 'Vientiane, Laos',
-      'RGN': 'Yangon, Myanmar',
-      'DEL': 'New Delhi, India',
-      'BOM': 'Mumbai, India',
-      'BLR': 'Bangalore, India',
+      'HAN': 'Hanoi Noi Bai, Vietnam',
+      'DEL': 'Delhi Indira Gandhi, India',
+      'BOM': 'Mumbai Chhatrapati Shivaji, India',
+      'BLR': 'Bengaluru Kempegowda, India',
       'MAA': 'Chennai, India',
-      'CCU': 'Kolkata, India',
-      'HYD': 'Hyderabad, India',
-      'COK': 'Kochi, India',
-      'AMD': 'Ahmedabad, India',
-      'ISB': 'Islamabad, Pakistan',
-      'KHI': 'Karachi, Pakistan',
-      'LHE': 'Lahore, Pakistan',
-      'KTM': 'Kathmandu, Nepal',
-      'DAC': 'Dhaka, Bangladesh',
-      'CMB': 'Colombo, Sri Lanka',
-      'MLE': 'Male, Maldives',
-      
-      // Middle East
+      'HYD': 'Hyderabad Rajiv Gandhi, India',
       'DXB': 'Dubai, UAE',
       'AUH': 'Abu Dhabi, UAE',
-      'DOH': 'Doha, Qatar',
-      'KWI': 'Kuwait City, Kuwait',
-      'BAH': 'Manama, Bahrain',
-      'MCT': 'Muscat, Oman',
-      'AMM': 'Amman, Jordan',
-      'BEY': 'Beirut, Lebanon',
-      'TLV': 'Tel Aviv, Israel',
-      'JED': 'Jeddah, Saudi Arabia',
-      'RUH': 'Riyadh, Saudi Arabia',
-      'DMM': 'Dammam, Saudi Arabia',
-      
-      // Oceania
-      'SYD': 'Sydney, Australia',
-      'MEL': 'Melbourne, Australia',
+      'DOH': 'Doha Hamad, Qatar',
+      'JED': 'Jeddah King Abdulaziz, Saudi Arabia',
+      'RUH': 'Riyadh King Khalid, Saudi Arabia',
+      'TLV': 'Tel Aviv Ben Gurion, Israel',
+      'CAI': 'Cairo, Egypt',
+      'JNB': 'Johannesburg O.R. Tambo, South Africa',
+      'CPT': 'Cape Town, South Africa',
+      'LOS': 'Lagos Murtala Muhammed, Nigeria',
+      'NBO': 'Nairobi Jomo Kenyatta, Kenya',
+      'SYD': 'Sydney Kingsford Smith, Australia',
+      'MEL': 'Melbourne Tullamarine, Australia',
       'BNE': 'Brisbane, Australia',
       'PER': 'Perth, Australia',
-      'ADL': 'Adelaide, Australia',
-      'CBR': 'Canberra, Australia',
-      'OOL': 'Gold Coast, Australia',
       'AKL': 'Auckland, New Zealand',
-      'WLG': 'Wellington, New Zealand',
-      'CHC': 'Christchurch, New Zealand',
-      'ZQN': 'Queenstown, New Zealand',
-      'NAN': 'Nadi, Fiji',
-      'PPT': 'Papeete, Tahiti',
-      'NOU': 'Noumea, New Caledonia',
-      
-      // South America
-      'GRU': 'Sao Paulo, Brazil',
-      'GIG': 'Rio de Janeiro, Brazil',
-      'EZE': 'Buenos Aires, Argentina',
-      'AEP': 'Buenos Aires, Argentina',
+      'GRU': 'Sao Paulo Guarulhos, Brazil',
+      'GIG': 'Rio de Janeiro Galeao, Brazil',
+      'EZE': 'Buenos Aires Ezeiza, Argentina',
       'SCL': 'Santiago, Chile',
-      'LIM': 'Lima, Peru',
-      'BOG': 'Bogota, Colombia',
-      'MDE': 'Medellin, Colombia',
-      'CLO': 'Cali, Colombia',
-      'UIO': 'Quito, Ecuador',
-      'GYE': 'Guayaquil, Ecuador',
-      'CCS': 'Caracas, Venezuela',
-      
-      // Africa
-      'JNB': 'Johannesburg, South Africa',
-      'CPT': 'Cape Town, South Africa',
-      'DUR': 'Durban, South Africa',
-      'NBO': 'Nairobi, Kenya',
-      'ADD': 'Addis Ababa, Ethiopia',
-      'CAI': 'Cairo, Egypt',
-      'CMN': 'Casablanca, Morocco',
-      'TUN': 'Tunis, Tunisia',
-      'ALG': 'Algiers, Algeria',
-      'LOS': 'Lagos, Nigeria',
-      'ACC': 'Accra, Ghana',
-      'DAR': 'Dar es Salaam, Tanzania',
-      'EBB': 'Entebbe, Uganda',
-      
-      // Caribbean
-      'MBJ': 'Montego Bay, Jamaica',
-      'KIN': 'Kingston, Jamaica',
-      'POS': 'Port of Spain, Trinidad',
-      'BGI': 'Bridgetown, Barbados',
-      'AUA': 'Oranjestad, Aruba',
-      'CUR': 'Willemstad, Curacao',
+      'BOG': 'Bogota El Dorado, Colombia',
+      'LIM': 'Lima Jorge Chavez, Peru',
+      'PTY': 'Panama City Tocumen, Panama',
+      'SJO': 'San Jose Juan Santamaria, Costa Rica',
+      'GUA': 'Guatemala City La Aurora, Guatemala',
+      'SAL': 'San Salvador, El Salvador',
+      'SDQ': 'Santo Domingo Las Americas, Dominican Republic',
+      'PUJ': 'Punta Cana, Dominican Republic',
+      'SJU': 'San Juan Luis Munoz Marin, Puerto Rico',
+      'BQN': 'Aguadilla, Puerto Rico',
+      'PSE': 'Ponce, Puerto Rico',
+      'MBJ': 'Montego Bay Sangster, Jamaica',
+      'KIN': 'Kingston Norman Manley, Jamaica',
+      'HAV': 'Havana Jose Marti, Cuba',
+      'VRA': 'Varadero, Cuba',
       'SXM': 'Sint Maarten',
       'STT': 'Charlotte Amalie, US Virgin Islands',
       'STX': 'Christiansted, US Virgin Islands',
@@ -678,6 +782,69 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     return null;
   };
 
+  const formatDate = (dateStr: string) => {
+    const [datePart, timePart] = dateStr.split('T');
+    if (datePart && timePart) {
+      const [year, month, day] = datePart.split('-').map(Number);
+      const [hour, minute] = timePart.split(':').map(Number);
+
+      const d = new Date(year, month - 1, day, hour, minute);
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      const dayOfWeek = days[d.getDay()];
+      const monthDay = `${months[d.getMonth()]} ${d.getDate()}`;
+
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour % 12 || 12;
+      const displayMinute = minute < 10 ? `0${minute}` : minute;
+      const time = `${displayHour}:${displayMinute} ${period}`;
+
+      return { dayOfWeek, monthDay, time };
+    }
+
+    const d = new Date(dateStr);
+    return {
+      dayOfWeek: d.toLocaleDateString(undefined, { weekday: 'short' }),
+      monthDay: d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      time: d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+    };
+  };
+
+  const getArrivalFormatted = (trip: Trip) => {
+    const arrivalDateStr = trip.revisedArrivalTime || trip.arrivalTime;
+    if (arrivalDateStr) {
+      return formatDate(arrivalDateStr);
+    }
+    // Fallback: estimate +2 hours after departure
+    const depDateStr = trip.revisedDate || trip.date;
+    const [datePart, timePart] = depDateStr.split('T');
+    if (datePart && timePart) {
+      const [year, month, day] = datePart.split('-').map(Number);
+      const [hour, minute] = timePart.split(':').map(Number);
+      const d = new Date(year, month - 1, day, hour + 2, minute);
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const period = d.getHours() >= 12 ? 'PM' : 'AM';
+      const displayHour = d.getHours() % 12 || 12;
+      const displayMinute = d.getMinutes() < 10 ? `0${d.getMinutes()}` : d.getMinutes();
+      return {
+        dayOfWeek: days[d.getDay()],
+        monthDay: `${months[d.getMonth()]} ${d.getDate()}`,
+        time: `${displayHour}:${displayMinute} ${period}`
+      };
+    }
+    return { dayOfWeek: '', monthDay: '', time: '--:--' };
+  };
+
+  const formatLayover = (mins: number) => {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h > 0 && m > 0) return `${h}h ${m}m`;
+    if (h > 0) return `${h}h`;
+    return `${m}m`;
+  };
+
   const activeTrips = trips.filter((t) => !isOldTrip(t.revisedDate || t.date));
   const pastTrips = trips.filter((t) => isOldTrip(t.revisedDate || t.date));
   const upcomingCount = activeTrips.length;
@@ -692,6 +859,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     const isCanceled = trip.status === 'Canceled';
     const isDelayed = !isCanceled && (trip.status === 'Delayed' || Boolean(trip.revisedDate && trip.revisedDate !== trip.date));
     const tripTravelTime = travelTimes[trip.sk];
+    const connectionInfo = getDayConnectionInfo(trip, trips);
 
     return (
       <div
@@ -715,9 +883,16 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           {/* Header row: Flight # + Status Badge + Expand Icon */}
           <div className="flex items-start justify-between gap-2 mb-3">
             <div>
-              <span className="text-xl font-extrabold text-green-700 dark:text-green-500 tracking-tight group-hover:text-green-800 dark:group-hover:text-green-400 transition-colors">
-                {trip.flightNumber}
-              </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xl font-extrabold text-green-700 dark:text-green-500 tracking-tight group-hover:text-green-800 dark:group-hover:text-green-400 transition-colors">
+                  {trip.flightNumber}
+                </span>
+                {connectionInfo.isConnecting && (
+                  <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                    Leg {connectionInfo.legIndex + 1} of {connectionInfo.totalLegs}
+                  </span>
+                )}
+              </div>
               <div className="mt-1 flex items-center gap-1.5 flex-wrap">
                 {isCanceled && (
                   <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300">
@@ -729,7 +904,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                     ⚠️ Delayed {trip.delayMinutes ? `(+${trip.delayMinutes}m)` : ''}
                   </span>
                 )}
-                {!isCanceled && !isDelayed && !old && (
+                {!isCanceled && !isDelayed && !old && !connectionInfo.isConnecting && (
                   <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200/60 dark:border-green-800/60">
                     ✈️ Scheduled
                   </span>
@@ -754,6 +929,16 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
               {getAirportCity(trip.originAirport).split(',')[0]} to {getAirportCity(trip.destinationAirport).split(',')[0]}
             </p>
+            {connectionInfo.nextFlight && (
+              <p className="text-[11px] text-blue-600 dark:text-blue-400 mt-1 font-medium truncate">
+                ↳ Connecting to {connectionInfo.nextFlight.flightNumber} ({connectionInfo.nextFlight.originAirport} → {connectionInfo.nextFlight.destinationAirport})
+              </p>
+            )}
+            {connectionInfo.previousFlight && (
+              <p className="text-[11px] text-purple-600 dark:text-purple-400 mt-1 font-medium truncate">
+                ↳ Connected from {connectionInfo.previousFlight.flightNumber} (arr. {formatDate(connectionInfo.previousFlight.revisedArrivalTime || connectionInfo.previousFlight.arrivalTime || connectionInfo.previousFlight.date).time})
+              </p>
+            )}
           </div>
 
           {/* Date & Time pill */}
@@ -783,7 +968,11 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
 
         {/* Tile footer */}
         <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700/60 flex items-center justify-between text-xs">
-          {tripTravelTime ? (
+          {connectionInfo.legIndex > 0 && connectionInfo.layoverMinutes !== undefined ? (
+            <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium truncate">
+              <span>⏱️ {formatLayover(connectionInfo.layoverMinutes)} layover at {trip.originAirport}</span>
+            </div>
+          ) : tripTravelTime ? (
             <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium truncate">
               <span>🚗 {tripTravelTime.durationText}</span>
               {tripTravelTime.transit && (
@@ -869,7 +1058,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           </div>
         )}
 
-        {/* Expandable Screen Overlay Modal (fills screen as the 1 big card with scroll & X out) */}
+        {/* Expandable Screen Overlay Modal */}
         {expandedTrip && (() => {
           const effectiveDate = expandedTrip.revisedDate || expandedTrip.date;
           const formatted = formatDate(effectiveDate);
@@ -879,6 +1068,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           const isCanceled = expandedTrip.status === 'Canceled';
           const isDelayed = !isCanceled && (expandedTrip.status === 'Delayed' || Boolean(expandedTrip.revisedDate && expandedTrip.revisedDate !== expandedTrip.date));
           const tripTravelTime = travelTimes[expandedTrip.sk];
+          const connectionInfo = getDayConnectionInfo(expandedTrip, trips);
 
           return (
             <div
@@ -898,10 +1088,15 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
               >
                 {/* Modal Top Bar with 'X' close button */}
                 <div className="sticky top-0 z-10 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Flight Details</span>
                     <span className="text-gray-300 dark:text-gray-600">•</span>
                     <span className="text-base font-extrabold text-green-700 dark:text-green-500">{expandedTrip.flightNumber}</span>
+                    {connectionInfo.isConnecting && (
+                      <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                        Leg {connectionInfo.legIndex + 1} of {connectionInfo.totalLegs}
+                      </span>
+                    )}
                   </div>
                   <button
                     onClick={() => setExpandedTrip(null)}
@@ -914,7 +1109,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                   </button>
                 </div>
 
-                {/* Scrollable Big Card Content (fills modal screen) */}
+                {/* Scrollable Big Card Content */}
                 <div className="overflow-y-auto p-6 space-y-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -966,6 +1161,83 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                     </div>
                   </div>
 
+                  {/* TODAY'S FLIGHT ITINERARY COMPONENT (when connection exists) */}
+                  {connectionInfo.isConnecting && (
+                    <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-blue-950/30 dark:to-indigo-950/30 p-4 rounded-2xl border border-blue-100 dark:border-blue-900/40 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wider text-blue-900 dark:text-blue-300 flex items-center gap-1.5">
+                          <span>✈️</span> Today&apos;s Flight Itinerary ({connectionInfo.totalLegs} legs)
+                        </span>
+                        <span className="text-xs text-blue-700 dark:text-blue-400 font-medium">
+                          Viewing Leg {connectionInfo.legIndex + 1} of {connectionInfo.totalLegs}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        {connectionInfo.allLegs.map((leg, idx) => {
+                          const isCurrent = leg.sk === expandedTrip.sk;
+                          const legDep = formatDate(leg.revisedDate || leg.date);
+                          const legArr = getArrivalFormatted(leg);
+                          const nextLeg = connectionInfo.allLegs[idx + 1];
+                          const legLayoverMins = nextLeg ? Math.round((new Date(nextLeg.revisedDate || nextLeg.date).getTime() - new Date(leg.revisedArrivalTime || leg.arrivalTime || leg.date).getTime()) / 60000) : null;
+
+                          return (
+                            <div key={leg.sk}>
+                              <div
+                                onClick={() => setExpandedTrip(leg)}
+                                className={`p-3 rounded-xl transition-all cursor-pointer flex items-center justify-between flex-wrap gap-2 ${
+                                  isCurrent
+                                    ? 'bg-white dark:bg-gray-800 shadow-sm border-2 border-blue-600 dark:border-blue-500'
+                                    : 'bg-white/60 dark:bg-gray-800/60 hover:bg-white dark:hover:bg-gray-800 border border-blue-100/60 dark:border-gray-700'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2.5">
+                                  <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center shrink-0 ${
+                                    isCurrent
+                                      ? 'bg-blue-600 text-white'
+                                      : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                                  }`}>
+                                    {idx + 1}
+                                  </span>
+                                  <div>
+                                    <div className="flex items-center gap-1.5 font-bold text-gray-900 dark:text-white text-sm">
+                                      <span>{leg.flightNumber}</span>
+                                      <span className="text-gray-400 font-normal">•</span>
+                                      <span>{leg.originAirport} → {leg.destinationAirport}</span>
+                                      {isCurrent && (
+                                        <span className="ml-1 text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+                                          (Current)
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      {getAirportCity(leg.originAirport).split(',')[0]} to {getAirportCity(leg.destinationAirport).split(',')[0]}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-xs font-medium text-gray-700 dark:text-gray-300 text-right">
+                                  <span>🛫 {legDep.time}</span>
+                                  <span className="mx-1 text-gray-400">→</span>
+                                  <span>🛬 {legArr.time}</span>
+                                </div>
+                              </div>
+
+                              {/* Layover transfer connector */}
+                              {nextLeg && legLayoverMins !== null && (
+                                <div className="flex items-center gap-2 px-4 py-1.5 text-xs text-amber-700 dark:text-amber-400 font-medium">
+                                  <div className="w-0.5 h-4 bg-blue-300 dark:bg-blue-700 ml-2.5" />
+                                  <span>
+                                    ⏱️ {formatLayover(legLayoverMins)} layover at {leg.destinationAirport} ({getAirportCity(leg.destinationAirport).split(',')[0]})
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Flight Route Map */}
                   <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-inner">
                     <img
@@ -976,94 +1248,121 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                     />
                   </div>
 
-                  {/* Commute and Address Details */}
+                  {/* Commute and Transfer Details */}
                   <div className="bg-gray-50 dark:bg-gray-700/30 rounded-2xl p-5 border border-gray-100 dark:border-gray-700/50">
                     <div className="text-sm text-gray-400 dark:text-gray-500 space-y-3">
-                      <div>
-                        <p className="text-xs uppercase font-medium tracking-wide">Leaving from</p>
-                        <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">{expandedTrip.homeAddress}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs uppercase font-medium tracking-wide">To Departure Airport</p>
-                        <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">
-                          {expandedTrip.originAirport} ({getAirportCity(expandedTrip.originAirport)})
-                        </p>
-                      </div>
-
-                      {tripTravelTime && (
-                        <div className="pt-3 border-t border-gray-200 dark:border-gray-700 space-y-3">
-                          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-semibold text-sm">
-                            <span className="text-base">🚗</span>
-                            <span>Estimated drive time: {tripTravelTime.durationText}</span>
+                      {connectionInfo.legIndex > 0 ? (
+                        <>
+                          <div>
+                            <p className="text-xs uppercase font-medium tracking-wide">Connection Origin</p>
+                            <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">
+                              Transfer at {expandedTrip.originAirport} ({getAirportCity(expandedTrip.originAirport)})
+                            </p>
                           </div>
 
-                          {tripTravelTime.transit && (
-                            <div className="text-blue-700 dark:text-blue-400 font-semibold text-sm bg-blue-50/70 dark:bg-blue-900/20 p-3.5 rounded-xl border border-blue-100 dark:border-blue-900/30">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-base">🚆</span>
-                                <span>
-                                  {tripTravelTime.stationInfo?.agency || tripTravelTime.transit.transitAgency || "Transit"}: {tripTravelTime.transit.durationText}
-                                </span>
-                              </div>
-                              {tripTravelTime.transit.transitSteps && tripTravelTime.transit.transitSteps.length > 0 ? (
-                                <div className="mt-2.5 space-y-1.5 text-xs text-gray-600 dark:text-gray-300 font-normal">
-                                  {tripTravelTime.transit.transitSteps
-                                    .filter(step => step.transitLine)
-                                    .map((step, idx) => {
-                                      const vehicleType = typeof step.vehicleType === 'string'
-                                        ? step.vehicleType.toLowerCase()
-                                        : (step.vehicleType as any)?.text?.toLowerCase() || '';
-                                      let icon = '🚆';
-                                      if (vehicleType.includes('subway') || vehicleType.includes('train')) {
-                                        icon = '🚇';
-                                      } else if (vehicleType.includes('bus')) {
-                                        icon = '🚌';
-                                      } else if (vehicleType.includes('light rail')) {
-                                        icon = '🚃';
-                                      }
-
-                                      const stopSegment = step.departureStop && step.arrivalStop
-                                        ? `${step.departureStop} to ${step.arrivalStop}`
-                                        : step.departureStop
-                                        ? `from ${step.departureStop}`
-                                        : step.arrivalStop
-                                        ? `to ${step.arrivalStop}`
-                                        : step.instruction
-                                        ? step.instruction
-                                        : step.stopName
-                                        ? `at ${step.stopName}`
-                                        : null;
-
-                                      const lineDisplay = step.lineShortName && (!step.transitLine || !step.transitLine.toLowerCase().includes(step.lineShortName.toLowerCase()))
-                                        ? (step.transitLine ? `${step.lineShortName} - ${step.transitLine}` : step.lineShortName)
-                                        : (step.transitLine || step.lineShortName || '');
-
-                                      return (
-                                        <div key={idx} className="flex items-center gap-1.5 flex-wrap">
-                                          <span>{icon}</span>
-                                          <span className="font-semibold text-gray-800 dark:text-gray-200">{lineDisplay}</span>
-                                          {stopSegment && (
-                                            <span className="text-gray-600 dark:text-gray-300 font-normal">
-                                              - {stopSegment}
-                                            </span>
-                                          )}
-                                          {step.numStops ? (
-                                            <span className="text-gray-400 dark:text-gray-500 text-[11px]">
-                                              ({step.numStops} {step.numStops === 1 ? 'stop' : 'stops'})
-                                            </span>
-                                          ) : null}
-                                        </div>
-                                      );
-                                    })}
-                                </div>
-                              ) : getTransitRouteSummary(tripTravelTime) ? (
-                                <div className="mt-2 text-xs text-gray-600 dark:text-gray-300 font-normal">
-                                  {getTransitRouteSummary(tripTravelTime)}
-                                </div>
-                              ) : null}
+                          {connectionInfo.previousFlight && (
+                            <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                Connecting from <span className="font-bold text-gray-800 dark:text-gray-200">{connectionInfo.previousFlight.flightNumber}</span> ({connectionInfo.previousFlight.originAirport} → {connectionInfo.previousFlight.destinationAirport})
+                              </p>
+                              {connectionInfo.layoverMinutes !== undefined && (
+                                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 mt-1">
+                                  ⏱️ Scheduled Layover: {formatLayover(connectionInfo.layoverMinutes)}
+                                </p>
+                              )}
                             </div>
                           )}
-                        </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <p className="text-xs uppercase font-medium tracking-wide">Leaving from</p>
+                            <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">{expandedTrip.homeAddress}</p>
+                          </div>
+
+                          <div>
+                            <p className="text-xs uppercase font-medium tracking-wide">To Departure Airport</p>
+                            <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">
+                              {expandedTrip.originAirport} ({getAirportCity(expandedTrip.originAirport)})
+                            </p>
+                          </div>
+
+                          {tripTravelTime && (
+                            <div className="pt-3 border-t border-gray-200 dark:border-gray-700 space-y-3">
+                              <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-semibold text-sm">
+                                <span className="text-base">🚗</span>
+                                <span>Estimated drive time: {tripTravelTime.durationText}</span>
+                              </div>
+
+                              {tripTravelTime.transit && (
+                                <div className="text-blue-700 dark:text-blue-400 font-semibold text-sm bg-blue-50/70 dark:bg-blue-900/20 p-3.5 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-base">🚆</span>
+                                    <span>
+                                      {tripTravelTime.stationInfo?.agency || tripTravelTime.transit.transitAgency || "Transit"}: {tripTravelTime.transit.durationText}
+                                    </span>
+                                  </div>
+                                  {tripTravelTime.transit.transitSteps && tripTravelTime.transit.transitSteps.length > 0 ? (
+                                    <div className="mt-2.5 space-y-1.5 text-xs text-gray-600 dark:text-gray-300 font-normal">
+                                      {tripTravelTime.transit.transitSteps
+                                        .filter((step) => step.transitLine)
+                                        .map((step, idx) => {
+                                          const vehicleType = typeof step.vehicleType === 'string'
+                                            ? step.vehicleType.toLowerCase()
+                                            : (step.vehicleType as any)?.text?.toLowerCase() || '';
+                                          let icon = '🚆';
+                                          if (vehicleType.includes('subway') || vehicleType.includes('train')) {
+                                            icon = '🚇';
+                                          } else if (vehicleType.includes('bus')) {
+                                            icon = '🚌';
+                                          } else if (vehicleType.includes('light rail')) {
+                                            icon = '🚃';
+                                          }
+
+                                          const stopSegment = step.departureStop && step.arrivalStop
+                                            ? `${step.departureStop} to ${step.arrivalStop}`
+                                            : step.departureStop
+                                            ? `from ${step.departureStop}`
+                                            : step.arrivalStop
+                                            ? `to ${step.arrivalStop}`
+                                            : step.instruction
+                                            ? step.instruction
+                                            : step.stopName
+                                            ? `at ${step.stopName}`
+                                            : null;
+
+                                          const lineDisplay = step.lineShortName && (!step.transitLine || !step.transitLine.toLowerCase().includes(step.lineShortName.toLowerCase()))
+                                            ? (step.transitLine ? `${step.lineShortName} - ${step.transitLine}` : step.lineShortName)
+                                            : (step.transitLine || step.lineShortName || '');
+
+                                          return (
+                                            <div key={idx} className="flex items-center gap-1.5 flex-wrap">
+                                              <span>{icon}</span>
+                                              <span className="font-semibold text-gray-800 dark:text-gray-200">{lineDisplay}</span>
+                                              {stopSegment && (
+                                                <span className="text-gray-600 dark:text-gray-300 font-normal">
+                                                  - {stopSegment}
+                                                </span>
+                                              )}
+                                              {step.numStops ? (
+                                                <span className="text-gray-400 dark:text-gray-500 text-[11px]">
+                                                  ({step.numStops} {step.numStops === 1 ? 'stop' : 'stops'})
+                                                </span>
+                                              ) : null}
+                                            </div>
+                                          );
+                                        })}
+                                    </div>
+                                  ) : getTransitRouteSummary(tripTravelTime) ? (
+                                    <div className="mt-2 text-xs text-gray-600 dark:text-gray-300 font-normal">
+                                      {getTransitRouteSummary(tripTravelTime)}
+                                    </div>
+                                  ) : null}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -1087,10 +1386,20 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                               onClick={() => handleDelete(expandedTrip)}
                               className="px-4 py-2 text-sm font-medium rounded-xl border bg-red-600 text-white hover:bg-red-700 border-red-600 transition-colors cursor-pointer"
                           >
-                            Confirm Delete
+                            Delete This Flight
                           </button>
+                          {connectionInfo.isConnecting && (
+                            <button
+                                onClick={() => handleDeleteAllLegs(connectionInfo.allLegs)}
+                                className="px-4 py-2 text-sm font-medium rounded-xl border bg-red-700 text-white hover:bg-red-800 border-red-700 transition-colors cursor-pointer"
+                            >
+                              Delete All {connectionInfo.totalLegs} Legs
+                            </button>
+                          )}
                           <button
-                              onClick={() => setConfirmDeleteId(null)}
+                              onClick={() => {
+                                setConfirmDeleteId(null);
+                              }}
                               className="px-4 py-2 text-sm font-medium rounded-xl border bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700 transition-colors cursor-pointer"
                           >
                             Cancel
@@ -1121,7 +1430,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                             : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-500 hover:bg-green-100 dark:hover:bg-green-900/50 border-green-200 dark:border-green-800'
                         }`}
                     >
-                      Edit Trip
+                      Edit Flight
                     </button>
                     <button
                         onClick={() => setExpandedTrip(null)}

@@ -12,6 +12,11 @@ import CalendarImport from './CalendarImport';
 import Onboarding from './Onboarding';
 import type { CalendarFlight } from './utils/googleCalendar';
 
+interface FlightSegment {
+  origin: string;
+  destination: string;
+}
+
 interface FlightData {
   flightNumber: string;
   departureTime: string;
@@ -33,6 +38,12 @@ interface Trip {
   createdAt?: number;
 }
 
+interface MultiSegmentResult {
+  origin: string;
+  destination: string;
+  flights: FlightData[];
+}
+
 type Step = 'input' | 'select' | 'confirm';
 
 function App() {
@@ -42,10 +53,13 @@ function App() {
   // State for Data
   const [searchResults, setSearchResults] = useState<FlightData[]>([]);
   const [selectedFlight, setSelectedFlight] = useState<FlightData | null>(null);
+  const [multiSegments, setMultiSegments] = useState<MultiSegmentResult[] | null>(null);
+  const [currentSegmentIdx, setCurrentSegmentIdx] = useState(0);
+  const [selectedSegments, setSelectedSegments] = useState<FlightData[]>([]);
   const [homeAddress, setHomeAddress] = useState('');
   const [searchMode, setSearchMode] = useState<'flight' | 'route'>('flight');
-  const [depAirport, setDepAirport] = useState('');
-  const [arrAirport, setArrAirport] = useState('');
+  const [flightSegments, setFlightSegments] = useState<FlightSegment[]>([{ origin: '', destination: '' }]);
+  const [flightNumbers, setFlightNumbers] = useState<string[]>(['']);
 
   const [view, setView] = useState<'add' | 'list' | 'profile'>('list');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -206,15 +220,7 @@ function App() {
     setLoading(true);
 
     const form = new FormData(e.target as HTMLFormElement);
-    const flightNumRaw = form.get('flightNumber') as string;
-    const address = form.get('homeAddress') as string;
-    const depRaw = form.get('depAirport') as string;
-    const arrRaw = form.get('arrAirport') as string;
-
-    const flightNum = flightNumRaw ? flightNumRaw.toUpperCase().replace(/\s/g, '') : '';
-    const dep = depRaw ? depRaw.toUpperCase() : '';
-    const arr = arrRaw ? arrRaw.toUpperCase() : '';
-
+    const address = (form.get('homeAddress') as string) || homeAddress;
     setHomeAddress(address);
 
     try {
@@ -224,31 +230,135 @@ function App() {
       let params: any = {};
 
       if (searchMode === 'flight') {
-        if (!flightNum) {
+        const validFlightNums = flightNumbers
+          .map(f => f.trim().toUpperCase().replace(/\s/g, ''))
+          .filter(Boolean);
+
+        if (validFlightNums.length === 0) {
           showToast("Please enter a flight number.", "error");
           setLoading(false);
           return;
         }
-        if (!/^[A-Z]{2}\d{1,4}$/.test(flightNum)) {
-          showToast("Invalid flight number. Expected format: 2 letters followed by 1–4 digits (e.g. UA123 or DL 2806).", "error");
+
+        for (const fn of validFlightNums) {
+          if (!/^[A-Z]{2}\d{1,4}$/.test(fn)) {
+            showToast(`Invalid flight number '${fn}'. Expected format: 2 letters followed by 1–4 digits (e.g. UA123 or DL 2806).`, "error");
+            setLoading(false);
+            return;
+          }
+        }
+
+        const dateStr = selectedDate ? selectedDate.toISOString().split('T')[0] : undefined;
+
+        if (validFlightNums.length > 1) {
+          const segmentList: MultiSegmentResult[] = [];
+          for (let i = 0; i < validFlightNums.length; i++) {
+            const fn = validFlightNums[i];
+            if (i > 0) {
+              await new Promise(r => setTimeout(r, 1100));
+            }
+            try {
+              const res = await axios.get(`${Config.API_URL}/flights/search`, {
+                params: { flightNumber: fn, ...(dateStr ? { date: dateStr } : {}) },
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              const flights: FlightData[] = Array.isArray(res.data) ? res.data : [];
+              segmentList.push({
+                origin: flights[0]?.origin || fn,
+                destination: flights[0]?.destination || '',
+                flights,
+              });
+            } catch (err: any) {
+              console.error(`Failed to search flight ${fn}:`, err);
+              segmentList.push({
+                origin: fn,
+                destination: '',
+                flights: [],
+              });
+            }
+          }
+
+          const emptyLeg = segmentList.find(s => s.flights.length === 0);
+          if (emptyLeg) {
+            showToast(`Flight ${emptyLeg.origin} was not found on this date. Check flight number and date.`, "error");
+          }
+
+          setMultiSegments(segmentList);
+          setCurrentSegmentIdx(0);
+          setSelectedSegments([]);
+          setStep('select');
           setLoading(false);
           return;
-        }
-        params.flightNumber = flightNum;
-        if (selectedDate) {
-          params.date = selectedDate.toISOString().split('T')[0];
+        } else {
+          params.flightNumber = validFlightNums[0];
+          if (dateStr) {
+            params.date = dateStr;
+          }
         }
       } else {
-        // Route mode
-        if (!dep || !arr || !selectedDate) {
+        // Route mode - check if we have connecting flights
+        const firstSegment = flightSegments[0];
+        const lastSegment = flightSegments[flightSegments.length - 1];
+        if (!firstSegment.origin || !lastSegment.destination || !selectedDate) {
           showToast("Please enter departure, destination airports, and date.", "error");
           setLoading(false);
           return;
         }
-        params.depIata = dep;
-        params.arrIata = arr;
-        params.date = selectedDate.toISOString().split('T')[0];
-        console.log('Route search params:', params);
+
+        const dateStr = selectedDate.toISOString().split('T')[0];
+
+        // For connecting flights, search each segment individually using standard depIata & arrIata
+        // This ensures full compatibility with currently deployed API and avoids 400 errors
+        if (flightSegments.length > 1) {
+          const segmentList: MultiSegmentResult[] = [];
+          for (let i = 0; i < flightSegments.length; i++) {
+            const seg = flightSegments[i];
+            if (i > 0) {
+              // Delay to respect RapidAPI Basic 1 req/sec rate limit
+              await new Promise(r => setTimeout(r, 1100));
+            }
+            try {
+              const res = await axios.get(`${Config.API_URL}/flights/search`, {
+                params: {
+                  depIata: seg.origin.trim().toUpperCase(),
+                  arrIata: seg.destination.trim().toUpperCase(),
+                  date: dateStr,
+                },
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              const flights: FlightData[] = Array.isArray(res.data) ? res.data : [];
+              segmentList.push({
+                origin: seg.origin.trim().toUpperCase(),
+                destination: seg.destination.trim().toUpperCase(),
+                flights,
+              });
+            } catch (err: any) {
+              console.error(`Failed to search segment ${seg.origin} -> ${seg.destination}:`, err);
+              segmentList.push({
+                origin: seg.origin.trim().toUpperCase(),
+                destination: seg.destination.trim().toUpperCase(),
+                flights: [],
+              });
+            }
+          }
+
+          const hasEmpty = segmentList.some(s => s.flights.length === 0);
+          if (hasEmpty) {
+            const emptyLegs = segmentList.filter(s => s.flights.length === 0).map(s => `${s.origin}→${s.destination}`).join(', ');
+            showToast(`No schedule results found on ${dateStr} for: ${emptyLegs}. Airport route schedules are often only available 24-48 hrs in advance. Try searching by Flight Number!`, "info");
+          }
+
+          setMultiSegments(segmentList);
+          setCurrentSegmentIdx(0);
+          setSelectedSegments([]);
+          setStep('select');
+          setLoading(false);
+          return;
+        } else {
+          params.depIata = firstSegment.origin.trim().toUpperCase();
+          params.arrIata = firstSegment.destination.trim().toUpperCase();
+          params.date = dateStr;
+        }
       }
 
       console.log('Sending flight search request with params:', params);
@@ -258,19 +368,23 @@ function App() {
       });
       console.log('Flight search response:', res.status, res.data);
 
-      const flights = res.data;
-
-      if (flights && flights.length > 0) {
+      setMultiSegments(null);
+      setSelectedSegments([]);
+      const flights = Array.isArray(res.data) ? res.data : [];
+      if (flights.length > 0) {
         setSearchResults(flights);
         setStep('select');
       } else {
         if (searchMode === 'flight') {
-          showToast(`Flight ${flightNum} not found. Airlines typically publish schedules 6-11 months in advance.`, "error");
+          const fn = flightNumbers[0] || 'entered';
+          showToast(`Flight ${fn} not found. Airlines typically publish schedules 6-11 months in advance.`, "error");
         } else {
+          const routeOrigin = flightSegments[0]?.origin || '';
+          const routeDestination = flightSegments[flightSegments.length - 1]?.destination || '';
           const monthsOut = selectedDate ? Math.floor((selectedDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30)) : 0;
           const message = monthsOut > 11 
-            ? `No flights found from ${dep} to ${arr} on ${selectedDate?.toLocaleDateString()}. This date is ${monthsOut} months away - airlines typically publish schedules only 6-11 months in advance. Try using Google Calendar Import for future flights.`
-            : `No flights found from ${dep} to ${arr} on ${selectedDate?.toLocaleDateString()}.`;
+            ? `No flights found from ${routeOrigin} to ${routeDestination} on ${selectedDate?.toLocaleDateString()}. This date is ${monthsOut} months away - airlines typically publish schedules only 6-11 months in advance. Try using Google Calendar Import for future flights.`
+            : `No flights found from ${routeOrigin} to ${routeDestination} on ${selectedDate?.toLocaleDateString()}. Airport route boards may not be published yet for this date; try searching by Flight Number!`;
           showToast(message, "error");
         }
       }
@@ -308,8 +422,23 @@ function App() {
           headers: {Authorization: `Bearer ${token}`}
         });
         showToast("Trip updated successfully!", "success");
+      } else if (selectedSegments.length > 1) {
+        // Create each connecting flight as an independent trip
+        await Promise.all(selectedSegments.map((flight) =>
+          axios.post(`${Config.API_URL}/trips`, {
+            flightNumber: flight.flightNumber,
+            date: flight.departureTime,
+            arrivalTime: flight.arrivalTime,
+            originAirport: flight.origin,
+            destinationAirport: flight.destination,
+            homeAddress: homeAddress,
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ));
+        showToast(`${selectedSegments.length} connecting flights tracked successfully!`, "success");
       } else {
-        // Create new trip
+        // Create single trip
         await axios.post(`${Config.API_URL}/trips`, {
           flightNumber: selectedFlight?.flightNumber,
           date: selectedFlight?.departureTime,
@@ -325,13 +454,16 @@ function App() {
 
       setStep('input');
       setSelectedFlight(null);
+      setSelectedSegments([]);
+      setMultiSegments(null);
+      setCurrentSegmentIdx(0);
       setSearchResults([]);
       setHomeAddress('');
       setSelectedDate(null); // Reset date
       setEditingTrip(null);
       setSearchMode('flight');
-      setDepAirport('');
-      setArrAirport('');
+      setFlightSegments([{ origin: '', destination: '' }]);
+      setFlightNumbers(['']);
       setView('list');
     } catch (err) {
       console.error(err);
@@ -342,16 +474,59 @@ function App() {
   };
 
   const handleCancel = () => {
+    if (step === 'select' && multiSegments && currentSegmentIdx > 0) {
+      setCurrentSegmentIdx(currentSegmentIdx - 1);
+      setSelectedSegments(selectedSegments.slice(0, -1));
+      return;
+    }
     setStep('input');
     setSearchResults([]);
+    setMultiSegments(null);
+    setCurrentSegmentIdx(0);
+    setSelectedSegments([]);
+    setSelectedFlight(null);
     setEditingTrip(null);
     setSearchMode('flight');
-    setDepAirport('');
-    setArrAirport('');
+    setFlightSegments([{ origin: '', destination: '' }]);
+    setFlightNumbers(['']);
+  };
+
+  const addFlightSegment = () => {
+    const lastSegment = flightSegments[flightSegments.length - 1];
+    setFlightSegments([...flightSegments, { origin: lastSegment.destination, destination: '' }]);
+  };
+
+  const removeFlightSegment = (index: number) => {
+    if (flightSegments.length > 1) {
+      setFlightSegments(flightSegments.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateFlightSegment = (index: number, field: 'origin' | 'destination', value: string) => {
+    const newSegments = [...flightSegments];
+    newSegments[index][field] = value.toUpperCase();
+    setFlightSegments(newSegments);
+  };
+
+  const addFlightNumber = () => {
+    setFlightNumbers([...flightNumbers, '']);
+  };
+
+  const removeFlightNumber = (index: number) => {
+    if (flightNumbers.length > 1) {
+      setFlightNumbers(flightNumbers.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateFlightNumber = (index: number, value: string) => {
+    const updated = [...flightNumbers];
+    updated[index] = value.toUpperCase().replace(/\s/g, '');
+    setFlightNumbers(updated);
   };
 
   const handleEdit = (trip: Trip) => {
     setEditingTrip(trip);
+    setFlightNumbers([trip.flightNumber]);
     setHomeAddress(trip.homeAddress);
     setSelectedDate(new Date(trip.date));
     setView('add');
@@ -539,21 +714,42 @@ function App() {
                                           className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
                                         Flight Info
                                       </label>
-                                      <div className="flex gap-2">
-                                        <input
-                                            name="flightNumber"
-                                            placeholder="e.g. AA123"
-                                            required
-                                            maxLength={8}
-                                            defaultValue={editingTrip?.flightNumber}
-                                            className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
-                                        />
-
-                                        <CustomDatePicker
-                                            selected={selectedDate}
-                                            onChange={(date) => setSelectedDate(date)}
-                                            placeholder="Date (Opt)"
-                                        />
+                                      <div className="space-y-2">
+                                        {flightNumbers.map((fn, index) => (
+                                          <div key={index} className="flex gap-2 items-center">
+                                            <input
+                                                placeholder={index === 0 ? "e.g. AA123" : `Connecting Leg #${index + 1} (e.g. AA456)`}
+                                                required
+                                                maxLength={8}
+                                                value={fn}
+                                                onChange={(e) => updateFlightNumber(index, e.target.value)}
+                                                className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
+                                            />
+                                            {index === 0 && (
+                                              <CustomDatePicker
+                                                  selected={selectedDate}
+                                                  onChange={(date) => setSelectedDate(date)}
+                                                  placeholder="Date (Opt)"
+                                              />
+                                            )}
+                                            {flightNumbers.length > 1 && (
+                                              <button
+                                                  type="button"
+                                                  onClick={() => removeFlightNumber(index)}
+                                                  className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer"
+                                              >
+                                                ✕
+                                              </button>
+                                            )}
+                                          </div>
+                                        ))}
+                                        <button
+                                          type="button"
+                                          onClick={addFlightNumber}
+                                          className="w-full py-2 text-sm text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors font-medium cursor-pointer"
+                                        >
+                                          + Add Connection
+                                        </button>
                                       </div>
                                     </div>
                                 ) : (
@@ -562,23 +758,42 @@ function App() {
                                           className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
                                         Route Info
                                       </label>
-                                      <div className="flex gap-2 mb-2">
-                                        <input
-                                            name="depAirport"
-                                            placeholder="From (e.g. JFK)"
-                                            required
-                                            value={depAirport}
-                                            onChange={(e) => setDepAirport(e.target.value.toUpperCase())}
-                                            className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
-                                        />
-                                        <input
-                                            name="arrAirport"
-                                            placeholder="To (e.g. LAX)"
-                                            required
-                                            value={arrAirport}
-                                            onChange={(e) => setArrAirport(e.target.value.toUpperCase())}
-                                            className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
-                                        />
+                                      <div className="space-y-2">
+                                        {flightSegments.map((segment, index) => (
+                                          <div key={index} className="flex gap-2 items-center">
+                                            <input
+                                              placeholder={index === 0 ? "From (e.g. JFK)" : "From"}
+                                              required
+                                              value={segment.origin}
+                                              onChange={(e) => updateFlightSegment(index, 'origin', e.target.value)}
+                                              className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
+                                            />
+                                            <span className="text-gray-400">→</span>
+                                            <input
+                                              placeholder={index === flightSegments.length - 1 ? "To (e.g. LAX)" : "To"}
+                                              required
+                                              value={segment.destination}
+                                              onChange={(e) => updateFlightSegment(index, 'destination', e.target.value)}
+                                              className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
+                                            />
+                                            {flightSegments.length > 1 && (
+                                              <button
+                                                type="button"
+                                                onClick={() => removeFlightSegment(index)}
+                                                className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                              >
+                                                ✕
+                                              </button>
+                                            )}
+                                          </div>
+                                        ))}
+                                        <button
+                                          type="button"
+                                          onClick={addFlightSegment}
+                                          className="w-full py-2 text-sm text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors font-medium"
+                                        >
+                                          + Add Connection
+                                        </button>
                                       </div>
                                       <CustomDatePicker
                                           selected={selectedDate}
@@ -620,26 +835,67 @@ function App() {
                         {step === 'select' && (
                             <div className="animate-fade-in">
                               <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-xl font-bold">Select Flight</h2>
+                                <div>
+                                  <h2 className="text-xl font-bold">
+                                    {multiSegments
+                                      ? `Select Leg ${currentSegmentIdx + 1} of ${multiSegments.length}: ${multiSegments[currentSegmentIdx].origin} → ${multiSegments[currentSegmentIdx].destination}`
+                                      : 'Select Flight'}
+                                  </h2>
+                                  {multiSegments && selectedSegments.length > 0 && (
+                                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
+                                      Selected leg {selectedSegments.length}: {selectedSegments[selectedSegments.length - 1].flightNumber} ({selectedSegments[selectedSegments.length - 1].origin} → {selectedSegments[selectedSegments.length - 1].destination})
+                                    </p>
+                                  )}
+                                </div>
                                 <button onClick={handleCancel}
-                                        className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium rounded-lg transition-colors"
+                                        className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium rounded-lg transition-colors cursor-pointer"
                                 >
                                   Back
                                 </button>
                               </div>
 
                               <div className="space-y-3 max-h-[60vh] overflow-y-auto">
-                                {searchResults.map((flight, idx) => (
+                                {(multiSegments ? multiSegments[currentSegmentIdx].flights : searchResults).length === 0 ? (
+                                  <div className="text-center py-8 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                                    <p className="text-gray-700 dark:text-gray-300 font-semibold mb-1">No flights found for this leg</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 max-w-sm mx-auto">
+                                      Airport route schedules are often only available 24–48 hours in advance. For future travel, try tracking directly by Flight Number.
+                                    </p>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setStep('input');
+                                        setSearchMode('flight');
+                                      }}
+                                      className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                                    >
+                                      Switch to Flight Number
+                                    </button>
+                                  </div>
+                                ) : (
+                                  (multiSegments ? multiSegments[currentSegmentIdx].flights : searchResults).map((flight, idx) => (
                                     <button
                                         key={idx}
-                                        onClick={() => handleSelectFlight(flight)}
-                                        className="w-full text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border-2 border-transparent hover:border-green-600 hover:bg-white dark:hover:bg-gray-700 transition-all shadow-sm group"
+                                        onClick={() => {
+                                          if (multiSegments) {
+                                            const updated = [...selectedSegments, flight];
+                                            setSelectedSegments(updated);
+                                            if (currentSegmentIdx + 1 < multiSegments.length) {
+                                              setCurrentSegmentIdx(currentSegmentIdx + 1);
+                                            } else {
+                                              setStep('confirm');
+                                            }
+                                          } else {
+                                            handleSelectFlight(flight);
+                                          }
+                                        }}
+                                        className="w-full text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border-2 border-transparent hover:border-green-600 hover:bg-white dark:hover:bg-gray-700 transition-all shadow-sm group cursor-pointer"
                                     >
                                       <div className="flex justify-between items-center mb-1">
                                         <span
                                             className="font-bold text-lg">{flight.flightNumber}</span>
                                         <span
-                                            className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded-md">{flight.airline}</span>
+                                            className="text-xs font-bold text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/40 px-2 py-1 rounded-md">{flight.airline}</span>
                                       </div>
                                       <div
                                           className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
@@ -655,7 +911,8 @@ function App() {
                                         <span>{flight.destination}</span>
                                       </div>
                                     </button>
-                                ))}
+                                  ))
+                                )}
                               </div>
                             </div>
                         )}
@@ -664,27 +921,60 @@ function App() {
                         {step === 'confirm' && (
                             <div
                                 className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-xl space-y-6 animate-fade-in border border-gray-100 dark:border-gray-700">
-                              <h2 className="text-xl font-bold text-center">Confirm Trip
-                                Details</h2>
+                              <h2 className="text-xl font-bold text-center">
+                                {selectedSegments.length > 1 ? 'Confirm Connecting Flights' : 'Confirm Trip Details'}
+                              </h2>
                               <div className="space-y-4">
-                                <div
-                                    className="flex items-center justify-between p-4 bg-white dark:bg-gray-700/50 rounded-xl">
-                                  <div>
-                                    <p className="text-xs text-gray-500 uppercase">Flight</p>
-                                    <p className="text-xl font-bold">{selectedFlight?.flightNumber}</p>
-                                    <p className="text-xs text-gray-400">{selectedFlight?.airline}</p>
+                                {selectedSegments.length > 1 ? (
+                                  <div className="space-y-3">
+                                    {selectedSegments.map((seg, i) => {
+                                      const nextSeg = selectedSegments[i + 1];
+                                      return (
+                                        <div key={i} className="space-y-2">
+                                          <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-700/50 rounded-xl">
+                                            <div>
+                                              <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Leg {i + 1}</span>
+                                              <p className="text-xl font-bold">{seg.flightNumber}</p>
+                                              <p className="text-xs text-gray-400">{seg.airline}</p>
+                                            </div>
+                                            <div className="text-right">
+                                              <p className="text-xs text-gray-500 uppercase">{seg.origin} → {seg.destination}</p>
+                                              <p className="text-base font-bold text-green-700 dark:text-green-500">
+                                                {formatFlightDate(seg.departureTime, seg.origin)}
+                                              </p>
+                                              <p className="text-xs text-gray-400">
+                                                Dep: {formatFlightTimeOnly(seg.departureTime, seg.origin)}{seg.arrivalTime ? ` • Arr: ${formatFlightTimeOnly(seg.arrivalTime, seg.destination)}` : ''}
+                                              </p>
+                                            </div>
+                                          </div>
+                                          {nextSeg && (
+                                            <div className="text-xs text-amber-700 dark:text-amber-400 font-medium px-4 flex items-center gap-1.5">
+                                              <span>⏱️ Layover transfer at {seg.destination}</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
                                   </div>
-                                  <div className="text-right">
-                                    <p className="text-xs text-gray-500 uppercase">Departing</p>
-                                    <p className="text-lg font-bold text-green-700">
-                                      {selectedFlight ? formatFlightDate(selectedFlight.departureTime, selectedFlight.origin) : ''}
-                                    </p>
-                                    <p className="text-sm font-medium text-gray-400">
-                                      {selectedFlight ? formatFlightTimeOnly(selectedFlight.departureTime, selectedFlight.origin) : ''}
-                                    </p>
+                                ) : (
+                                  <div
+                                      className="flex items-center justify-between p-4 bg-white dark:bg-gray-700/50 rounded-xl">
+                                    <div>
+                                      <p className="text-xs text-gray-500 uppercase">Flight</p>
+                                      <p className="text-xl font-bold">{selectedFlight?.flightNumber}</p>
+                                      <p className="text-xs text-gray-400">{selectedFlight?.airline}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <p className="text-xs text-gray-500 uppercase">Departing</p>
+                                      <p className="text-lg font-bold text-green-700 dark:text-green-500">
+                                        {selectedFlight ? formatFlightDate(selectedFlight.departureTime, selectedFlight.origin) : ''}
+                                      </p>
+                                      <p className="text-sm font-medium text-gray-400">
+                                        {selectedFlight ? formatFlightTimeOnly(selectedFlight.departureTime, selectedFlight.origin) : ''}
+                                      </p>
+                                    </div>
                                   </div>
-
-                                </div>
+                                )}
                                 <div className="px-2">
                                   <p className="text-xs text-gray-500 uppercase">Leaving From</p>
                                   <p className="text-sm truncate">{homeAddress}</p>
@@ -692,11 +982,11 @@ function App() {
                               </div>
                               <div className="flex gap-3 pt-2">
                                 <button onClick={handleCancel}
-                                        className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl font-medium transition-colors">Cancel
+                                        className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl font-medium transition-colors cursor-pointer">Cancel
                                 </button>
                                 <button onClick={handleConfirm} disabled={loading}
-                                        className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all">
-                                  {loading ? 'Scheduling...' : (editingTrip ? 'Update Trip' : 'Track Flight')}
+                                        className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all cursor-pointer">
+                                  {loading ? 'Scheduling...' : (editingTrip ? 'Update Trip' : selectedSegments.length > 1 ? `Track All ${selectedSegments.length} Flights` : 'Track Flight')}
                                 </button>
                               </div>
                             </div>
