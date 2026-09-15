@@ -95,7 +95,8 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
     };
   }
 
-  const body = JSON.parse(event.body || "{}");
+  const bodyStr = event.isBase64Encoded ? Buffer.from(event.body || "", "base64").toString("utf-8") : (event.body || "{}");
+  const body = JSON.parse(bodyStr);
 
   const profileData = {
     pk: `USER#${userId}`,
@@ -136,7 +137,8 @@ export const sendVerification: APIGatewayProxyHandlerV2 = async (event) => {
     };
   }
 
-  const body = JSON.parse(event.body || "{}");
+  const bodyStr = event.isBase64Encoded ? Buffer.from(event.body || "", "base64").toString("utf-8") : (event.body || "{}");
+  const body = JSON.parse(bodyStr);
   const phoneNumber = body.phoneNumber;
 
   if (!phoneNumber) {
@@ -196,7 +198,8 @@ export const confirmVerification: APIGatewayProxyHandlerV2 = async (event) => {
     };
   }
 
-  const body = JSON.parse(event.body || "{}");
+  const bodyStr = event.isBase64Encoded ? Buffer.from(event.body || "", "base64").toString("utf-8") : (event.body || "{}");
+  const body = JSON.parse(bodyStr);
   const { phoneNumber, code } = body;
 
   if (!phoneNumber || !code) {
