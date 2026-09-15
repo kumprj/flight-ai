@@ -469,7 +469,7 @@
       "file_type": "code",
       "norm_label": "multisegmentresult",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L41"
+      "source_location": "L44"
     },
     {
       "id": "packages_web_src_app_step",
@@ -482,7 +482,7 @@
       "file_type": "code",
       "norm_label": "step",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L47"
+      "source_location": "L50"
     },
     {
       "id": "packages_web_src_app_trip",
@@ -1374,18 +1374,6 @@
       "source_location": "L99"
     },
     {
-      "id": "packages_web_src_app_app",
-      "label": "App()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "app()",
-      "source_file": "packages/web/src/App.tsx",
-      "source_location": "L49"
-    },
-    {
       "id": "packages_web_src_types_google_maps_d_autocomplete_addlistener",
       "label": ".addListener()",
       "_callable": true,
@@ -1516,6 +1504,54 @@
       "norm_label": "loadgooglemapsscript()",
       "source_file": "packages/web/src/AddressAutocomplete.tsx",
       "source_location": "L15"
+    },
+    {
+      "id": "packages_web_src_app_app",
+      "label": "App()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "app()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L80"
+    },
+    {
+      "id": "packages_web_src_app_formatdateonly",
+      "label": "formatDateOnly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "formatdateonly()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L66"
+    },
+    {
+      "id": "packages_web_src_app_gettripdateonly",
+      "label": "getTripDateOnly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "gettripdateonly()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L74"
+    },
+    {
+      "id": "packages_web_src_app_parselocaldate",
+      "label": "parseLocalDate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "parselocaldate()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L52"
     },
     {
       "id": "packages_web_src_datepicker_customdatepicker",
@@ -1650,78 +1686,6 @@
       "source_location": "L4"
     },
     {
-      "id": "packages_functions_src_profile_confirmverification",
-      "label": "confirmVerification()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "confirmverification()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L189"
-    },
-    {
-      "id": "packages_functions_src_profile_decodejwt",
-      "label": "decodeJWT()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "decodejwt()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "packages_functions_src_profile_get",
-      "label": "get()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "get()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L58"
-    },
-    {
-      "id": "packages_functions_src_profile_getuseridfromevent",
-      "label": "getUserIdFromEvent()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "getuseridfromevent()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L33"
-    },
-    {
-      "id": "packages_functions_src_profile_sendverification",
-      "label": "sendVerification()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "sendverification()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L129"
-    },
-    {
-      "id": "packages_functions_src_profile_update",
-      "label": "update()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "update()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L88"
-    },
-    {
       "id": "sst_config_app",
       "label": "app()",
       "_callable": true,
@@ -1756,6 +1720,78 @@
       "norm_label": "api()",
       "source_file": "stacks/MyStack.ts",
       "source_location": "L3"
+    },
+    {
+      "id": "packages_functions_src_profile_confirmverification",
+      "label": "confirmVerification()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "profile.ts",
+      "file_type": "code",
+      "norm_label": "confirmverification()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L189"
+    },
+    {
+      "id": "packages_functions_src_profile_decodejwt",
+      "label": "decodeJWT()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "profile.ts",
+      "file_type": "code",
+      "norm_label": "decodejwt()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "packages_functions_src_profile_get",
+      "label": "get()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "profile.ts",
+      "file_type": "code",
+      "norm_label": "get()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L58"
+    },
+    {
+      "id": "packages_functions_src_profile_getuseridfromevent",
+      "label": "getUserIdFromEvent()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "profile.ts",
+      "file_type": "code",
+      "norm_label": "getuseridfromevent()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "packages_functions_src_profile_sendverification",
+      "label": "sendVerification()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "profile.ts",
+      "file_type": "code",
+      "norm_label": "sendverification()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L129"
+    },
+    {
+      "id": "packages_functions_src_profile_update",
+      "label": "update()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "profile.ts",
+      "file_type": "code",
+      "norm_label": "update()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L88"
     },
     {
       "id": "pnpm_workspace",
@@ -2063,6 +2099,17 @@
       "source_location": "L16"
     },
     {
+      "id": "ref_vitest",
+      "label": "vitest",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "concept",
+      "norm_label": "vitest",
+      "source_file": "packages/functions/package.json",
+      "source_location": "L18"
+    },
+    {
       "id": "agents",
       "label": "AGENTS.md",
       "_origin": "ast",
@@ -2205,74 +2252,6 @@
       "norm_label": "use the glossary's vocabulary",
       "source_file": "docs/agents/domain.md",
       "source_location": "L23"
-    },
-    {
-      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig",
-      "label": "query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
-      "file_type": "document",
-      "frontmatter": {
-        "type": "query",
-        "date": "2026-09-14T20:26:38.731599+00:00",
-        "question": "Why does getAirportTimezone() connect Make My Flight Core Backend &amp; Data to AWS Serverless SDK Dependencies?",
-        "contributor": "graphify",
-        "outcome": "useful",
-        "source_nodes": "[&quot;packages_core_src_airports_getairporttimezone&quot;, &quot;packages_functions_src_cron&quot;, &quot;packages_functions_src_notify&quot;]"
-      },
-      "node_kind": "page",
-      "norm_label": "query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_answer",
-      "label": "Answer",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "answer",
-      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_location": "L12"
-    },
-    {
-      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_outcome",
-      "label": "Outcome",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "outcome",
-      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_location": "L16"
-    },
-    {
-      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
-      "label": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "q: why does getairporttimezone() connect make my flight core backend & data to aws serverless sdk dependencies?",
-      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_location": "L10"
-    },
-    {
-      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_source_nodes",
-      "label": "Source Nodes",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "source nodes",
-      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_location": "L20"
     },
     {
       "id": "packages_functions_package",
@@ -2504,17 +2483,6 @@
       "norm_label": "@types/aws-lambda",
       "source_file": "packages/functions/package.json",
       "source_location": "L15"
-    },
-    {
-      "id": "ref_vitest",
-      "label": "vitest",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "functions/package.json",
-      "file_type": "concept",
-      "norm_label": "vitest",
-      "source_file": "packages/functions/package.json",
-      "source_location": "L18"
     },
     {
       "id": "packages_web_tsconfig_app",
@@ -3761,74 +3729,6 @@
       "source_location": "L1"
     },
     {
-      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai",
-      "label": "query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
-      "file_type": "document",
-      "frontmatter": {
-        "type": "query",
-        "date": "2026-09-14T20:30:43.914836+00:00",
-        "question": "How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
-        "contributor": "graphify",
-        "outcome": "useful",
-        "source_nodes": "[&quot;packages_core_src_maps_googlemaps&quot;, &quot;packages_core_src_maps_gettraveltime&quot;, &quot;packages_functions_src_notify&quot;, &quot;packages_functions_src_trip&quot;]"
-      },
-      "node_kind": "page",
-      "norm_label": "query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_answer",
-      "label": "Answer",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "answer",
-      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_location": "L12"
-    },
-    {
-      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_outcome",
-      "label": "Outcome",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "outcome",
-      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_location": "L16"
-    },
-    {
-      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
-      "label": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "q: how does traffic prediction work from departure airport to google maps routes api in make my flight?",
-      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_location": "L10"
-    },
-    {
-      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_source_nodes",
-      "label": "Source Nodes",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "source nodes",
-      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_location": "L20"
-    },
-    {
       "id": "resolve_simple",
       "label": "resolve_simple.js",
       "_origin": "ast",
@@ -4498,39 +4398,6 @@
       "norm_label": "version",
       "source_file": "packages/core/package.json",
       "source_location": "L3"
-    },
-    {
-      "id": "packages_functions_src_profile",
-      "label": "profile.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "profile.ts",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_functions_src_profile_dynamodb",
-      "label": "dynamodb",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "dynamodb",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "packages_functions_src_profile_twilioclient",
-      "label": "twilioClient",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "twilioclient",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L9"
     },
     {
       "id": "packages_core_package_json_ref_axios",
@@ -5496,6 +5363,39 @@
       "norm_label": "googlemaps",
       "source_file": "test-maps.ts",
       "source_location": "L4"
+    },
+    {
+      "id": "packages_functions_src_profile",
+      "label": "profile.ts",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "profile.ts",
+      "file_type": "code",
+      "norm_label": "profile.ts",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_functions_src_profile_dynamodb",
+      "label": "dynamodb",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "profile.ts",
+      "file_type": "code",
+      "norm_label": "dynamodb",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "packages_functions_src_profile_twilioclient",
+      "label": "twilioClient",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "profile.ts",
+      "file_type": "code",
+      "norm_label": "twilioclient",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L9"
     },
     {
       "id": "packages_core_sst_env_d",
@@ -6605,7 +6505,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L902",
+      "source_location": "L1009",
       "weight": 1.0
     },
     {
@@ -6617,7 +6517,43 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L903",
+      "source_location": "L1010",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app_app",
+      "target": "packages_web_src_app_formatdateonly",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app_app",
+      "target": "packages_web_src_app_gettripdateonly",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app_app",
+      "target": "packages_web_src_app_parselocaldate",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L617",
       "weight": 1.0
     },
     {
@@ -9082,6 +9018,18 @@
     },
     {
       "source": "packages_core_test_airports_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/airports.test.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_airports_test",
       "target": "packages_core_src_airports",
       "relation": "imports_from",
       "_origin": "ast",
@@ -9090,6 +9038,18 @@
       "context": "import",
       "source_file": "packages/core/test/airports.test.ts",
       "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_bart_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/bart.test.ts",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -9118,6 +9078,18 @@
     },
     {
       "source": "packages_core_test_cta_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/cta.test.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_cta_test",
       "target": "packages_core_src_cta",
       "relation": "imports_from",
       "_origin": "ast",
@@ -9130,6 +9102,18 @@
     },
     {
       "source": "packages_core_test_dateutils_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/dateUtils.test.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_dateutils_test",
       "target": "packages_core_src_dateutils",
       "relation": "imports_from",
       "_origin": "ast",
@@ -9138,6 +9122,18 @@
       "context": "import",
       "source_file": "packages/core/test/dateUtils.test.ts",
       "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_delays_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/delays.test.ts",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -9166,6 +9162,18 @@
     },
     {
       "source": "packages_core_test_mta_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/mta.test.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_mta_test",
       "target": "packages_core_src_mta",
       "relation": "imports_from",
       "_origin": "ast",
@@ -9178,6 +9186,18 @@
     },
     {
       "source": "packages_core_test_tfl_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/tfl.test.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_tfl_test",
       "target": "packages_core_src_tfl",
       "relation": "imports_from",
       "_origin": "ast",
@@ -9186,6 +9206,18 @@
       "context": "import",
       "source_file": "packages/core/test/tfl.test.ts",
       "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_wmata_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/wmata.test.ts",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -9450,6 +9482,18 @@
       "context": "import",
       "source_file": "packages/web/eslint.config.js",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_eslint_config",
+      "target": "ref_typescript_eslint",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/eslint.config.js",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -10250,94 +10294,6 @@
       "confidence_score": 1.0,
       "source_file": "GEMINI.md",
       "source_location": "L85",
-      "weight": 1.0
-    },
-    {
-      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig",
-      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_location": "L10",
-      "weight": 1.0
-    },
-    {
-      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
-      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_answer",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
-      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_outcome",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_location": "L16",
-      "weight": 1.0
-    },
-    {
-      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
-      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_source_nodes",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai",
-      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_location": "L10",
-      "weight": 1.0
-    },
-    {
-      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
-      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_answer",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
-      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_outcome",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_location": "L16",
-      "weight": 1.0
-    },
-    {
-      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
-      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_source_nodes",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
-      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -12889,7 +12845,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L41",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -12900,7 +12856,40 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L47",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_app_parselocaldate",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_app_formatdateonly",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_app_gettripdateonly",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -12911,7 +12900,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L49",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -14624,5 +14613,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "18543416242820ef02d9890b10a49600d0721738"
+  "built_at_commit": "01023bc3f309252994f6450aae51efed3702610a"
 }
