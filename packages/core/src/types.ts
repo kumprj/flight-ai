@@ -181,7 +181,28 @@ export interface WmataStationInfo {
   fareDescription: string;
 }
 
-export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | BartStationInfo | LondonTransitStationInfo | WmataStationInfo;
+export interface MbtaAlert {
+  id: string;
+  headline: string;
+  shortDescription: string;
+  severity: number;
+  lifecycle: string;
+  isMajor: boolean;
+  effect: string;
+}
+
+export interface MbtaStationInfo {
+  agency: "MBTA";
+  airportCode: "BOS";
+  name: string;
+  line: string;
+  lineColor: string;
+  primaryLines: string[];
+  stationLocation: string;
+  fareDescription: string;
+}
+
+export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | BartStationInfo | LondonTransitStationInfo | WmataStationInfo | MbtaStationInfo;
 
 /**
  * Normalised transit alert used across all agencies.
