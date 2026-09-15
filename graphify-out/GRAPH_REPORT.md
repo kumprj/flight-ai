@@ -1,17 +1,17 @@
 # Graph Report - flight-ai-bart  (2026-09-14)
 
 ## Corpus Check
-- 73 files · ~37,530 words
+- 73 files · ~38,227 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 5, .css 2)
 
 ## Summary
-- 492 nodes · 679 edges · 44 communities (24 shown, 10 thin omitted)
+- 496 nodes · 685 edges · 45 communities (25 shown, 10 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `df4ebd46`
+- Built from commit: `61f7c6e3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -28,6 +28,7 @@
 - Make My Flight (makemyflight)
 - Agent skills
 - Domain Docs
+- dependencies
 - functions/package.json
 - compilerOptions
 - React + TypeScript + Vite
@@ -78,19 +79,19 @@
 ## Import Cycles
 - None detected.
 
-## Communities (44 total, 10 thin omitted)
+## Communities (45 total, 10 thin omitted)
 
 ### Community 0 - "googleCalendar.ts"
 Cohesion: 0.20
 Nodes (15): CalendarImport(), Props, cacheToken(), CalendarFlight, fetchCalendarEvents(), getAccessToken(), getCachedToken(), getGoogleAccounts() (+7 more)
 
 ### Community 1 - "maps.ts"
-Cohesion: 0.07
-Nodes (41): AirportInfo, AIRPORTS, getAirportAddress(), BART_STATIONS, formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport() (+33 more)
+Cohesion: 0.08
+Nodes (42): alertMatchesAirport(), BART_STATIONS, formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport(), OAK_KEYWORDS, SFO_KEYWORDS (+34 more)
 
 ### Community 2 - "trip.ts"
-Cohesion: 0.15
-Nodes (26): getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), formatFlightDate(), formatFlightTime(), formatFlightTimeOnly(), formatLeaveTime(), parseFlightTimeToUTC() (+18 more)
+Cohesion: 0.11
+Nodes (30): AirportInfo, AIRPORTS, getAirportAddress(), getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), formatFlightDate(), formatFlightTime() (+22 more)
 
 ### Community 3 - "App.tsx"
 Cohesion: 0.11
@@ -101,12 +102,12 @@ Cohesion: 0.16
 Nodes (16): client, Database, docClient, dynamodb, lambda, confirmVerification(), decodeJWT(), dynamodb (+8 more)
 
 ### Community 5 - "web/package.json"
-Cohesion: 0.05
-Nodes (39): dependencies, aws-amplify, @aws-amplify/ui-react, axios, date-fns-tz, react, react-dom, react-router-dom (+31 more)
+Cohesion: 0.07
+Nodes (29): axios, date-fns-tz, @types/node, typescript, name, private, scripts, build (+21 more)
 
 ### Community 6 - "core/package.json"
-Cohesion: 0.09
-Nodes (21): dependencies, @aws-sdk/client-dynamodb, @aws-sdk/client-scheduler, @aws-sdk/lib-dynamodb, axios, date-fns, date-fns-tz, gtfs-realtime-bindings (+13 more)
+Cohesion: 0.10
+Nodes (20): dependencies, @aws-sdk/client-dynamodb, @aws-sdk/client-scheduler, @aws-sdk/lib-dynamodb, axios, date-fns, date-fns-tz, gtfs-realtime-bindings (+12 more)
 
 ### Community 7 - "Issue tracker: GitHub"
 Cohesion: 0.29
@@ -127,6 +128,10 @@ Nodes (5): Agent Guidelines - Make My Flight, Agent skills, Domain docs, Issue t
 ### Community 11 - "Domain Docs"
 Cohesion: 0.33
 Nodes (5): Before exploring, read these, Domain Docs, File structure, Flag ADR conflicts, Use the glossary's vocabulary
+
+### Community 12 - "dependencies"
+Cohesion: 0.20
+Nodes (10): dependencies, aws-amplify, @aws-amplify/ui-react, axios, date-fns-tz, react, react-dom, react-router-dom (+2 more)
 
 ### Community 13 - "functions/package.json"
 Cohesion: 0.10
@@ -177,8 +182,8 @@ Cohesion: 0.08
 Nodes (23): API Endpoints, APIs, Architecture, AWS Infrastructure, Backend, Deployment, Environment Variables, Features (+15 more)
 
 ## Knowledge Gaps
-- **270 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+265 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 306 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **273 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+268 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 309 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -187,14 +192,14 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `react` connect `App.tsx` to `googleCalendar.ts`, `web/package.json`?**
   _High betweenness centrality (0.117) - this node is a cross-community bridge._
 - **Why does `formatFlightTimeOnly()` connect `trip.ts` to `App.tsx`?**
-  _High betweenness centrality (0.092) - this node is a cross-community bridge._
+  _High betweenness centrality (0.093) - this node is a cross-community bridge._
 - **Why does `vitest` connect `trip.ts` to `maps.ts`, `functions/package.json`?**
-  _High betweenness centrality (0.044) - this node is a cross-community bridge._
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
 - **What connects `name`, `private`, `workspaces` to the rest of the system?**
-  _270 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _273 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `maps.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.07205513784461152 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07542087542087542 - nodes in this community are weakly interconnected._
 - **Should `trip.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.14795008912655971 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11219512195121951 - nodes in this community are weakly interconnected._
 - **Should `App.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.1066066066066066 - nodes in this community are weakly interconnected._

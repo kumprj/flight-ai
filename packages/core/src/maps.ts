@@ -189,7 +189,7 @@ export const GoogleMaps = {
     // 6. If San Francisco airport (SFO/OAK), fetch live BART alerts
     const isBart = isBartAirport(destination);
     const bartAlertsPromise = isBart && includeTransit
-      ? getBartAlerts().catch(() => [])
+      ? getBartAlerts(destination).catch(() => [])
       : Promise.resolve(undefined);
 
     const [drive, transit, ctaAlerts, mtaAlerts, tflAlerts, bartAlerts] = await Promise.all([

@@ -69,19 +69,6 @@
       "source_location": "L23"
     },
     {
-      "id": "packages_core_src_airports_airportinfo",
-      "label": "AirportInfo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "airportinfo",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "packages_core_src_types_bartalert",
       "label": "BartAlert",
       "_callable": true,
@@ -264,16 +251,16 @@
       "source_location": "L70"
     },
     {
-      "id": "packages_core_src_types_trip",
-      "label": "Trip",
+      "id": "packages_core_src_airports_airportinfo",
+      "label": "AirportInfo",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 2,
+      "community_name": "trip.ts",
       "file_type": "code",
-      "norm_label": "trip",
-      "source_file": "packages/core/src/types.ts",
+      "norm_label": "airportinfo",
+      "source_file": "packages/core/src/airports.ts",
       "source_location": "L1"
     },
     {
@@ -288,6 +275,19 @@
       "norm_label": "schedulerpayload",
       "source_file": "packages/core/src/types.ts",
       "source_location": "L39"
+    },
+    {
+      "id": "packages_core_src_types_trip",
+      "label": "Trip",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "trip",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L1"
     },
     {
       "id": "packages_web_src_types_google_maps_d_addresscomponent",
@@ -734,28 +734,16 @@
       "source_location": "L57"
     },
     {
-      "id": "packages_core_src_airports_getairportaddress",
-      "label": "getAirportAddress()",
+      "id": "packages_core_src_bart_alertmatchesairport",
+      "label": "alertMatchesAirport()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "maps.ts",
       "file_type": "code",
-      "norm_label": "getairportaddress()",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L278"
-    },
-    {
-      "id": "packages_core_src_airports_getairportlabel",
-      "label": "getAirportLabel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "getairportlabel()",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L283"
+      "norm_label": "alertmatchesairport()",
+      "source_file": "packages/core/src/bart.ts",
+      "source_location": "L51"
     },
     {
       "id": "packages_core_src_bart_formatbartalertssummary",
@@ -767,7 +755,7 @@
       "file_type": "code",
       "norm_label": "formatbartalertssummary()",
       "source_file": "packages/core/src/bart.ts",
-      "source_location": "L77"
+      "source_location": "L147"
     },
     {
       "id": "packages_core_src_bart_getbartalerts",
@@ -779,7 +767,7 @@
       "file_type": "code",
       "norm_label": "getbartalerts()",
       "source_file": "packages/core/src/bart.ts",
-      "source_location": "L38"
+      "source_location": "L94"
     },
     {
       "id": "packages_core_src_bart_getbartstationinfo",
@@ -791,7 +779,7 @@
       "file_type": "code",
       "norm_label": "getbartstationinfo()",
       "source_file": "packages/core/src/bart.ts",
-      "source_location": "L33"
+      "source_location": "L43"
     },
     {
       "id": "packages_core_src_bart_isbartairport",
@@ -803,7 +791,7 @@
       "file_type": "code",
       "norm_label": "isbartairport()",
       "source_file": "packages/core/src/bart.ts",
-      "source_location": "L28"
+      "source_location": "L35"
     },
     {
       "id": "packages_core_src_cta_formatctaalertssummary",
@@ -972,6 +960,30 @@
       "norm_label": "getclient()",
       "source_file": "packages/core/src/twilio.ts",
       "source_location": "L4"
+    },
+    {
+      "id": "packages_core_src_airports_getairportaddress",
+      "label": "getAirportAddress()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "getairportaddress()",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L278"
+    },
+    {
+      "id": "packages_core_src_airports_getairportlabel",
+      "label": "getAirportLabel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "getairportlabel()",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L283"
     },
     {
       "id": "packages_core_src_airports_getairporttimezone",
@@ -1626,28 +1638,6 @@
       "source_location": "L1"
     },
     {
-      "id": "packages_core_src_airports",
-      "label": "airports.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "airports.ts",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_airports_airports",
-      "label": "AIRPORTS",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "airports",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L7"
-    },
-    {
       "id": "packages_core_src_bart",
       "label": "bart.ts",
       "_origin": "ast",
@@ -1668,6 +1658,39 @@
       "norm_label": "bart_stations",
       "source_file": "packages/core/src/bart.ts",
       "source_location": "L7"
+    },
+    {
+      "id": "packages_core_src_bart_oak_keywords",
+      "label": "OAK_KEYWORDS",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "oak_keywords",
+      "source_file": "packages/core/src/bart.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "packages_core_src_bart_sfo_keywords",
+      "label": "SFO_KEYWORDS",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "sfo_keywords",
+      "source_file": "packages/core/src/bart.ts",
+      "source_location": "L28"
+    },
+    {
+      "id": "packages_core_src_bart_system_keywords",
+      "label": "SYSTEM_KEYWORDS",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "system_keywords",
+      "source_file": "packages/core/src/bart.ts",
+      "source_location": "L30"
     },
     {
       "id": "packages_core_src_cta",
@@ -1758,17 +1781,6 @@
       "source_location": "L6"
     },
     {
-      "id": "packages_core_src_timezones",
-      "label": "timezones.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "timezones.ts",
-      "source_file": "packages/core/src/timezones.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "packages_core_src_twilio",
       "label": "twilio.ts",
       "_origin": "ast",
@@ -1855,6 +1867,17 @@
       "norm_label": "mockedaxios",
       "source_file": "packages/core/test/tfl.test.ts",
       "source_location": "L12"
+    },
+    {
+      "id": "ref_gtfs_realtime_bindings",
+      "label": "gtfs-realtime-bindings",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "concept",
+      "norm_label": "gtfs-realtime-bindings",
+      "source_file": "packages/core/package.json",
+      "source_location": "L16"
     },
     {
       "id": "agents",
@@ -1999,6 +2022,116 @@
       "norm_label": "use the glossary's vocabulary",
       "source_file": "docs/agents/domain.md",
       "source_location": "L23"
+    },
+    {
+      "id": "packages_web_package_dependencies",
+      "label": "dependencies",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "dependencies",
+      "source_file": "packages/web/package.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "packages_web_package_dependencies_aws_amplify",
+      "label": "aws-amplify",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "aws-amplify",
+      "source_file": "packages/web/package.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "packages_web_package_dependencies_aws_amplify_ui_react",
+      "label": "@aws-amplify/ui-react",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@aws-amplify/ui-react",
+      "source_file": "packages/web/package.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "packages_web_package_dependencies_axios",
+      "label": "axios",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "axios",
+      "source_file": "packages/web/package.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "packages_web_package_dependencies_date_fns_tz",
+      "label": "date-fns-tz",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "date-fns-tz",
+      "source_file": "packages/web/package.json",
+      "source_location": "L18"
+    },
+    {
+      "id": "packages_web_package_dependencies_react",
+      "label": "react",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "react",
+      "source_file": "packages/web/package.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "packages_web_package_dependencies_react_dom",
+      "label": "react-dom",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "react-dom",
+      "source_file": "packages/web/package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "packages_web_package_dependencies_react_router_dom",
+      "label": "react-router-dom",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "react-router-dom",
+      "source_file": "packages/web/package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "packages_web_package_dependencies_tailwindcss_vite",
+      "label": "@tailwindcss/vite",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@tailwindcss/vite",
+      "source_file": "packages/web/package.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "packages_web_package_dependencies_tanstack_react_query",
+      "label": "@tanstack/react-query",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@tanstack/react-query",
+      "source_file": "packages/web/package.json",
+      "source_location": "L15"
     },
     {
       "id": "packages_functions_package",
@@ -3100,6 +3233,28 @@
       "source_location": "L28"
     },
     {
+      "id": "packages_core_src_airports",
+      "label": "airports.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "airports.ts",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_airports_airports",
+      "label": "AIRPORTS",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "airports",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L7"
+    },
+    {
       "id": "packages_core_src_dateutils",
       "label": "dateUtils.ts",
       "_origin": "ast",
@@ -3120,6 +3275,17 @@
       "norm_label": "googlemaps",
       "source_file": "packages/core/src/maps.ts",
       "source_location": "L11"
+    },
+    {
+      "id": "packages_core_src_timezones",
+      "label": "timezones.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "timezones.ts",
+      "source_file": "packages/core/src/timezones.ts",
+      "source_location": "L1"
     },
     {
       "id": "packages_core_test_dateutils_test",
@@ -4035,116 +4201,6 @@
       "norm_label": "web/package.json",
       "source_file": "packages/web/package.json",
       "source_location": "L1"
-    },
-    {
-      "id": "packages_web_package_dependencies",
-      "label": "dependencies",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "dependencies",
-      "source_file": "packages/web/package.json",
-      "source_location": "L12"
-    },
-    {
-      "id": "packages_web_package_dependencies_aws_amplify",
-      "label": "aws-amplify",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "aws-amplify",
-      "source_file": "packages/web/package.json",
-      "source_location": "L16"
-    },
-    {
-      "id": "packages_web_package_dependencies_aws_amplify_ui_react",
-      "label": "@aws-amplify/ui-react",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "@aws-amplify/ui-react",
-      "source_file": "packages/web/package.json",
-      "source_location": "L13"
-    },
-    {
-      "id": "packages_web_package_dependencies_axios",
-      "label": "axios",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "axios",
-      "source_file": "packages/web/package.json",
-      "source_location": "L17"
-    },
-    {
-      "id": "packages_web_package_dependencies_date_fns_tz",
-      "label": "date-fns-tz",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "date-fns-tz",
-      "source_file": "packages/web/package.json",
-      "source_location": "L18"
-    },
-    {
-      "id": "packages_web_package_dependencies_react",
-      "label": "react",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "react",
-      "source_file": "packages/web/package.json",
-      "source_location": "L19"
-    },
-    {
-      "id": "packages_web_package_dependencies_react_dom",
-      "label": "react-dom",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "react-dom",
-      "source_file": "packages/web/package.json",
-      "source_location": "L20"
-    },
-    {
-      "id": "packages_web_package_dependencies_react_router_dom",
-      "label": "react-router-dom",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "react-router-dom",
-      "source_file": "packages/web/package.json",
-      "source_location": "L21"
-    },
-    {
-      "id": "packages_web_package_dependencies_tailwindcss_vite",
-      "label": "@tailwindcss/vite",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "@tailwindcss/vite",
-      "source_file": "packages/web/package.json",
-      "source_location": "L14"
-    },
-    {
-      "id": "packages_web_package_dependencies_tanstack_react_query",
-      "label": "@tanstack/react-query",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "@tanstack/react-query",
-      "source_file": "packages/web/package.json",
-      "source_location": "L15"
     },
     {
       "id": "packages_web_package_name",
@@ -5079,17 +5135,6 @@
       "source_location": "L11"
     },
     {
-      "id": "ref_gtfs_realtime_bindings",
-      "label": "gtfs-realtime-bindings",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "core/package.json",
-      "file_type": "concept",
-      "norm_label": "gtfs-realtime-bindings",
-      "source_file": "packages/core/package.json",
-      "source_location": "L16"
-    },
-    {
       "id": "packages_core_sst_env_d",
       "label": "core/sst-env.d.ts",
       "_origin": "ast",
@@ -5674,6 +5719,18 @@
     }
   ],
   "links": [
+    {
+      "source": "packages_core_src_bart_getbartalerts",
+      "target": "packages_core_src_bart_alertmatchesairport",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/core/src/bart.ts",
+      "source_location": "L118",
+      "weight": 1.0
+    },
     {
       "source": "packages_core_src_dateutils_formatflightdate",
       "target": "packages_core_src_dateutils_formatflighttime",
@@ -8519,6 +8576,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_test_bart_test",
+      "target": "ref_gtfs_realtime_bindings",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/bart.test.ts",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_test_cta_test",
       "target": "ref_vitest",
       "relation": "imports_from",
@@ -10177,7 +10246,18 @@
     },
     {
       "source": "packages_core_src_bart",
-      "target": "packages_core_src_bart_isbartairport",
+      "target": "packages_core_src_bart_formatbartalertssummary",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/bart.ts",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_bart",
+      "target": "packages_core_src_bart_sfo_keywords",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10188,24 +10268,57 @@
     },
     {
       "source": "packages_core_src_bart",
+      "target": "packages_core_src_bart_oak_keywords",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/bart.ts",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_bart",
+      "target": "packages_core_src_bart_system_keywords",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/bart.ts",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_bart",
+      "target": "packages_core_src_bart_isbartairport",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/bart.ts",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_bart",
       "target": "packages_core_src_bart_getbartstationinfo",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/bart.ts",
-      "source_location": "L33",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
       "source": "packages_core_src_bart",
-      "target": "packages_core_src_bart_getbartalerts",
+      "target": "packages_core_src_bart_alertmatchesairport",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/bart.ts",
-      "source_location": "L38",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -10221,13 +10334,13 @@
     },
     {
       "source": "packages_core_src_bart",
-      "target": "packages_core_src_bart_formatbartalertssummary",
+      "target": "packages_core_src_bart_getbartalerts",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/bart.ts",
-      "source_location": "L77",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -13455,5 +13568,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "df4ebd4629527b3bf8bddb4b82b51fe731d503bd"
+  "built_at_commit": "61f7c6e33650985c7c77275710c106e3e61838b0"
 }
