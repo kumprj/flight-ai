@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CtaAlert, CtaStationInfo } from "./types";
+import { CtaAlert, CtaStationInfo, TransitAlert } from "./types";
 
 const CTA_ALERTS_API_URL = "https://www.transitchicago.com/api/1.0/alerts.aspx";
 const CTA_TRAIN_TRACKER_URL = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx";
@@ -123,3 +123,17 @@ export const formatCtaAlertsSummary = (
 /**
  * Fetch real-time train arrival predictions if a CTA Train Tracker API key is configured.
  */
+
+/**
+ * Normalise native CTA alerts to the shared TransitAlert shape.
+ */
+export const ctaToTransitAlerts = (alerts: CtaAlert[], agency = "CTA"): TransitAlert[] =>
+  alerts.map((a) => ({
+    id: a.id,
+    headline: a.headline,
+    shortDescription: a.shortDescription,
+    isMajor: a.isMajor || a.severityScore >= 50,
+    agency,
+    routeId: a.routeId,
+    url: a.url,
+  }));

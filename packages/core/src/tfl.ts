@@ -1,5 +1,5 @@
 import axios from "axios";
-import { TflAlert, LondonTransitStationInfo } from "./types";
+import { TflAlert, LondonTransitStationInfo, TransitAlert } from "./types";
 
 const TFL_STATUS_API_URL = "https://api.tfl.gov.uk/Line/Mode/tube,elizabeth-line,dlr,overground,national-rail/Status";
 
@@ -158,3 +158,18 @@ export const formatTflAlertsSummary = (
   const first = alerts[0];
   return `ℹ️ ${lineName}: ${first.headline}`;
 };
+
+/**
+ * Normalise native TfL alerts to the shared TransitAlert shape.
+ */
+export const tflToTransitAlerts = (alerts: TflAlert[], agency = "TfL"): TransitAlert[] =>
+  alerts.map((a) => ({
+    id: a.id,
+    headline: a.headline,
+    shortDescription: a.shortDescription,
+    isMajor: a.isMajor ?? false,
+    agency,
+    routeId: a.routeId,
+    url: a.url,
+  }));
+

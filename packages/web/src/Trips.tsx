@@ -52,9 +52,7 @@ interface TravelTimeData {
     transitAgency?: string;
     transitSteps?: TransitStep[];
   };
-  ctaAlerts?: any[];
-  mtaAlerts?: any[];
-  tflAlerts?: any[];
+  alerts?: any[];
   stationInfo?: { agency?: string; line?: string; fareDescription?: string };
 }
 

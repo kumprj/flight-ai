@@ -61,9 +61,7 @@ describe("bart module", () => {
           station: "BART",
           type: "INFO",
           description: "Expect 15 minute delays.",
-          sms_text: "15 min delay",
-          posted: "",
-          expires: "",
+          smsText: "15 min delay",
         },
       ];
       const summary = formatBartAlertsSummary(alerts, "BART");
@@ -78,9 +76,7 @@ describe("bart module", () => {
           station: "BART",
           type: "INFO",
           description: "Expect 30-minute delays for riders traveling between Millbrae and SFO stations.",
-          sms_text: "BART.gov Alert",
-          posted: "",
-          expires: "",
+          smsText: "BART.gov Alert",
         },
       ];
       const summary = formatBartAlertsSummary(alerts, "BART");
@@ -144,7 +140,7 @@ describe("bart module", () => {
       const sfoAlerts = await getBartAlerts("SFO");
       expect(sfoAlerts).toHaveLength(1);
       expect(sfoAlerts[0].id).toBe("alert_sfo");
-      expect(sfoAlerts[0].sms_text).toContain("Track maintenance near SFO");
+      expect(sfoAlerts[0].smsText).toContain("Track maintenance near SFO");
       expect(sfoAlerts[0].description).toContain("20 min delays");
 
       spy.mockRestore();
