@@ -83,12 +83,6 @@ export const handler: Handler = async (event) => {
       <p style="color: #4b5563; font-size: 15px; line-height: 1.6;">
         Do not head to the airport. Please contact your airline directly to discuss rebooking or refund options.
       </p>
-      ${transitEnabled && (!travelEstimate.transit || !transitLeaveFormatted) ? `
-      <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
-        <p style="color: #991b1b; font-size: 13px; margin: 0; font-weight: 600;">
-          ⚠️ Public transit directions are currently unavailable for this route.
-        </p>
-      </div>` : ''}
       <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: center;">
         <p style="color: #9ca3af; font-size: 14px; margin: 0;">Make My Flight Alert</p>
       </div>
@@ -138,18 +132,45 @@ export const handler: Handler = async (event) => {
     const estimatedLeaveUTC = new Date(flightUTC.getTime() - (arrivalPreference * 60 * 60 * 1000));
 
     // 4. Calculate Travel Time using predicted traffic at estimated leave time
-    const travelInfo = await GoogleMaps.getTravelTime(
+    const transitEnabled = Boolean(profile.Item?.transitEnabled);
+    const travelEstimate = await GoogleMaps.getMultiModalTravelTime(
       payload.homeAddress,
       payload.airportCode,
-      estimatedLeaveUTC
+      estimatedLeaveUTC,
+      transitEnabled
     );
 
-    console.log("Travel time calculated:", travelInfo);
+    console.log("Travel time calculated:", travelEstimate);
 
-    // Calculate final leave time
-    const travelTimeMinutes = Math.ceil(travelInfo.durationSeconds / 60);
+    // Calculate final leave time (drive)
+    const travelTimeMinutes = Math.ceil(travelEstimate.drive.durationSeconds / 60);
     const leaveTimeUTC = calculateLeaveTime(flightUTC, travelTimeMinutes, arrivalPreference);
-    const leaveTimeFormatted = formatLeaveTime(leaveTimeUTC, timezone);
+    const driveLeaveFormatted = formatLeaveTime(leaveTimeUTC, timezone);
+    const leaveTimeFormatted = driveLeaveFormatted;
+
+    let transitLeaveFormatted: string | undefined;
+    let transitAlertsSummary: string | undefined;
+
+    if (travelEstimate.transit) {
+      const transitMinutes = Math.ceil(travelEstimate.transit.durationSeconds / 60);
+      const transitLeaveUTC = calculateLeaveTime(flightUTC, transitMinutes, arrivalPreference);
+      transitLeaveFormatted = formatLeaveTime(transitLeaveUTC, timezone);
+
+      if (travelEstimate.ctaAlerts && travelEstimate.ctaAlerts.length > 0) {
+        transitAlertsSummary = formatCtaAlertsSummary(
+          travelEstimate.ctaAlerts,
+          travelEstimate.stationInfo?.line || "CTA Transit"
+        );
+      } else if (travelEstimate.mtaAlerts && travelEstimate.mtaAlerts.length > 0) {
+        transitAlertsSummary = formatMtaAlertsSummary(
+          travelEstimate.mtaAlerts,
+          travelEstimate.stationInfo?.line || "MTA Transit"
+        );
+      }
+    }
+
+    const transitAgency = travelEstimate.stationInfo?.agency || (travelEstimate.ctaAlerts ? "CTA" : travelEstimate.mtaAlerts ? "MTA" : "Public Transit");
+    const transitLineName = travelEstimate.stationInfo?.line || (travelEstimate.transit?.transitLine ? `${travelEstimate.transit.transitLine} (${transitAgency})` : `${transitAgency} Public Transit`);
 
     const schedDepartureFormatted = formatFlightTimeOnly(trip.Item.date, trip.Item.originAirport);
     const effectiveDepartureFormatted = formatFlightTimeOnly(effectiveDateStr, trip.Item.originAirport);
@@ -166,7 +187,7 @@ export const handler: Handler = async (event) => {
       message = `✈️ Good News for ${trip.Item.flightNumber}!\n\n` +
         `Your flight is now back on its original schedule.\n` +
         `• Departure: ${schedDepartureFormatted}\n\n` +
-        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelInfo.durationText}.\n\n` +
+        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelEstimate.drive.durationText}.\n\n` +
         `To arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early, leave at ${leaveTimeFormatted}.\n\n` +
         `Safe travels!`;
     } else if (isUpdate && isDelayed) {
@@ -176,7 +197,7 @@ export const handler: Handler = async (event) => {
         `Your flight delay has changed to ${delayMinutes} minutes.\n` +
         `• Original: ${schedDepartureFormatted}\n` +
         `• New Departure: ${effectiveDepartureFormatted}\n\n` +
-        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelInfo.durationText}.\n\n` +
+        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelEstimate.drive.durationText}.\n\n` +
         `Updated leave time: ${leaveTimeFormatted}\n\n` +
         `Safe travels!`;
     } else if (isDelayed) {
@@ -185,15 +206,45 @@ export const handler: Handler = async (event) => {
         `Your flight is delayed by ${delayMinutes} minutes.\n` +
         `• Original: ${schedDepartureFormatted}\n` +
         `• New Departure: ${effectiveDepartureFormatted}\n\n` +
-        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelInfo.durationText}.\n\n` +
+        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} is ${travelEstimate.drive.durationText}.\n\n` +
         `To arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your new departure time, leave at ${leaveTimeFormatted}.\n\n` +
         `Safe travels!`;
     } else {
       subject = `⏰ Time to Leave for Flight ${trip.Item.flightNumber}!`;
       message = `✈️ Flight Alert for ${trip.Item.flightNumber}!\n\n` +
-        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} airport is ${travelInfo.durationText}.\n\n` +
+        `Expected travel time from ${payload.homeAddress} to ${payload.airportCode} airport is ${travelEstimate.drive.durationText}.\n\n` +
         `In order to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early for your flight, you should leave at ${leaveTimeFormatted}.\n\n` +
         `Safe travels!`;
+    }
+
+    if (travelEstimate.transit && transitLeaveFormatted) {
+      let transitText = `\n🚆 ${transitLineName}: ${travelEstimate.transit.durationText}\n` +
+        `Leave by: ${transitLeaveFormatted}`;
+      if (travelEstimate.transit.transitSteps && travelEstimate.transit.transitSteps.length > 0) {
+        const stepLines = travelEstimate.transit.transitSteps
+          .filter((s) => s.transitLine)
+          .map((s) => {
+            const stopSeg = s.departureStop && s.arrivalStop
+              ? `: ${s.departureStop} to ${s.arrivalStop}`
+              : s.departureStop
+              ? `: from ${s.departureStop}`
+              : s.arrivalStop
+              ? `: to ${s.arrivalStop}`
+              : '';
+            return `• ${s.transitLine}${stopSeg}`;
+          })
+          .join('\n');
+        if (stepLines) {
+          transitText += `\nTransit steps:\n${stepLines}`;
+        }
+      }
+      if (transitAlertsSummary) {
+        transitText += `\n${transitAlertsSummary}`;
+      }
+      if (travelEstimate.stationInfo?.fareDescription) {
+        transitText += `\nFare: ${travelEstimate.stationInfo.fareDescription}`;
+      }
+      message += `\n${transitText}\n`;
     }
 
     // 6. Send SMS
@@ -289,7 +340,7 @@ export const handler: Handler = async (event) => {
         <p style="color: #1f2937; font-size: 16px; margin: 0; line-height: 1.6;">
           From <strong>${payload.homeAddress}</strong> to <strong>${payload.airportCode} airport</strong>
         </p>
-        <p style="color: ${accentColor}; font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${travelInfo.durationText}</p>
+        <p style="color: ${accentColor}; font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${travelEstimate.drive.durationText}</p>
       </div>
       
       <!-- Drive Option -->
@@ -317,6 +368,19 @@ export const handler: Handler = async (event) => {
         <p style="color: #2563eb; font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
           ${transitLeaveFormatted}
         </p>
+        ${travelEstimate.transit.transitSteps && travelEstimate.transit.transitSteps.length > 0 ? `
+        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #bfdbfe; font-size: 13px; color: #1e3a8a;">
+          ${travelEstimate.transit.transitSteps.filter((s) => s.transitLine).map((s) => {
+            const stopSeg = s.departureStop && s.arrivalStop
+              ? `: ${s.departureStop} to ${s.arrivalStop}`
+              : s.departureStop
+              ? `: from ${s.departureStop}`
+              : s.arrivalStop
+              ? `: to ${s.arrivalStop}`
+              : '';
+            return `<div style="margin-top: 4px;">• <strong>${s.transitLine}</strong>${stopSeg}</div>`;
+          }).join('')}
+        </div>` : ''}
         ${travelEstimate.stationInfo?.fareDescription ? `
         <p style="color: #6b7280; font-size: 12px; margin: 8px 0 0 0;">
           💳 Fare: ${travelEstimate.stationInfo.fareDescription}

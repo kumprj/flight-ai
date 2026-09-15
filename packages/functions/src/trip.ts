@@ -226,6 +226,24 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
       message = `✈️ TEST Flight Alert for ${trip.flightNumber}!\n\nOptions to arrive ${arrivalPreference}h early at ${trip.originAirport}:\n` +
         `🚗 Drive: ${travelEstimate.drive.durationText} (Leave by ${driveLeaveFormatted})\n` +
         `🚆 ${transitLineName}: ${travelEstimate.transit.durationText} (Leave by ${transitLeaveFormatted})\n`;
+      if (travelEstimate.transit.transitSteps && travelEstimate.transit.transitSteps.length > 0) {
+        const stepLines = travelEstimate.transit.transitSteps
+          .filter((s) => s.transitLine)
+          .map((s) => {
+            const stopSeg = s.departureStop && s.arrivalStop
+              ? `: ${s.departureStop} to ${s.arrivalStop}`
+              : s.departureStop
+              ? `: from ${s.departureStop}`
+              : s.arrivalStop
+              ? `: to ${s.arrivalStop}`
+              : '';
+            return `   • ${s.transitLine}${stopSeg}`;
+          })
+          .join('\n');
+        if (stepLines) {
+          message += `Transit steps:\n${stepLines}\n`;
+        }
+      }
       if (transitAlertsSummary) {
         message += `\n${transitAlertsSummary}\n`;
       }
@@ -290,6 +308,19 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
         <p style="color: #2563eb; font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
           ${transitLeaveFormatted}
         </p>
+        ${travelEstimate.transit.transitSteps && travelEstimate.transit.transitSteps.length > 0 ? `
+        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #bfdbfe; font-size: 13px; color: #1e3a8a;">
+          ${travelEstimate.transit.transitSteps.filter((s) => s.transitLine).map((s) => {
+            const stopSeg = s.departureStop && s.arrivalStop
+              ? `: ${s.departureStop} to ${s.arrivalStop}`
+              : s.departureStop
+              ? `: from ${s.departureStop}`
+              : s.arrivalStop
+              ? `: to ${s.arrivalStop}`
+              : '';
+            return `<div style="margin-top: 4px;">• <strong>${s.transitLine}</strong>${stopSeg}</div>`;
+          }).join('')}
+        </div>` : ''}
         ${travelEstimate.stationInfo?.fareDescription ? `
         <p style="color: #6b7280; font-size: 12px; margin: 8px 0 0 0;">
           💳 Fare: ${travelEstimate.stationInfo.fareDescription}

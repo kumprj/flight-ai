@@ -1,4 +1,3 @@
-import React from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -35,6 +34,7 @@ interface Props {
   selected: Date | null;
   onChange: (date: Date | null) => void;
   placeholder?: string;
+  required?: boolean;
 }
 
 export default function CustomDatePicker({ selected, onChange, placeholder }: Props) {
