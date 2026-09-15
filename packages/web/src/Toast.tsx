@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export type ToastType = "success" | "error";
+export type ToastType = "success" | "error" | "info";
 
 interface ToastProps {
   message: string;
@@ -12,17 +12,26 @@ export default function Toast({ message, type, onClose }: ToastProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 3000); // Auto-dismiss after 3 seconds
+    }, 4000); // Auto-dismiss after 4 seconds
 
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const bgColor = type === "success" ? "bg-emerald-500" : "bg-red-500";
-  const icon = type === "success" ? (
+  const bgColor =
+    type === "success"
+      ? "bg-emerald-500"
+      : type === "info"
+      ? "bg-blue-600"
+      : "bg-red-500";
+
+  const icon =
+    type === "success" ? (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-  ) : (
+    ) : type === "info" ? (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    ) : (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-  );
+    );
 
   return (
       <div className="fixed top-5 right-5 z-50 animate-bounce-in">
