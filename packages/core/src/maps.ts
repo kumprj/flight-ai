@@ -38,7 +38,7 @@ export const GoogleMaps = {
     }
 
     const fieldMask = mode === "TRANSIT"
-      ? "routes.duration,routes.distanceMeters,routes.legs.steps,routes.legs.steps.transitDetails,routes.legs.steps.transitDetails.transitLine,routes.legs.steps.transitDetails.stopDetails"
+      ? "routes.duration,routes.distanceMeters,routes.legs.steps,routes.legs.steps.navigationInstruction,routes.legs.steps.transitDetails,routes.legs.steps.transitDetails.transitLine,routes.legs.steps.transitDetails.stopDetails"
       : "routes.duration,routes.distanceMeters,routes.staticDuration";
 
     const response = await axios.post(
@@ -72,18 +72,34 @@ export const GoogleMaps = {
         if (leg.steps) {
           for (const step of leg.steps) {
             // Extract step details for full route
+            const instruction = step.navigationInstruction?.instructions || step.instruction;
             const stepInfo: TransitStep = {
-              instruction: step.instruction,
+              instruction,
               distanceMeters: step.distanceMeters,
               durationSeconds: parseInt(step.duration?.replace("s", "") || "0", 10),
             };
 
             if (step.transitDetails) {
               const line = step.transitDetails.transitLine;
-              const lineName = line?.name || line?.nameShort;
+              const vehicleType = typeof line?.vehicle?.name === "object" ? line.vehicle.name.text : line?.vehicle?.name;
+              const isBus = line?.vehicle?.type === "BUS" || vehicleType?.toLowerCase()?.includes("bus");
+
+              let lineName: string | undefined;
+              if (line?.nameShort && line?.name) {
+                if (line.name.toLowerCase().includes(line.nameShort.toLowerCase())) {
+                  lineName = line.name;
+                } else if (isBus) {
+                  lineName = `${line.nameShort} - ${line.name}`;
+                } else {
+                  lineName = line.name;
+                }
+              } else {
+                lineName = line?.nameShort || line?.name;
+              }
+
               if (!transitLine && lineName) {
                 transitLine = lineName;
-                transitAgency = line.agencies?.[0]?.name;
+                transitAgency = line?.agencies?.[0]?.name;
               }
 
               // Collect all unique transit lines for the full route
@@ -91,10 +107,16 @@ export const GoogleMaps = {
                 transitLines.push(lineName);
               }
 
+              const departureStop = step.transitDetails.stopDetails?.departureStop?.name;
+              const arrivalStop = step.transitDetails.stopDetails?.arrivalStop?.name;
+
               stepInfo.transitLine = lineName;
+              stepInfo.lineShortName = line?.nameShort;
               stepInfo.transitAgency = line?.agencies?.[0]?.name;
-              stepInfo.stopName = step.transitDetails.stopDetails?.name;
-              stepInfo.vehicleType = line?.vehicle?.name;
+              stepInfo.departureStop = departureStop;
+              stepInfo.arrivalStop = arrivalStop;
+              stepInfo.stopName = departureStop || arrivalStop || step.transitDetails.stopDetails?.name;
+              stepInfo.vehicleType = vehicleType;
               stepInfo.numStops = step.transitDetails.numStops;
             }
 
