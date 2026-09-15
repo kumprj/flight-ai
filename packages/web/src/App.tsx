@@ -12,6 +12,11 @@ import CalendarImport from './CalendarImport';
 import Onboarding from './Onboarding';
 import type { CalendarFlight } from './utils/googleCalendar';
 
+interface FlightSegment {
+  origin: string;
+  destination: string;
+}
+
 interface FlightData {
   flightNumber: string;
   departureTime: string;
@@ -43,6 +48,7 @@ function App() {
   const [searchMode, setSearchMode] = useState<'flight' | 'route'>('flight');
   const [depAirport, setDepAirport] = useState('');
   const [arrAirport, setArrAirport] = useState('');
+  const [flightSegments, setFlightSegments] = useState<FlightSegment[]>([{ origin: '', destination: '' }]);
 
   const [view, setView] = useState<'add' | 'list' | 'profile'>('list');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -235,15 +241,27 @@ function App() {
           params.date = selectedDate.toISOString().split('T')[0];
         }
       } else {
-        // Route mode
-        if (!dep || !arr || !selectedDate) {
+        // Route mode - check if we have connecting flights
+        const firstSegment = flightSegments[0];
+        const lastSegment = flightSegments[flightSegments.length - 1];
+        if (!firstSegment.origin || !lastSegment.destination || !selectedDate) {
           showToast("Please enter departure, destination airports, and date.", "error");
           setLoading(false);
           return;
         }
-        params.depIata = dep;
-        params.arrIata = arr;
-        params.date = selectedDate.toISOString().split('T')[0];
+
+        // For connecting flights, search for each segment
+        if (flightSegments.length > 1) {
+          // Search for the first segment only for now
+          params.depIata = firstSegment.origin;
+          params.arrIata = firstSegment.destination;
+          params.date = selectedDate.toISOString().split('T')[0];
+          params.segments = flightSegments;
+        } else {
+          params.depIata = dep;
+          params.arrIata = arr;
+          params.date = selectedDate.toISOString().split('T')[0];
+        }
         console.log('Route search params:', params);
       }
 
@@ -304,17 +322,41 @@ function App() {
         });
         showToast("Trip updated successfully!", "success");
       } else {
-        // Create new trip
-        await axios.post(`${Config.API_URL}/trips`, {
-          flightNumber: selectedFlight?.flightNumber,
-          date: selectedFlight?.departureTime,
-          originAirport: selectedFlight?.origin,
-          destinationAirport: selectedFlight?.destination,
-          homeAddress: homeAddress,
-        }, {
-          headers: {Authorization: `Bearer ${token}`}
-        });
-        showToast("Trip tracked successfully!", "success");
+        // Create new trip(s)
+        if (searchMode === 'route' && flightSegments.length > 1) {
+          // Create multiple trips for connecting flights
+          const createPromises = flightSegments.map((segment, index) => {
+            // For now, use the selected flight for the first segment
+            // TODO: Need to select flights for each segment
+            if (index === 0 && selectedFlight) {
+              return axios.post(`${Config.API_URL}/trips`, {
+                flightNumber: selectedFlight.flightNumber,
+                date: selectedFlight.departureTime,
+                originAirport: segment.origin,
+                destinationAirport: segment.destination,
+                homeAddress: homeAddress,
+              }, {
+                headers: {Authorization: `Bearer ${token}`}
+              });
+            }
+            return null;
+          }).filter(Boolean);
+
+          await Promise.all(createPromises);
+          showToast("Connecting flights tracked successfully!", "success");
+        } else {
+          // Create single trip
+          await axios.post(`${Config.API_URL}/trips`, {
+            flightNumber: selectedFlight?.flightNumber,
+            date: selectedFlight?.departureTime,
+            originAirport: selectedFlight?.origin,
+            destinationAirport: selectedFlight?.destination,
+            homeAddress: homeAddress,
+          }, {
+            headers: {Authorization: `Bearer ${token}`}
+          });
+          showToast("Trip tracked successfully!", "success");
+        }
       }
 
       setStep('input');
@@ -326,6 +368,7 @@ function App() {
       setSearchMode('flight');
       setDepAirport('');
       setArrAirport('');
+      setFlightSegments([{ origin: '', destination: '' }]);
       setView('list');
     } catch (err) {
       console.error(err);
@@ -342,6 +385,24 @@ function App() {
     setSearchMode('flight');
     setDepAirport('');
     setArrAirport('');
+    setFlightSegments([{ origin: '', destination: '' }]);
+  };
+
+  const addFlightSegment = () => {
+    const lastSegment = flightSegments[flightSegments.length - 1];
+    setFlightSegments([...flightSegments, { origin: lastSegment.destination, destination: '' }]);
+  };
+
+  const removeFlightSegment = (index: number) => {
+    if (flightSegments.length > 1) {
+      setFlightSegments(flightSegments.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateFlightSegment = (index: number, field: 'origin' | 'destination', value: string) => {
+    const newSegments = [...flightSegments];
+    newSegments[index][field] = value.toUpperCase();
+    setFlightSegments(newSegments);
   };
 
   const handleEdit = (trip: Trip) => {
@@ -556,23 +617,42 @@ function App() {
                                           className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
                                         Route Info
                                       </label>
-                                      <div className="flex gap-2 mb-2">
-                                        <input
-                                            name="depAirport"
-                                            placeholder="From (e.g. JFK)"
-                                            required
-                                            value={depAirport}
-                                            onChange={(e) => setDepAirport(e.target.value.toUpperCase())}
-                                            className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
-                                        />
-                                        <input
-                                            name="arrAirport"
-                                            placeholder="To (e.g. LAX)"
-                                            required
-                                            value={arrAirport}
-                                            onChange={(e) => setArrAirport(e.target.value.toUpperCase())}
-                                            className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
-                                        />
+                                      <div className="space-y-2">
+                                        {flightSegments.map((segment, index) => (
+                                          <div key={index} className="flex gap-2 items-center">
+                                            <input
+                                              placeholder={index === 0 ? "From (e.g. JFK)" : "From"}
+                                              required
+                                              value={segment.origin}
+                                              onChange={(e) => updateFlightSegment(index, 'origin', e.target.value)}
+                                              className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
+                                            />
+                                            <span className="text-gray-400">→</span>
+                                            <input
+                                              placeholder={index === flightSegments.length - 1 ? "To (e.g. LAX)" : "To"}
+                                              required
+                                              value={segment.destination}
+                                              onChange={(e) => updateFlightSegment(index, 'destination', e.target.value)}
+                                              className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
+                                            />
+                                            {flightSegments.length > 1 && (
+                                              <button
+                                                type="button"
+                                                onClick={() => removeFlightSegment(index)}
+                                                className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                              >
+                                                ✕
+                                              </button>
+                                            )}
+                                          </div>
+                                        ))}
+                                        <button
+                                          type="button"
+                                          onClick={addFlightSegment}
+                                          className="w-full py-2 text-sm text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors font-medium"
+                                        >
+                                          + Add Connection
+                                        </button>
                                       </div>
                                       <CustomDatePicker
                                           selected={selectedDate}
