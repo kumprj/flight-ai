@@ -176,9 +176,16 @@ export default function Profile({ onBack }: ProfileProps) {
         )}
 
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">My Profile</h2>
-          <button onClick={onBack} className="text-green-700 hover:text-green-800 text-sm font-semibold">
-            Back
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">My Profile</h2>
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-1 text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 text-sm font-semibold cursor-pointer transition-colors"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Trips
           </button>
         </div>
 

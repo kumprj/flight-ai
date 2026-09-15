@@ -173,19 +173,6 @@
       "source_location": "L25"
     },
     {
-      "id": "packages_core_src_types_schedulerpayload",
-      "label": "SchedulerPayload",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "schedulerpayload",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L39"
-    },
-    {
       "id": "packages_core_src_types_tflalert",
       "label": "TflAlert",
       "_callable": true,
@@ -301,6 +288,19 @@
       "norm_label": "airportinfo",
       "source_file": "packages/core/src/airports.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_types_schedulerpayload",
+      "label": "SchedulerPayload",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "schedulerpayload",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L39"
     },
     {
       "id": "packages_web_src_types_google_maps_d_addresscomponent",
@@ -1969,6 +1969,74 @@
       "source_file": "packages/web/index.html",
       "source_location": "L1-L16",
       "source_url": null
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig",
+      "label": "query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "frontmatter": {
+        "type": "query",
+        "date": "2026-09-14T20:26:38.731599+00:00",
+        "question": "Why does getAirportTimezone() connect Make My Flight Core Backend &amp; Data to AWS Serverless SDK Dependencies?",
+        "contributor": "graphify",
+        "outcome": "useful",
+        "source_nodes": "[&quot;packages_core_src_airports_getairporttimezone&quot;, &quot;packages_functions_src_cron&quot;, &quot;packages_functions_src_notify&quot;]"
+      },
+      "node_kind": "page",
+      "norm_label": "query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_answer",
+      "label": "Answer",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "answer",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_outcome",
+      "label": "Outcome",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "outcome",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "label": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "q: why does getairporttimezone() connect make my flight core backend & data to aws serverless sdk dependencies?",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_source_nodes",
+      "label": "Source Nodes",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "source nodes",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L20"
     },
     {
       "id": "packages_core_src_bart",
@@ -3742,6 +3810,17 @@
       "source_location": "L1"
     },
     {
+      "id": "ref_aws_sdk_client_ses",
+      "label": "@aws-sdk/client-ses",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "concept",
+      "norm_label": "@aws-sdk/client-ses",
+      "source_file": "package.json",
+      "source_location": "L27"
+    },
+    {
       "id": "packages_web_src_types_google_maps_d",
       "label": "google-maps.d.ts",
       "_origin": "ast",
@@ -4171,17 +4250,6 @@
       "norm_label": "googlecalendar.ts",
       "source_file": "packages/web/src/utils/googleCalendar.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "ref_aws_amplify",
-      "label": "aws-amplify",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "concept",
-      "norm_label": "aws-amplify",
-      "source_file": "packages/web/package.json",
-      "source_location": "L16"
     },
     {
       "id": "ref_react",
@@ -5042,6 +5110,17 @@
       "source_location": "L34"
     },
     {
+      "id": "ref_aws_amplify",
+      "label": "aws-amplify",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "web/package.json",
+      "file_type": "concept",
+      "norm_label": "aws-amplify",
+      "source_file": "packages/web/package.json",
+      "source_location": "L16"
+    },
+    {
       "id": "ref_aws_amplify_ui_react",
       "label": "@aws-amplify/ui-react",
       "_origin": "ast",
@@ -5589,6 +5668,74 @@
       "source_location": "L4"
     },
     {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai",
+      "label": "query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "frontmatter": {
+        "type": "query",
+        "date": "2026-09-14T20:30:43.914836+00:00",
+        "question": "How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+        "contributor": "graphify",
+        "outcome": "useful",
+        "source_nodes": "[&quot;packages_core_src_maps_googlemaps&quot;, &quot;packages_core_src_maps_gettraveltime&quot;, &quot;packages_functions_src_notify&quot;, &quot;packages_functions_src_trip&quot;]"
+      },
+      "node_kind": "page",
+      "norm_label": "query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_answer",
+      "label": "Answer",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "answer",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_outcome",
+      "label": "Outcome",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "outcome",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "label": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "q: how does traffic prediction work from departure airport to google maps routes api in make my flight?",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_source_nodes",
+      "label": "Source Nodes",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "source nodes",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L20"
+    },
+    {
       "id": "packages_core_sst_env_d",
       "label": "core/sst-env.d.ts",
       "_origin": "ast",
@@ -6034,17 +6181,6 @@
       "norm_label": "typescript",
       "source_file": "package.json",
       "source_location": "L24"
-    },
-    {
-      "id": "ref_aws_sdk_client_ses",
-      "label": "@aws-sdk/client-ses",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "package.json",
-      "file_type": "concept",
-      "norm_label": "@aws-sdk/client-ses",
-      "source_file": "package.json",
-      "source_location": "L27"
     },
     {
       "id": "ref_dotenv",
@@ -6755,7 +6891,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L1030",
+      "source_location": "L1002",
       "weight": 1.0
     },
     {
@@ -6767,7 +6903,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L1031",
+      "source_location": "L1003",
       "weight": 1.0
     },
     {
@@ -10808,6 +10944,94 @@
       "confidence_score": 1.0,
       "source_file": "GEMINI.md",
       "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_answer",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_outcome",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_source_nodes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_answer",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_outcome",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_source_nodes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -15341,5 +15565,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "37829a94f75b6b77348291a50302501837500f5b"
+  "built_at_commit": "6337f0047633a2561fe2b73c7338f8bd4c580471"
 }

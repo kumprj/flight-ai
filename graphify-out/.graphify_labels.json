@@ -1,9 +1,11 @@
 {
+  "0": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
   "1": "maps.ts",
   "2": "trip.ts",
   "3": "App.tsx",
   "4": "core/package.json",
   "5": "web/package.json",
+  "6": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
   "7": "Issue tracker: GitHub",
   "8": "package.json",
   "9": "Make My Flight (makemyflight)",
