@@ -1,17 +1,17 @@
 # Graph Report - flight-ai  (2026-09-14)
 
 ## Corpus Check
-- 71 files · ~37,245 words
+- 71 files · ~37,950 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 6 file(s) not represented in the graph (top: (none) 4, .css 2)
 
 ## Summary
-- 480 nodes · 636 edges · 46 communities (26 shown, 10 thin omitted)
+- 481 nodes · 638 edges · 46 communities (26 shown, 10 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `90684a07`
+- Built from commit: `361255e5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -88,11 +88,11 @@ Nodes (15): CalendarImport(), Props, cacheToken(), CalendarFlight, fetchCalendar
 
 ### Community 1 - "maps.ts"
 Cohesion: 0.10
-Nodes (25): AirportInfo, AIRPORTS, getAirportAddress(), CHICAGO_STATIONS, formatCtaAlertsSummary(), getCtaAlerts(), getCtaStationInfo(), isChicagoAirport() (+17 more)
+Nodes (24): AirportInfo, AIRPORTS, getAirportAddress(), CHICAGO_STATIONS, formatCtaAlertsSummary(), getCtaAlerts(), getCtaStationInfo(), isChicagoAirport() (+16 more)
 
 ### Community 2 - "trip.ts"
-Cohesion: 0.15
-Nodes (26): getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), formatFlightDate(), formatFlightTime(), formatFlightTimeOnly(), formatLeaveTime(), parseFlightTimeToUTC() (+18 more)
+Cohesion: 0.14
+Nodes (27): getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), formatFlightDate(), formatFlightTime(), formatFlightTimeOnly(), formatLeaveTime(), parseFlightTimeToUTC() (+19 more)
 
 ### Community 3 - "App.tsx"
 Cohesion: 0.11
@@ -175,8 +175,8 @@ Cohesion: 0.15
 Nodes (12): compilerOptions, allowSyntheticDefaultImports, baseUrl, esModuleInterop, module, moduleResolution, paths, skipLibCheck (+4 more)
 
 ### Community 31 - "flights.ts"
-Cohesion: 0.28
-Nodes (5): cache, FlightResult, Flights, mapFlight(), parseLocalTime()
+Cohesion: 0.27
+Nodes (7): aeroHeaders(), cache, fetchWithRetry(), FlightResult, Flights, mapFlight(), parseLocalTime()
 
 ### Community 35 - "compilerOptions"
 Cohesion: 0.40
@@ -188,7 +188,7 @@ Nodes (23): API Endpoints, APIs, Architecture, AWS Infrastructure, Backend, Depl
 
 ## Knowledge Gaps
 - **272 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+267 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 311 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 310 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -199,12 +199,12 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `formatFlightTimeOnly()` connect `trip.ts` to `App.tsx`?**
   _High betweenness centrality (0.081) - this node is a cross-community bridge._
 - **Why does `@aws-sdk/client-ses` connect `trip.ts` to `package.json`?**
-  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+  _High betweenness centrality (0.040) - this node is a cross-community bridge._
 - **What connects `name`, `private`, `workspaces` to the rest of the system?**
   _272 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `maps.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.09759759759759759 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.10158730158730159 - nodes in this community are weakly interconnected._
 - **Should `trip.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.14795008912655971 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1411764705882353 - nodes in this community are weakly interconnected._
 - **Should `App.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.1066066066066066 - nodes in this community are weakly interconnected._

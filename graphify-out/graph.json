@@ -212,19 +212,6 @@
       "source_location": "L70"
     },
     {
-      "id": "packages_core_src_types_trip",
-      "label": "Trip",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "trip",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "packages_core_src_types_schedulerpayload",
       "label": "SchedulerPayload",
       "_callable": true,
@@ -236,6 +223,19 @@
       "norm_label": "schedulerpayload",
       "source_file": "packages/core/src/types.ts",
       "source_location": "L39"
+    },
+    {
+      "id": "packages_core_src_types_trip",
+      "label": "Trip",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "trip",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L1"
     },
     {
       "id": "packages_web_src_types_google_maps_d_addresscomponent",
@@ -1256,6 +1256,18 @@
       "norm_label": "aeroheaders()",
       "source_file": "packages/core/src/flights.ts",
       "source_location": "L25"
+    },
+    {
+      "id": "packages_core_src_flights_fetchwithretry",
+      "label": "fetchWithRetry()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "flights.ts",
+      "file_type": "code",
+      "norm_label": "fetchwithretry()",
+      "source_file": "packages/core/src/flights.ts",
+      "source_location": "L97"
     },
     {
       "id": "packages_core_src_flights_mapflight",
@@ -3635,7 +3647,7 @@
       "file_type": "code",
       "norm_label": "flights",
       "source_file": "packages/core/src/flights.ts",
-      "source_location": "L97"
+      "source_location": "L115"
     },
     {
       "id": "packages_functions_src_flight",
@@ -5635,6 +5647,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_src_flights_fetchwithretry",
+      "target": "packages_core_src_flights_aeroheaders",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/core/src/flights.ts",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_src_flights_mapflight",
       "target": "packages_core_src_flights_parselocaltime",
       "relation": "calls",
@@ -5991,7 +6015,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L758",
+      "source_location": "L902",
       "weight": 1.0
     },
     {
@@ -6003,7 +6027,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L759",
+      "source_location": "L903",
       "weight": 1.0
     },
     {
@@ -9898,6 +9922,17 @@
     },
     {
       "source": "packages_core_src_flights",
+      "target": "packages_core_src_flights_flights",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/flights.ts",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_flights",
       "target": "packages_core_src_flights_aeroheaders",
       "relation": "contains",
       "_origin": "ast",
@@ -9953,7 +9988,7 @@
     },
     {
       "source": "packages_core_src_flights",
-      "target": "packages_core_src_flights_flights",
+      "target": "packages_core_src_flights_fetchwithretry",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12824,5 +12859,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "90684a0700e02971306045f6d8a3ea7f7f46a77f"
+  "built_at_commit": "361255e567a229a22ea9e74966a9fc028d1dd492"
 }

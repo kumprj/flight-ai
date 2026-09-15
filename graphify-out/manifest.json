@@ -30,9 +30,9 @@
     "semantic_hash": "fe7a59ba3b8624385be993206cbae69d"
   },
   "packages/core/src/flights.ts": {
-    "mtime": 1789432476.34327,
-    "seen": 1789435640.0384252,
-    "ast_hash": "6d42a401688f21f4cac50204ffec8bcc",
+    "mtime": 1789438680.2862504,
+    "seen": 1789438797.719378,
+    "ast_hash": "881f2a5fd147b44d036325dd5ebdcfc0",
     "semantic_hash": ""
   },
   "packages/core/src/index.ts": {
@@ -144,9 +144,9 @@
     "semantic_hash": "98a38794f8f05fe467e686ff680cbc26"
   },
   "packages/web/src/App.tsx": {
-    "mtime": 1789438353.4019308,
-    "seen": 1789438425.8001978,
-    "ast_hash": "5711edab9499a42597074979d2f59743",
+    "mtime": 1789438757.0311,
+    "seen": 1789438797.719421,
+    "ast_hash": "756701924b5de47c528ea8b65cc8342f",
     "semantic_hash": ""
   },
   "packages/web/src/CalendarImport.tsx": {
@@ -174,10 +174,10 @@
     "semantic_hash": ""
   },
   "packages/web/src/Toast.tsx": {
-    "mtime": 1769052144.5982916,
-    "seen": 1789417498.4783921,
-    "ast_hash": "05a5e041dad9e99479c6e1122dd57a43",
-    "semantic_hash": "05a5e041dad9e99479c6e1122dd57a43"
+    "mtime": 1789438774.1838415,
+    "seen": 1789438797.71943,
+    "ast_hash": "80d92be6b0e7be4a2064eca358504d39",
+    "semantic_hash": ""
   },
   "packages/web/src/Trips.tsx": {
     "mtime": 1789438396.2518487,

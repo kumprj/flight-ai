@@ -94,6 +94,24 @@ export const mapFlight = (f: any): FlightResult => {
   };
 };
 
+const fetchWithRetry = async (url: string, params?: any, retries = 2): Promise<any> => {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await axios.get(url, { params, headers: aeroHeaders() });
+    } catch (err: any) {
+      const isRateLimit =
+        err?.response?.status === 429 ||
+        err?.response?.data?.message?.toLowerCase().includes('rate limit');
+      if (isRateLimit && attempt < retries) {
+        console.warn(`RapidAPI rate limit hit, backing off 1200ms (attempt ${attempt + 1}/${retries})...`);
+        await new Promise((resolve) => setTimeout(resolve, 1200 * (attempt + 1)));
+        continue;
+      }
+      throw err;
+    }
+  }
+};
+
 export const Flights = {
   search: async (flightIata: string, date?: string): Promise<FlightResult[]> => {
     const today = new Date().toISOString().split('T')[0];
@@ -110,9 +128,8 @@ export const Flights = {
     console.log(`Searching AeroDataBox for flight: ${flightIata} on ${searchDate}`);
 
     try {
-      const res = await axios.get(
-        `${AERODATABOX_BASE_URL}/flights/number/${encodeURIComponent(flightIata)}/${searchDate}`,
-        { headers: aeroHeaders() }
+      const res = await fetchWithRetry(
+        `${AERODATABOX_BASE_URL}/flights/number/${encodeURIComponent(flightIata)}/${searchDate}`
       );
 
       const data: any[] = Array.isArray(res.data) ? res.data : [];
@@ -143,7 +160,7 @@ export const Flights = {
 
       return match;
     } catch (error: any) {
-      console.error(`Failed to check status for ${flightIata} on ${dateStr}:`, error?.message || error);
+      console.error("Error checking flight status:", error);
       return null;
     }
   },
@@ -161,17 +178,25 @@ export const Flights = {
     console.log(`Searching AeroDataBox for route: ${depIata} -> ${arrIata} on ${date}`);
 
     try {
-      // AeroDataBox limits airport queries to 12-hour windows, so split the day into AM and PM halves
-      const [amRes, pmRes] = await Promise.all([
-        axios.get(
-          `${AERODATABOX_BASE_URL}/flights/airports/iata/${depIata}/${date}T00:00/${date}T11:59`,
-          { params: { direction: 'Departure', withLeg: true }, headers: aeroHeaders() }
-        ),
-        axios.get(
-          `${AERODATABOX_BASE_URL}/flights/airports/iata/${depIata}/${date}T12:00/${date}T23:59`,
-          { params: { direction: 'Departure', withLeg: true }, headers: aeroHeaders() }
-        ),
-      ]);
+      // AeroDataBox limits airport queries to 12-hour windows.
+      // Query AM and PM sequentially with a delay to respect RapidAPI Basic 1 req/sec rate limit.
+      const amRes = await fetchWithRetry(
+        `${AERODATABOX_BASE_URL}/flights/airports/iata/${depIata}/${date}T00:00/${date}T11:59`,
+        { direction: 'Departure', withLeg: true }
+      ).catch((err) => {
+        console.warn('AeroDataBox AM route fetch error:', err?.response?.data || err?.message || err);
+        return { data: { departures: [] } };
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 1100));
+
+      const pmRes = await fetchWithRetry(
+        `${AERODATABOX_BASE_URL}/flights/airports/iata/${depIata}/${date}T12:00/${date}T23:59`,
+        { direction: 'Departure', withLeg: true }
+      ).catch((err) => {
+        console.warn('AeroDataBox PM route fetch error:', err?.response?.data || err?.message || err);
+        return { data: { departures: [] } };
+      });
 
       const departures: any[] = [
         ...(amRes.data?.departures || []),

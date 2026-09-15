@@ -59,6 +59,7 @@ function App() {
   const [homeAddress, setHomeAddress] = useState('');
   const [searchMode, setSearchMode] = useState<'flight' | 'route'>('flight');
   const [flightSegments, setFlightSegments] = useState<FlightSegment[]>([{ origin: '', destination: '' }]);
+  const [flightNumbers, setFlightNumbers] = useState<string[]>(['']);
 
   const [view, setView] = useState<'add' | 'list' | 'profile'>('list');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -219,11 +220,7 @@ function App() {
     setLoading(true);
 
     const form = new FormData(e.target as HTMLFormElement);
-    const flightNumRaw = form.get('flightNumber') as string;
-    const address = form.get('homeAddress') as string;
-
-    const flightNum = flightNumRaw ? flightNumRaw.toUpperCase().replace(/\s/g, '') : '';
-
+    const address = (form.get('homeAddress') as string) || homeAddress;
     setHomeAddress(address);
 
     try {
@@ -233,19 +230,70 @@ function App() {
       let params: any = {};
 
       if (searchMode === 'flight') {
-        if (!flightNum) {
+        const validFlightNums = flightNumbers
+          .map(f => f.trim().toUpperCase().replace(/\s/g, ''))
+          .filter(Boolean);
+
+        if (validFlightNums.length === 0) {
           showToast("Please enter a flight number.", "error");
           setLoading(false);
           return;
         }
-        if (!/^[A-Z]{2}\d{1,4}$/.test(flightNum)) {
-          showToast("Invalid flight number. Expected format: 2 letters followed by 1–4 digits (e.g. UA123 or DL 2806).", "error");
+
+        for (const fn of validFlightNums) {
+          if (!/^[A-Z]{2}\d{1,4}$/.test(fn)) {
+            showToast(`Invalid flight number '${fn}'. Expected format: 2 letters followed by 1–4 digits (e.g. UA123 or DL 2806).`, "error");
+            setLoading(false);
+            return;
+          }
+        }
+
+        const dateStr = selectedDate ? selectedDate.toISOString().split('T')[0] : undefined;
+
+        if (validFlightNums.length > 1) {
+          const segmentList: MultiSegmentResult[] = [];
+          for (let i = 0; i < validFlightNums.length; i++) {
+            const fn = validFlightNums[i];
+            if (i > 0) {
+              await new Promise(r => setTimeout(r, 1100));
+            }
+            try {
+              const res = await axios.get(`${Config.API_URL}/flights/search`, {
+                params: { flightNumber: fn, ...(dateStr ? { date: dateStr } : {}) },
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              const flights: FlightData[] = Array.isArray(res.data) ? res.data : [];
+              segmentList.push({
+                origin: flights[0]?.origin || fn,
+                destination: flights[0]?.destination || '',
+                flights,
+              });
+            } catch (err: any) {
+              console.error(`Failed to search flight ${fn}:`, err);
+              segmentList.push({
+                origin: fn,
+                destination: '',
+                flights: [],
+              });
+            }
+          }
+
+          const emptyLeg = segmentList.find(s => s.flights.length === 0);
+          if (emptyLeg) {
+            showToast(`Flight ${emptyLeg.origin} was not found on this date. Check flight number and date.`, "error");
+          }
+
+          setMultiSegments(segmentList);
+          setCurrentSegmentIdx(0);
+          setSelectedSegments([]);
+          setStep('select');
           setLoading(false);
           return;
-        }
-        params.flightNumber = flightNum;
-        if (selectedDate) {
-          params.date = selectedDate.toISOString().split('T')[0];
+        } else {
+          params.flightNumber = validFlightNums[0];
+          if (dateStr) {
+            params.date = dateStr;
+          }
         }
       } else {
         // Route mode - check if we have connecting flights
@@ -257,16 +305,60 @@ function App() {
           return;
         }
 
-        // For connecting flights, search for each segment
+        const dateStr = selectedDate.toISOString().split('T')[0];
+
+        // For connecting flights, search each segment individually using standard depIata & arrIata
+        // This ensures full compatibility with currently deployed API and avoids 400 errors
         if (flightSegments.length > 1) {
-          params.date = selectedDate.toISOString().split('T')[0];
-          params.segments = JSON.stringify(flightSegments);
+          const segmentList: MultiSegmentResult[] = [];
+          for (let i = 0; i < flightSegments.length; i++) {
+            const seg = flightSegments[i];
+            if (i > 0) {
+              // Delay to respect RapidAPI Basic 1 req/sec rate limit
+              await new Promise(r => setTimeout(r, 1100));
+            }
+            try {
+              const res = await axios.get(`${Config.API_URL}/flights/search`, {
+                params: {
+                  depIata: seg.origin.trim().toUpperCase(),
+                  arrIata: seg.destination.trim().toUpperCase(),
+                  date: dateStr,
+                },
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              const flights: FlightData[] = Array.isArray(res.data) ? res.data : [];
+              segmentList.push({
+                origin: seg.origin.trim().toUpperCase(),
+                destination: seg.destination.trim().toUpperCase(),
+                flights,
+              });
+            } catch (err: any) {
+              console.error(`Failed to search segment ${seg.origin} -> ${seg.destination}:`, err);
+              segmentList.push({
+                origin: seg.origin.trim().toUpperCase(),
+                destination: seg.destination.trim().toUpperCase(),
+                flights: [],
+              });
+            }
+          }
+
+          const hasEmpty = segmentList.some(s => s.flights.length === 0);
+          if (hasEmpty) {
+            const emptyLegs = segmentList.filter(s => s.flights.length === 0).map(s => `${s.origin}→${s.destination}`).join(', ');
+            showToast(`No schedule results found on ${dateStr} for: ${emptyLegs}. Airport route schedules are often only available 24-48 hrs in advance. Try searching by Flight Number!`, "info");
+          }
+
+          setMultiSegments(segmentList);
+          setCurrentSegmentIdx(0);
+          setSelectedSegments([]);
+          setStep('select');
+          setLoading(false);
+          return;
         } else {
-          params.depIata = firstSegment.origin;
-          params.arrIata = firstSegment.destination;
-          params.date = selectedDate.toISOString().split('T')[0];
+          params.depIata = firstSegment.origin.trim().toUpperCase();
+          params.arrIata = firstSegment.destination.trim().toUpperCase();
+          params.date = dateStr;
         }
-        console.log('Route search params:', params);
       }
 
       console.log('Sending flight search request with params:', params);
@@ -276,30 +368,24 @@ function App() {
       });
       console.log('Flight search response:', res.status, res.data);
 
-      if (res.data?.isMultiSegment && Array.isArray(res.data.segments) && res.data.segments.length > 0) {
-        setMultiSegments(res.data.segments);
-        setCurrentSegmentIdx(0);
-        setSelectedSegments([]);
+      setMultiSegments(null);
+      setSelectedSegments([]);
+      const flights = Array.isArray(res.data) ? res.data : [];
+      if (flights.length > 0) {
+        setSearchResults(flights);
         setStep('select');
       } else {
-        setMultiSegments(null);
-        setSelectedSegments([]);
-        const flights = Array.isArray(res.data) ? res.data : [];
-        if (flights.length > 0) {
-          setSearchResults(flights);
-          setStep('select');
+        if (searchMode === 'flight') {
+          const fn = flightNumbers[0] || 'entered';
+          showToast(`Flight ${fn} not found. Airlines typically publish schedules 6-11 months in advance.`, "error");
         } else {
-          if (searchMode === 'flight') {
-            showToast(`Flight ${flightNum} not found. Airlines typically publish schedules 6-11 months in advance.`, "error");
-          } else {
-            const routeOrigin = flightSegments[0]?.origin || '';
-            const routeDestination = flightSegments[flightSegments.length - 1]?.destination || '';
-            const monthsOut = selectedDate ? Math.floor((selectedDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30)) : 0;
-            const message = monthsOut > 11 
-              ? `No flights found from ${routeOrigin} to ${routeDestination} on ${selectedDate?.toLocaleDateString()}. This date is ${monthsOut} months away - airlines typically publish schedules only 6-11 months in advance. Try using Google Calendar Import for future flights.`
-              : `No flights found from ${routeOrigin} to ${routeDestination} on ${selectedDate?.toLocaleDateString()}.`;
-            showToast(message, "error");
-          }
+          const routeOrigin = flightSegments[0]?.origin || '';
+          const routeDestination = flightSegments[flightSegments.length - 1]?.destination || '';
+          const monthsOut = selectedDate ? Math.floor((selectedDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30)) : 0;
+          const message = monthsOut > 11 
+            ? `No flights found from ${routeOrigin} to ${routeDestination} on ${selectedDate?.toLocaleDateString()}. This date is ${monthsOut} months away - airlines typically publish schedules only 6-11 months in advance. Try using Google Calendar Import for future flights.`
+            : `No flights found from ${routeOrigin} to ${routeDestination} on ${selectedDate?.toLocaleDateString()}. Airport route boards may not be published yet for this date; try searching by Flight Number!`;
+          showToast(message, "error");
         }
       }
     } catch (err) {
@@ -377,6 +463,7 @@ function App() {
       setEditingTrip(null);
       setSearchMode('flight');
       setFlightSegments([{ origin: '', destination: '' }]);
+      setFlightNumbers(['']);
       setView('list');
     } catch (err) {
       console.error(err);
@@ -401,6 +488,7 @@ function App() {
     setEditingTrip(null);
     setSearchMode('flight');
     setFlightSegments([{ origin: '', destination: '' }]);
+    setFlightNumbers(['']);
   };
 
   const addFlightSegment = () => {
@@ -420,8 +508,25 @@ function App() {
     setFlightSegments(newSegments);
   };
 
+  const addFlightNumber = () => {
+    setFlightNumbers([...flightNumbers, '']);
+  };
+
+  const removeFlightNumber = (index: number) => {
+    if (flightNumbers.length > 1) {
+      setFlightNumbers(flightNumbers.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateFlightNumber = (index: number, value: string) => {
+    const updated = [...flightNumbers];
+    updated[index] = value.toUpperCase().replace(/\s/g, '');
+    setFlightNumbers(updated);
+  };
+
   const handleEdit = (trip: Trip) => {
     setEditingTrip(trip);
+    setFlightNumbers([trip.flightNumber]);
     setHomeAddress(trip.homeAddress);
     setSelectedDate(new Date(trip.date));
     setView('add');
@@ -609,21 +714,42 @@ function App() {
                                           className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
                                         Flight Info
                                       </label>
-                                      <div className="flex gap-2">
-                                        <input
-                                            name="flightNumber"
-                                            placeholder="e.g. AA123"
-                                            required
-                                            maxLength={8}
-                                            defaultValue={editingTrip?.flightNumber}
-                                            className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
-                                        />
-
-                                        <CustomDatePicker
-                                            selected={selectedDate}
-                                            onChange={(date) => setSelectedDate(date)}
-                                            placeholder="Date (Opt)"
-                                        />
+                                      <div className="space-y-2">
+                                        {flightNumbers.map((fn, index) => (
+                                          <div key={index} className="flex gap-2 items-center">
+                                            <input
+                                                placeholder={index === 0 ? "e.g. AA123" : `Connecting Leg #${index + 1} (e.g. AA456)`}
+                                                required
+                                                maxLength={8}
+                                                value={fn}
+                                                onChange={(e) => updateFlightNumber(index, e.target.value)}
+                                                className="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-green-600 transition-all outline-none uppercase font-medium"
+                                            />
+                                            {index === 0 && (
+                                              <CustomDatePicker
+                                                  selected={selectedDate}
+                                                  onChange={(date) => setSelectedDate(date)}
+                                                  placeholder="Date (Opt)"
+                                              />
+                                            )}
+                                            {flightNumbers.length > 1 && (
+                                              <button
+                                                  type="button"
+                                                  onClick={() => removeFlightNumber(index)}
+                                                  className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer"
+                                              >
+                                                ✕
+                                              </button>
+                                            )}
+                                          </div>
+                                        ))}
+                                        <button
+                                          type="button"
+                                          onClick={addFlightNumber}
+                                          className="w-full py-2 text-sm text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors font-medium cursor-pointer"
+                                        >
+                                          + Add Connection
+                                        </button>
                                       </div>
                                     </div>
                                 ) : (
@@ -729,7 +855,25 @@ function App() {
                               </div>
 
                               <div className="space-y-3 max-h-[60vh] overflow-y-auto">
-                                {(multiSegments ? multiSegments[currentSegmentIdx].flights : searchResults).map((flight, idx) => (
+                                {(multiSegments ? multiSegments[currentSegmentIdx].flights : searchResults).length === 0 ? (
+                                  <div className="text-center py-8 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                                    <p className="text-gray-700 dark:text-gray-300 font-semibold mb-1">No flights found for this leg</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 max-w-sm mx-auto">
+                                      Airport route schedules are often only available 24–48 hours in advance. For future travel, try tracking directly by Flight Number.
+                                    </p>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setStep('input');
+                                        setSearchMode('flight');
+                                      }}
+                                      className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                                    >
+                                      Switch to Flight Number
+                                    </button>
+                                  </div>
+                                ) : (
+                                  (multiSegments ? multiSegments[currentSegmentIdx].flights : searchResults).map((flight, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => {
@@ -767,7 +911,8 @@ function App() {
                                         <span>{flight.destination}</span>
                                       </div>
                                     </button>
-                                ))}
+                                  ))
+                                )}
                               </div>
                             </div>
                         )}
