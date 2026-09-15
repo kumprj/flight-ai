@@ -678,8 +678,135 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     return null;
   };
 
-  const upcomingCount = trips.filter((t) => !isOldTrip(t.revisedDate || t.date)).length;
-  const pastCount = trips.length - upcomingCount;
+  const activeTrips = trips.filter((t) => !isOldTrip(t.revisedDate || t.date));
+  const pastTrips = trips.filter((t) => isOldTrip(t.revisedDate || t.date));
+  const upcomingCount = activeTrips.length;
+  const pastCount = pastTrips.length;
+
+  const renderTripTile = (trip: Trip) => {
+    const effectiveDate = trip.revisedDate || trip.date;
+    const formatted = formatDate(effectiveDate);
+    const arrivalFormatted = getArrivalFormatted(trip);
+    const originalFormatted = trip.revisedDate && trip.revisedDate !== trip.date ? formatDate(trip.date) : null;
+    const old = isOldTrip(effectiveDate);
+    const isCanceled = trip.status === 'Canceled';
+    const isDelayed = !isCanceled && (trip.status === 'Delayed' || Boolean(trip.revisedDate && trip.revisedDate !== trip.date));
+    const tripTravelTime = travelTimes[trip.sk];
+
+    return (
+      <div
+        key={trip.sk}
+        role="button"
+        tabIndex={0}
+        aria-haspopup="dialog"
+        aria-label={`Flight ${trip.flightNumber} from ${trip.originAirport} to ${trip.destinationAirport}`}
+        onClick={() => setExpandedTrip(trip)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setExpandedTrip(trip);
+          }
+        }}
+        className={`group relative bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg hover:border-green-600 dark:hover:border-green-500 transition-all duration-200 cursor-pointer flex flex-col justify-between text-left hover:-translate-y-0.5 ${
+          old ? 'opacity-60 grayscale hover:opacity-100 hover:grayscale-0' : ''
+        }`}
+      >
+        <div>
+          {/* Header row: Flight # + Status Badge + Expand Icon */}
+          <div className="flex items-start justify-between gap-2 mb-3">
+            <div>
+              <span className="text-xl font-extrabold text-green-700 dark:text-green-500 tracking-tight group-hover:text-green-800 dark:group-hover:text-green-400 transition-colors">
+                {trip.flightNumber}
+              </span>
+              <div className="mt-1 flex items-center gap-1.5 flex-wrap">
+                {isCanceled && (
+                  <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300">
+                    ❌ Canceled
+                  </span>
+                )}
+                {isDelayed && (
+                  <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                    ⚠️ Delayed {trip.delayMinutes ? `(+${trip.delayMinutes}m)` : ''}
+                  </span>
+                )}
+                {!isCanceled && !isDelayed && !old && (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200/60 dark:border-green-800/60">
+                    ✈️ Scheduled
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="p-1.5 rounded-lg text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:bg-green-50 dark:group-hover:bg-green-900/30 transition-all">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Route details */}
+          <div className="my-2.5">
+            <div className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+              <span>{trip.originAirport}</span>
+              <span className="text-gray-400 dark:text-gray-500 font-normal">→</span>
+              <span>{trip.destinationAirport}</span>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
+              {getAirportCity(trip.originAirport).split(',')[0]} to {getAirportCity(trip.destinationAirport).split(',')[0]}
+            </p>
+          </div>
+
+          {/* Date & Time pill */}
+          <div className="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs mt-3">
+            <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 shrink-0">
+              <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span className="font-medium">{formatted.dayOfWeek}, {formatted.monthDay}</span>
+            </div>
+            <div className="flex items-center gap-2 font-semibold justify-end flex-wrap">
+              <span className={`inline-flex items-center gap-1 ${isCanceled ? 'text-red-600 line-through' : isDelayed ? 'text-amber-600 dark:text-amber-400' : 'text-green-700 dark:text-green-500'}`} title="Departure Time">
+                <span className="text-sm leading-none">🛫</span>
+                <span>{formatted.time}</span>
+              </span>
+              <span className="text-gray-300 dark:text-gray-600 font-normal">•</span>
+              <span className={`inline-flex items-center gap-1 ${isCanceled ? 'text-red-600 line-through' : 'text-gray-700 dark:text-gray-200'}`} title="Arrival Time">
+                <span className="text-sm leading-none">🛬</span>
+                <span>{arrivalFormatted.time}</span>
+              </span>
+              {originalFormatted && !isCanceled && (
+                <span className="text-[10px] text-gray-400 line-through ml-0.5">({originalFormatted.time})</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Tile footer */}
+        <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700/60 flex items-center justify-between text-xs">
+          {tripTravelTime ? (
+            <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium truncate">
+              <span>🚗 {tripTravelTime.durationText}</span>
+              {tripTravelTime.transit && (
+                <span className="text-blue-600 dark:text-blue-400 ml-1">
+                  • 🚆 {tripTravelTime.transit.durationText}
+                </span>
+              )}
+            </div>
+          ) : old ? (
+            <span />
+          ) : (
+            <span className="text-gray-400 dark:text-gray-500">Checking traffic...</span>
+          )}
+          <span className="text-green-700 dark:text-green-400 font-semibold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 shrink-0 ml-2">
+            Details
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   return (
       <div className="w-full">
@@ -689,7 +816,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {trips.length === 0
                 ? 'No flights scheduled'
-                : `${upcomingCount} upcoming ${upcomingCount === 1 ? 'flight' : 'flights'}, ${pastCount} previously taken`}
+                : `${upcomingCount} upcoming ${upcomingCount === 1 ? 'flight' : 'flights'}${pastCount > 0 ? `, ${pastCount} past` : ''}`}
             </p>
           </div>
           <button
@@ -713,132 +840,33 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
               </button>
             </div>
         ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {trips.map((trip) => {
-                const effectiveDate = trip.revisedDate || trip.date;
-                const formatted = formatDate(effectiveDate);
-                const arrivalFormatted = getArrivalFormatted(trip);
-                const originalFormatted = trip.revisedDate && trip.revisedDate !== trip.date ? formatDate(trip.date) : null;
-                const old = isOldTrip(effectiveDate);
-                const isCanceled = trip.status === 'Canceled';
-                const isDelayed = !isCanceled && (trip.status === 'Delayed' || Boolean(trip.revisedDate && trip.revisedDate !== trip.date));
-                const tripTravelTime = travelTimes[trip.sk];
+          <div className="space-y-10">
+            {/* Active Trips Section */}
+            {activeTrips.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {activeTrips.map(renderTripTile)}
+              </div>
+            ) : (
+              <div className="text-center sm:text-left py-6 text-gray-500 dark:text-gray-400 text-sm bg-gray-50 dark:bg-gray-800/40 rounded-xl p-4 border border-dashed border-gray-200 dark:border-gray-700">
+                No active flights scheduled.
+              </div>
+            )}
 
-                return (
-                    <div
-                        key={trip.sk}
-                        role="button"
-                        tabIndex={0}
-                        aria-haspopup="dialog"
-                        aria-label={`Flight ${trip.flightNumber} from ${trip.originAirport} to ${trip.destinationAirport}`}
-                        onClick={() => setExpandedTrip(trip)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            setExpandedTrip(trip);
-                          }
-                        }}
-                        className={`group relative bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg hover:border-green-600 dark:hover:border-green-500 transition-all duration-200 cursor-pointer flex flex-col justify-between text-left hover:-translate-y-0.5 ${
-                          old ? 'opacity-60 grayscale hover:opacity-100 hover:grayscale-0' : ''
-                        }`}
-                    >
-                      <div>
-                        {/* Header row: Flight # + Status Badge + Expand Icon */}
-                        <div className="flex items-start justify-between gap-2 mb-3">
-                          <div>
-                            <span className="text-xl font-extrabold text-green-700 dark:text-green-500 tracking-tight group-hover:text-green-800 dark:group-hover:text-green-400 transition-colors">
-                              {trip.flightNumber}
-                            </span>
-                            <div className="mt-1 flex items-center gap-1.5 flex-wrap">
-                              {isCanceled && (
-                                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300">
-                                  ❌ Canceled
-                                </span>
-                              )}
-                              {isDelayed && (
-                                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
-                                  ⚠️ Delayed {trip.delayMinutes ? `(+${trip.delayMinutes}m)` : ''}
-                                </span>
-                              )}
-                              {!isCanceled && !isDelayed && !old && (
-                                <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200/60 dark:border-green-800/60">
-                                  ✈️ Scheduled
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="p-1.5 rounded-lg text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:bg-green-50 dark:group-hover:bg-green-900/30 transition-all">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                            </svg>
-                          </div>
-                        </div>
-
-                        {/* Route details */}
-                        <div className="my-2.5">
-                          <div className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-                            <span>{trip.originAirport}</span>
-                            <span className="text-gray-400 dark:text-gray-500 font-normal">→</span>
-                            <span>{trip.destinationAirport}</span>
-                          </div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
-                            {getAirportCity(trip.originAirport).split(',')[0]} to {getAirportCity(trip.destinationAirport).split(',')[0]}
-                          </p>
-                        </div>
-
-                        {/* Date & Time pill */}
-                        <div className="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs mt-3">
-                          <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 shrink-0">
-                            <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span className="font-medium">{formatted.dayOfWeek}, {formatted.monthDay}</span>
-                          </div>
-                          <div className="flex items-center gap-2 font-semibold justify-end flex-wrap">
-                            <span className={`inline-flex items-center gap-1 ${isCanceled ? 'text-red-600 line-through' : isDelayed ? 'text-amber-600 dark:text-amber-400' : 'text-green-700 dark:text-green-500'}`} title="Departure Time">
-                              <span className="text-sm leading-none">🛫</span>
-                              <span>{formatted.time}</span>
-                            </span>
-                            <span className="text-gray-300 dark:text-gray-600 font-normal">•</span>
-                            <span className={`inline-flex items-center gap-1 ${isCanceled ? 'text-red-600 line-through' : 'text-gray-700 dark:text-gray-200'}`} title="Arrival Time">
-                              <span className="text-sm leading-none">🛬</span>
-                              <span>{arrivalFormatted.time}</span>
-                            </span>
-                            {originalFormatted && !isCanceled && (
-                              <span className="text-[10px] text-gray-400 line-through ml-0.5">({originalFormatted.time})</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Tile footer */}
-                      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700/60 flex items-center justify-between text-xs">
-                        {tripTravelTime ? (
-                          <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium truncate">
-                            <span>🚗 {tripTravelTime.durationText}</span>
-                            {tripTravelTime.transit && (
-                              <span className="text-blue-600 dark:text-blue-400 ml-1">
-                                • 🚆 {tripTravelTime.transit.durationText}
-                              </span>
-                            )}
-                          </div>
-                        ) : old ? (
-                          <span />
-                        ) : (
-                          <span className="text-gray-400 dark:text-gray-500">Checking traffic...</span>
-                        )}
-                        <span className="text-green-700 dark:text-green-400 font-semibold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 shrink-0 ml-2">
-                          Details
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                );
-              })}
-            </div>
+            {/* Separator and Past Trips Section */}
+            {pastTrips.length > 0 && (
+              <div className="pt-8 border-t border-gray-200 dark:border-gray-700/80">
+                <div className="mb-5">
+                  <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Past Trips</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                    {pastTrips.length} previously taken {pastTrips.length === 1 ? 'flight' : 'flights'}
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {pastTrips.map(renderTripTile)}
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         {/* Expandable Screen Overlay Modal (fills screen as the 1 big card with scroll & X out) */}
