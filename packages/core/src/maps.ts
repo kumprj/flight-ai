@@ -5,6 +5,7 @@ import { isChicagoAirport, getCtaAlerts, getCtaStationInfo, formatCtaAlertsSumma
 import { isNycAirport, getMtaAlerts, getNycStationInfo, formatMtaAlertsSummary, mtaToTransitAlerts } from "./mta";
 import { isLondonAirport, getTflAlerts, getLondonStationInfo, formatTflAlertsSummary, tflToTransitAlerts } from "./tfl";
 import { isBartAirport, getBartAlerts, getBartStationInfo, formatBartAlertsSummary, bartToTransitAlerts } from "./bart";
+import { isDcAirport, getWmataAlerts, getWmataStationInfo, formatWmataAlertsSummary, wmataToTransitAlerts } from "./wmata";
 
 const ROUTES_API_URL = "https://routes.googleapis.com/directions/v2:computeRoutes";
 
@@ -63,6 +64,14 @@ export const TRANSIT_REGISTRY: TransitAgencyConfig[] = [
     getStationInfo: getBartStationInfo,
     formatSummary: formatBartAlertsSummary,
     toTransitAlerts: bartToTransitAlerts,
+  },
+  {
+    name: "WMATA",
+    isMatch: isDcAirport,
+    fetchAlerts: getWmataAlerts,
+    getStationInfo: getWmataStationInfo,
+    formatSummary: formatWmataAlertsSummary,
+    toTransitAlerts: wmataToTransitAlerts,
   },
 ];
 

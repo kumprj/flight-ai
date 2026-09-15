@@ -161,7 +161,27 @@ export interface LondonTransitStationInfo {
   fareDescription: string;
 }
 
-export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | BartStationInfo | LondonTransitStationInfo;
+export interface WmataAlert {
+  id: string;
+  headline: string;
+  shortDescription: string;
+  linesAffected: string[];
+  incidentType: string;
+  isMajor: boolean;
+}
+
+export interface WmataStationInfo {
+  agency: "WMATA";
+  airportCode: "DCA" | "IAD";
+  name: string;
+  line: string;
+  lineColor: string;
+  primaryLines: string[];
+  stationLocation: string;
+  fareDescription: string;
+}
+
+export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | BartStationInfo | LondonTransitStationInfo | WmataStationInfo;
 
 /**
  * Normalised transit alert used across all agencies.
