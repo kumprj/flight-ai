@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MtaAlert, NycTransitStationInfo } from "./types";
+import { MtaAlert, NycTransitStationInfo, TransitAlert } from "./types";
 
 const MTA_ALL_ALERTS_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fall-alerts.json";
 

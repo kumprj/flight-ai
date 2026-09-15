@@ -1,5 +1,5 @@
 import axios from "axios";
-import { TflAlert, LondonTransitStationInfo } from "./types";
+import { TflAlert, LondonTransitStationInfo, TransitAlert } from "./types";
 
 const TFL_STATUS_API_URL = "https://api.tfl.gov.uk/Line/Mode/tube,elizabeth-line,dlr,overground,national-rail/Status";
 

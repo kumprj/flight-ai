@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BartAlert, BartStationInfo } from "./types";
+import { BartAlert, BartStationInfo, TransitAlert } from "./types";
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 
 const BART_ALERTS_URL = "https://api.bart.gov/gtfsrt/alerts.aspx";
