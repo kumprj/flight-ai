@@ -152,6 +152,8 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
   const [travelTimes, setTravelTimes] = useState<Record<string, TravelTimeData>>({});
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
+  const [visibleActiveCount, setVisibleActiveCount] = useState(9);
+  const [visiblePastCount, setVisiblePastCount] = useState(3);
   const [expandedTrip, setExpandedTrip] = useState<Trip | null>(null);
 
   const showToast = (msg: string, type: ToastType = 'success') => setToast({ msg, type });
@@ -222,8 +224,8 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       const sortedTrips = [...activeTrips, ...pastTrips];
       setTrips(sortedTrips);
 
-      // Load travel times only for flights departing from home (not intermediate connection layovers)
-      loadTravelTimes(sortedTrips);
+      // Load travel times only for active flights departing from home up to the initial pagination limit
+      loadTravelTimes(activeTrips.slice(0, visibleActiveCount));
     } catch (err) {
       console.error(err);
       showToast("Failed to load trips", "error");
@@ -268,10 +270,22 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           newTravelTimes[result.tripId] = result.data;
         }
       });
-      setTravelTimes(newTravelTimes);
+      setTravelTimes((prev) => ({ ...prev, ...newTravelTimes }));
     } catch (err) {
       console.error("Failed to load travel times:", err);
     }
+  };
+
+  const handleLoadMoreActive = () => {
+    const nextCount = visibleActiveCount + 9;
+    const activeTripsList = trips.filter((t) => !isOldTrip(t.revisedDate || t.date));
+    const newSlice = activeTripsList.slice(visibleActiveCount, nextCount);
+    setVisibleActiveCount(nextCount);
+    loadTravelTimes(newSlice);
+  };
+
+  const handleLoadMorePast = () => {
+    setVisiblePastCount((prev) => prev + 3);
   };
 
   const handleTestNotify = async (trip: Trip) => {
@@ -1047,9 +1061,21 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           <div className="space-y-10">
             {/* Active Trips Section */}
             {activeTrips.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {activeTrips.map(renderTripTile)}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {activeTrips.slice(0, visibleActiveCount).map(renderTripTile)}
+                </div>
+                {visibleActiveCount < activeTrips.length && (
+                  <div className="mt-6 text-center">
+                    <button
+                      onClick={() => handleLoadMoreActive()}
+                      className="px-6 py-2 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                    >
+                      Load More Active Flights
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center sm:text-left py-6 text-gray-500 dark:text-gray-400 text-sm bg-gray-50 dark:bg-gray-800/40 rounded-xl p-4 border border-dashed border-gray-200 dark:border-gray-700">
                 No active flights scheduled.
@@ -1066,8 +1092,18 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {pastTrips.map(renderTripTile)}
+                  {pastTrips.slice(0, visiblePastCount).map(renderTripTile)}
                 </div>
+                {visiblePastCount < pastTrips.length && (
+                  <div className="mt-6 text-center">
+                    <button
+                      onClick={() => handleLoadMorePast()}
+                      className="px-6 py-2 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                    >
+                      Load More Past Flights
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
