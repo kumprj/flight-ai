@@ -12,7 +12,7 @@ A smart flight tracking application that uses your home address and historical/p
 - **Multi-channel Alerts**: Receive notifications via email (AWS SES) and SMS (Twilio) with opt-in/opt-out toggles
 - **Authentication**: Secure authentication via AWS Cognito with Google and Facebook OAuth support
 - **Real-time Traffic Analysis**: Uses Google Maps Routes API for accurate traffic-aware drive time estimates
-- **Multi-Modal Transit Alerts**: Compare Drive vs. Public Transit departure times with live service alerts (Chicago CTA Blue/Orange Lines to ORD/MDW via Ventra, NYC MTA Subway/AirTrain to JFK/LGA/EWR via OMNY)
+- **Multi-Modal Transit Alerts**: Compare Drive vs. Public Transit departure times with live service alerts for supported cities (Chicago, New York, Boston, San Francisco, Washington D.C., London)
 
 ## Architecture
 

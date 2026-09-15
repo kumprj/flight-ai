@@ -97,6 +97,7 @@ export default function AddressAutocomplete({
 }: AddressAutocompleteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const autocompleteRef = useRef<google.maps.places.PlaceAutocompleteElement | null>(null);
+  const isFocusedRef = useRef(false);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
@@ -146,24 +147,39 @@ export default function AddressAutocomplete({
 
     const handleSelect = async (event: any) => {
       try {
-        const place = event.placePrediction?.toPlace();
-        if (place) {
-          await place.fetchFields({
-            fields: ['formattedAddress', 'displayName'],
-          });
-          const selectedAddress = place.formattedAddress || place.displayName;
-          if (selectedAddress) {
-            onChangeRef.current(selectedAddress);
+        const placePrediction = event.placePrediction;
+        if (!placePrediction) {
+          return;
+        }
+        const place = placePrediction.toPlace();
+        await place.fetchFields({
+          fields: ['formattedAddress', 'displayName'],
+        });
+        const selectedAddress =
+          place.formattedAddress ||
+          place.displayName ||
+          (typeof placePrediction.text === 'string'
+            ? placePrediction.text
+            : placePrediction.text?.text) ||
+          autocomplete.value;
+        if (selectedAddress) {
+          onChangeRef.current(selectedAddress);
+          if (autocomplete.value !== selectedAddress) {
+            autocomplete.value = selectedAddress;
           }
         }
       } catch (err) {
         console.error('Error fetching place details:', err);
+        if (autocomplete.value) {
+          onChangeRef.current(autocomplete.value);
+        }
       }
     };
 
     const handleInput = (event: Event) => {
       const target = event.target as HTMLElement & { value?: string };
-      const currentVal = autocomplete.value ?? target?.value ?? '';
+      const shadowInput = autocomplete.shadowRoot?.querySelector('input');
+      const currentVal = autocomplete.value ?? shadowInput?.value ?? target?.value ?? '';
       onChangeRef.current(currentVal);
     };
 
@@ -172,10 +188,14 @@ export default function AddressAutocomplete({
 
     container.appendChild(autocomplete);
 
-    if (autoFocus) {
+    if (autoFocus || isFocusedRef.current) {
       setTimeout(() => {
-        autocomplete.focus();
-      }, 0);
+        try {
+          autocomplete.focus();
+        } catch {
+          // ignore if not focusable yet
+        }
+      }, 50);
     }
 
     return () => {
@@ -186,7 +206,7 @@ export default function AddressAutocomplete({
       }
       autocompleteRef.current = null;
     };
-  }, [hasPlaceAutocomplete]);
+  }, [hasPlaceAutocomplete, autoFocus]);
 
   useEffect(() => {
     if (autocompleteRef.current && value !== undefined) {
@@ -213,6 +233,12 @@ export default function AddressAutocomplete({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onFocus={() => {
+          isFocusedRef.current = true;
+        }}
+        onBlur={() => {
+          isFocusedRef.current = false;
+        }}
         className={className}
         autoFocus={autoFocus}
         required={required}
