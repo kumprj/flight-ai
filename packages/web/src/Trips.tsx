@@ -17,8 +17,18 @@ interface Trip {
   createdAt?: number;
 }
 
+interface Journey {
+  id: string;
+  flights: Trip[];
+  isConnecting: boolean;
+  originAirport: string;
+  destinationAirport: string;
+  date: string;
+}
+
 export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (trip: Trip) => void }) {
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [journeys, setJourneys] = useState<Journey[]>([]);
   const [loading, setLoading] = useState(true);
   const [testNotifying, setTestNotifying] = useState<string | null>(null);
   const [travelTimes, setTravelTimes] = useState<Record<string, {
@@ -33,6 +43,56 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
   const showToast = (msg: string, type: ToastType = 'success') => setToast({ msg, type });
+
+  // Group trips into journeys (connecting flights)
+  const groupIntoJourneys = (trips: Trip[]): Journey[] => {
+    const sortedTrips = [...trips].sort((a, b) => {
+      const dateA = new Date(a.revisedDate || a.date).getTime();
+      const dateB = new Date(b.revisedDate || b.date).getTime();
+      return dateA - dateB; // Ascending order (oldest first)
+    });
+
+    const journeys: Journey[] = [];
+    const used = new Set<string>();
+
+    for (const trip of sortedTrips) {
+      if (used.has(trip.sk)) continue;
+
+      const tripDate = trip.date.split('T')[0];
+      const connectedFlights = [trip];
+      used.add(trip.sk);
+
+      // Look for connecting flights on the same day
+      for (const otherTrip of sortedTrips) {
+        if (used.has(otherTrip.sk)) continue;
+        const otherDate = otherTrip.date.split('T')[0];
+
+        // Same day and destination matches origin
+        if (tripDate === otherDate && trip.destinationAirport === otherTrip.originAirport) {
+          connectedFlights.push(otherTrip);
+          used.add(otherTrip.sk);
+        }
+      }
+
+      const journey: Journey = {
+        id: connectedFlights.map(f => f.sk).sort().join('-'),
+        flights: connectedFlights,
+        isConnecting: connectedFlights.length > 1,
+        originAirport: connectedFlights[0].originAirport,
+        destinationAirport: connectedFlights[connectedFlights.length - 1].destinationAirport,
+        date: connectedFlights[0].date,
+      };
+
+      journeys.push(journey);
+    }
+
+    // Sort journeys by date (newest first for upcoming flights)
+    return journeys.sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return dateB - dateA; // Descending order (newest first)
+    });
+  };
 
   useEffect(() => {
     loadTrips();
@@ -52,6 +112,10 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         return dateA - dateB;
       });
       setTrips(sortedTrips);
+
+      // Group trips into journeys
+      const groupedJourneys = groupIntoJourneys(sortedTrips);
+      setJourneys(groupedJourneys);
 
       // Load travel times for each trip
       loadTravelTimes(sortedTrips);
@@ -164,6 +228,30 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     } catch (err) {
       console.error(err);
       showToast("Failed to delete trip.", "error");
+    }
+  };
+
+  const handleDeleteJourney = async (journey: Journey) => {
+    setConfirmDeleteId(null);
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+
+      // Delete all flights in the journey
+      await Promise.all(
+        journey.flights.map(flight =>
+          axios.delete(`${Config.API_URL}/trips`, {
+            data: { tripId: flight.sk },
+            headers: {Authorization: `Bearer ${token}`}
+          })
+        )
+      );
+
+      showToast("Journey deleted successfully", "success");
+      loadTrips();
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to delete journey", "error");
     }
   };
 
@@ -593,25 +681,31 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
             </div>
         ) : (
             <div className="space-y-4">
-              {trips.map((trip) => {
-                const effectiveDate = trip.revisedDate || trip.date;
+              {journeys.map((journey) => {
+                const firstFlight = journey.flights[0];
+                const effectiveDate = firstFlight.revisedDate || firstFlight.date;
                 const formatted = formatDate(effectiveDate);
-                const originalFormatted = trip.revisedDate && trip.revisedDate !== trip.date ? formatDate(trip.date) : null;
+                const originalFormatted = firstFlight.revisedDate && firstFlight.revisedDate !== firstFlight.date ? formatDate(firstFlight.date) : null;
                 const old = isOldTrip(effectiveDate);
-                const isCanceled = trip.status === 'Canceled';
-                const isDelayed = !isCanceled && (trip.status === 'Delayed' || Boolean(trip.revisedDate && trip.revisedDate !== trip.date));
+                const isCanceled = firstFlight.status === 'Canceled';
+                const isDelayed = !isCanceled && (firstFlight.status === 'Delayed' || Boolean(firstFlight.revisedDate && firstFlight.revisedDate !== firstFlight.date));
 
                 return (
                     <div
-                        key={trip.sk}
+                        key={journey.id}
                         className={`bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 ${old ? 'opacity-50 grayscale' : ''}`}
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <h2 className="text-2xl font-bold text-green-700 dark:text-green-600">
-                              {trip.flightNumber}
+                              {journey.isConnecting ? `${journey.flights.map(f => f.flightNumber).join(' → ')}` : firstFlight.flightNumber}
                             </h2>
+                            {journey.isConnecting && (
+                              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                                Connecting Flight
+                              </span>
+                            )}
                             {isCanceled && (
                               <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300">
                                 ❌ Canceled
@@ -619,13 +713,22 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                             )}
                             {isDelayed && (
                               <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
-                                ⚠️ Delayed {trip.delayMinutes ? `(+${trip.delayMinutes}m)` : ''}
+                                ⚠️ Delayed {firstFlight.delayMinutes ? `(+${firstFlight.delayMinutes}m)` : ''}
                               </span>
                             )}
                           </div>
                           <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">
-                            {trip.originAirport} → {trip.destinationAirport}
+                            {journey.flights.map(f => f.originAirport).join(' → ')} → {journey.destinationAirport}
                           </p>
+                          {journey.isConnecting && (
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                              {journey.flights.map((f, idx) => (
+                                <div key={f.sk}>
+                                  {idx + 1}. {f.flightNumber}: {f.originAirport} → {f.destinationAirport}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -645,38 +748,38 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                           )}
                         </div>
                       </div>
-                      
+
                       {/* Flight Route Map */}
                       <div className="mb-4 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
                         <img
-                          src={`https://maps.googleapis.com/maps/api/staticmap?size=600x200&maptype=roadmap&markers=color:green|label:A|${getAirportCity(trip.originAirport)}&markers=color:red|label:B|${getAirportCity(trip.destinationAirport)}&path=color:0x15803d|weight:3|${getAirportCity(trip.originAirport)}|${getAirportCity(trip.destinationAirport)}&key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}`}
-                          alt={`Flight route from ${trip.originAirport} to ${trip.destinationAirport}`}
+                          src={`https://maps.googleapis.com/maps/api/staticmap?size=600x200&maptype=roadmap&markers=color:green|label:A|${getAirportCity(journey.originAirport)}&markers=color:red|label:B|${getAirportCity(journey.destinationAirport)}&path=color:0x15803d|weight:3|${getAirportCity(journey.originAirport)}|${getAirportCity(journey.destinationAirport)}&key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}`}
+                          alt={`Flight route from ${journey.originAirport} to ${journey.destinationAirport}`}
                           className="w-full h-auto"
                           loading="lazy"
                         />
                       </div>
-                      
+
                       <div className="flex flex-col">
                         <div className="text-sm text-gray-400 dark:text-gray-500">
                           <p>Leaving from</p>
-                          <p className="font-bold text-gray-700 dark:text-gray-300 mt-1">{trip.homeAddress}</p>
+                          <p className="font-bold text-gray-700 dark:text-gray-300 mt-1">{firstFlight.homeAddress}</p>
                           <p className="mt-1">to</p>
-                          <p className="font-bold text-gray-700 dark:text-gray-300 mt-1">{trip.originAirport} airport</p>
-                          {travelTimes[trip.sk] && (
+                          <p className="font-bold text-gray-700 dark:text-gray-300 mt-1">{journey.originAirport} airport</p>
+                          {travelTimes[firstFlight.sk] && (
                             <div className="mt-2 space-y-1">
                               <p className="text-amber-600 dark:text-amber-500 font-semibold text-xs">
-                                🚗 Current drive time: {travelTimes[trip.sk].durationText}
+                                🚗 Current drive time: {travelTimes[firstFlight.sk].durationText}
                               </p>
-                              {travelTimes[trip.sk].transit && (
+                              {travelTimes[firstFlight.sk].transit && (
                                 <div className="text-blue-600 dark:text-blue-400 font-semibold text-xs">
                                   <div className="flex items-center gap-1.5">
                                     <span>
-                                      🚆 {travelTimes[trip.sk].stationInfo?.agency || travelTimes[trip.sk].transit?.transitAgency || "Transit"}: {travelTimes[trip.sk].transit?.durationText}
+                                      🚆 {travelTimes[firstFlight.sk].stationInfo?.agency || travelTimes[firstFlight.sk].transit?.transitAgency || "Transit"}: {travelTimes[firstFlight.sk].transit?.durationText}
                                     </span>
                                   </div>
-                                  {travelTimes[trip.sk].transit?.transitSteps && travelTimes[trip.sk].transit.transitSteps.length > 0 && (
+                                  {travelTimes[firstFlight.sk].transit?.transitSteps && travelTimes[firstFlight.sk].transit.transitSteps.length > 0 && (
                                     <div className="mt-1.5 text-[10px] text-gray-600 dark:text-gray-400 leading-tight">
-                                      {travelTimes[trip.sk].transit.transitSteps
+                                      {travelTimes[firstFlight.sk].transit.transitSteps
                                         .filter(step => step.transitLine)
                                         .map((step, idx) => {
                                           const vehicleType = typeof step.vehicleType === 'string'
@@ -703,20 +806,20 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                         </div>
                         <div className="flex justify-end mt-4 gap-2">
                           <button
-                              onClick={() => handleTestNotify(trip)}
-                              disabled={testNotifying === trip.sk || old}
+                              onClick={() => handleTestNotify(firstFlight)}
+                              disabled={testNotifying === firstFlight.sk || old}
                               className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
-                                testNotifying === trip.sk || old
+                                testNotifying === firstFlight.sk || old
                                   ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed opacity-50'
                                   : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-600 hover:bg-amber-100 dark:hover:bg-amber-900/50 border-amber-200 dark:border-amber-800'
                               }`}
                           >
-                            {testNotifying === trip.sk ? 'Sending...' : 'Test Notify'}
+                            {testNotifying === firstFlight.sk ? 'Sending...' : 'Test Notify'}
                           </button>
-                          {confirmDeleteId === trip.sk ? (
+                          {confirmDeleteId === journey.id ? (
                               <>
                                 <button
-                                    onClick={() => handleDelete(trip)}
+                                    onClick={() => handleDeleteJourney(journey)}
                                     className="px-3 py-1.5 text-sm font-medium rounded-lg border bg-red-600 text-white hover:bg-red-700 border-red-600 transition-colors"
                                 >
                                   Confirm
@@ -730,7 +833,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                               </>
                           ) : (
                               <button
-                                  onClick={() => setConfirmDeleteId(trip.sk)}
+                                  onClick={() => setConfirmDeleteId(journey.id)}
                                   disabled={old}
                                   className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
                                     old
