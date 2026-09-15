@@ -91,6 +91,7 @@ export default $config({
         TWILIO_TOKEN: process.env.TWILIO_TOKEN!,
         TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER!,
         MY_PHONE_NUMBER: process.env.MY_PHONE_NUMBER!,
+        SENDER_EMAIL: process.env.SENDER_EMAIL || "test@example.com",
       },
       permissions: [{actions: ["scheduler:*", "ses:*"], resources: ["*"]}],
       transform: {
