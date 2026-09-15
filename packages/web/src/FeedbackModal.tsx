@@ -61,8 +61,12 @@ export default function FeedbackModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !description.trim()) {
-      setError('Please provide both a title and description.');
+    if (title.trim().length < 3) {
+      setError('Title must be at least 3 characters long.');
+      return;
+    }
+    if (description.trim().length < 5) {
+      setError('Description must be at least 5 characters long.');
       return;
     }
 

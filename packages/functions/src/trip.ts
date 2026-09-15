@@ -48,7 +48,8 @@ export const create: APIGatewayProxyHandlerV2 = async (event) => {
     return { statusCode: 401, body: "Unauthorized" };
   }
 
-  const body = JSON.parse(event.body || "{}");
+  const bodyStr = event.isBase64Encoded ? Buffer.from(event.body || "", "base64").toString("utf-8") : (event.body || "{}");
+  const body = JSON.parse(bodyStr);
   const tripId = `${body.date}#${body.flightNumber}`;
 
   // Get timezone for the origin airport
@@ -103,7 +104,8 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
     return { statusCode: 401, body: "Unauthorized" };
   }
 
-  const body = JSON.parse(event.body || "{}");
+  const bodyStr = event.isBase64Encoded ? Buffer.from(event.body || "", "base64").toString("utf-8") : (event.body || "{}");
+  const body = JSON.parse(bodyStr);
   const tripId = `${body.date}#${body.flightNumber}`;
 
   // Get timezone for the origin airport
@@ -145,7 +147,8 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
     return { statusCode: 401, body: "Unauthorized" };
   }
 
-  const body = JSON.parse(event.body || "{}");
+  const bodyStr = event.isBase64Encoded ? Buffer.from(event.body || "", "base64").toString("utf-8") : (event.body || "{}");
+  const body = JSON.parse(bodyStr);
   const tripId = body.tripId;
 
   if (!tripId) {
@@ -354,7 +357,8 @@ export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
     return { statusCode: 401, body: "Unauthorized" };
   }
 
-  const body = JSON.parse(event.body || "{}");
+  const bodyStr = event.isBase64Encoded ? Buffer.from(event.body || "", "base64").toString("utf-8") : (event.body || "{}");
+  const body = JSON.parse(bodyStr);
   const { homeAddress, airportCode, flightDate, timezone } = body;
 
   if (!homeAddress || !airportCode) {
@@ -409,7 +413,8 @@ export const remove: APIGatewayProxyHandlerV2 = async (event) => {
     return { statusCode: 401, body: "Unauthorized" };
   }
 
-  const body = JSON.parse(event.body || "{}");
+  const bodyStr = event.isBase64Encoded ? Buffer.from(event.body || "", "base64").toString("utf-8") : (event.body || "{}");
+  const body = JSON.parse(bodyStr);
   const tripId = body.tripId;
 
   if (!tripId) {

@@ -56,7 +56,10 @@ export const submit: APIGatewayProxyHandlerV2 = async (event) => {
   };
 
   try {
-    body = JSON.parse(event.body || "{}");
+    const bodyStr = event.isBase64Encoded
+      ? Buffer.from(event.body || "", "base64").toString("utf-8")
+      : (event.body || "{}");
+    body = JSON.parse(bodyStr);
   } catch {
     return {
       statusCode: 400,
