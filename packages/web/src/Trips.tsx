@@ -3,6 +3,7 @@ import axios from 'axios';
 import {Config} from './config';
 import {fetchAuthSession} from 'aws-amplify/auth';
 import Toast, { type ToastType } from './Toast';
+import { calculateDaysAway } from './utils/flightTimes';
 
 interface Trip {
   sk: string;
@@ -861,6 +862,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     const isDelayed = !isCanceled && (trip.status === 'Delayed' || Boolean(trip.revisedDate && trip.revisedDate !== trip.date));
     const tripTravelTime = travelTimes[trip.sk];
     const connectionInfo = getDayConnectionInfo(trip, trips);
+    const daysAway = calculateDaysAway(effectiveDate);
 
     return (
       <div
@@ -881,7 +883,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         }`}
       >
         <div>
-          {/* Header row: Flight # + Status Badge + Expand Icon */}
+          {/* Header row: Flight # + Status Badge + Days Away Badge */}
           <div className="flex items-start justify-between gap-2 mb-3">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -913,11 +915,23 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
               </div>
             </div>
 
-            <div className="p-1.5 rounded-lg text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:bg-green-50 dark:group-hover:bg-green-900/30 transition-all">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-              </svg>
-            </div>
+            {daysAway.label && (
+              <div className="shrink-0 pt-0.5">
+                <span
+                  className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-colors ${
+                    daysAway.urgency === 'today'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border border-green-200/80 dark:border-green-700/60'
+                      : daysAway.urgency === 'tomorrow'
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60'
+                      : daysAway.urgency === 'upcoming'
+                      ? 'bg-gray-100 text-gray-700 dark:bg-gray-700/60 dark:text-gray-300 border border-gray-200/60 dark:border-gray-600/60'
+                      : 'bg-gray-100/70 text-gray-500 dark:bg-gray-800/60 dark:text-gray-400 border border-gray-200/40 dark:border-gray-700/40'
+                  }`}
+                >
+                  {daysAway.label}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Route details */}

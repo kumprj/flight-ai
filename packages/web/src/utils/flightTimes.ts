@@ -8,4 +8,6 @@ export {
   getTripDateOnly,
   isTripAlreadyTracked,
   filterNewFlights,
+  calculateDaysAway,
+  type DaysAwayInfo,
 } from '../../../core/src/dateUtils';

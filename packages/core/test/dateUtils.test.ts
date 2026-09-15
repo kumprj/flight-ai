@@ -13,6 +13,7 @@ import {
   isTripAlreadyTracked,
   filterNewFlights,
   shouldAlertDriveTimeChange,
+  calculateDaysAway,
 } from "../src/dateUtils";
 
 describe("dateUtils", () => {
@@ -301,6 +302,55 @@ describe("dateUtils", () => {
       // Custom threshold 20m
       expect(shouldAlertDriveTimeChange(46, 30, 20)).toBe(false);
       expect(shouldAlertDriveTimeChange(51, 30, 20)).toBe(true);
+    });
+  });
+
+  describe("calculateDaysAway", () => {
+    // Reference date: May 20, 2026 at 10:00 AM
+    const refDate = new Date(2026, 4, 20, 10, 0, 0);
+
+    it("returns 'Today' with urgency 'today' when flight departure is on reference day", () => {
+      // Same day early morning
+      const earlyRes = calculateDaysAway("2026-05-20T06:30:00", refDate);
+      expect(earlyRes).toEqual({ diffDays: 0, label: "Today", urgency: "today" });
+
+      // Same day late evening
+      const lateRes = calculateDaysAway("2026-05-20T23:45:00", refDate);
+      expect(lateRes).toEqual({ diffDays: 0, label: "Today", urgency: "today" });
+    });
+
+    it("returns 'Tomorrow' with urgency 'tomorrow' when flight departure is 1 day away", () => {
+      const res = calculateDaysAway("2026-05-21T07:15:00", refDate);
+      expect(res).toEqual({ diffDays: 1, label: "Tomorrow", urgency: "tomorrow" });
+    });
+
+    it("returns 'X days away' with urgency 'upcoming' for future flights > 1 day away", () => {
+      const res2 = calculateDaysAway("2026-05-22T14:30:00", refDate);
+      expect(res2).toEqual({ diffDays: 2, label: "2 days away", urgency: "upcoming" });
+
+      const res5 = calculateDaysAway("2026-05-25T18:00:00", refDate);
+      expect(res5).toEqual({ diffDays: 5, label: "5 days away", urgency: "upcoming" });
+
+      const res30 = calculateDaysAway("2026-06-19T09:00:00", refDate);
+      expect(res30).toEqual({ diffDays: 30, label: "30 days away", urgency: "upcoming" });
+    });
+
+    it("returns 'Yesterday' with urgency 'past' when flight departure was 1 day ago", () => {
+      const res = calculateDaysAway("2026-05-19T18:30:00", refDate);
+      expect(res).toEqual({ diffDays: -1, label: "Yesterday", urgency: "past" });
+    });
+
+    it("returns 'X days ago' with urgency 'past' for flights > 1 day in the past", () => {
+      const res2 = calculateDaysAway("2026-05-18T12:00:00", refDate);
+      expect(res2).toEqual({ diffDays: -2, label: "2 days ago", urgency: "past" });
+
+      const res10 = calculateDaysAway("2026-05-10T14:00:00", refDate);
+      expect(res10).toEqual({ diffDays: -10, label: "10 days ago", urgency: "past" });
+    });
+
+    it("handles empty or invalid date strings safely", () => {
+      expect(calculateDaysAway("", refDate)).toEqual({ diffDays: 0, label: "", urgency: "upcoming" });
+      expect(calculateDaysAway("invalid-date", refDate)).toEqual({ diffDays: 0, label: "", urgency: "upcoming" });
     });
   });
 });
