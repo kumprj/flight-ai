@@ -134,7 +134,7 @@ export interface TflAlert {
 
 export interface LondonTransitStationInfo {
   agency: "TfL";
-  airportCode: "LHR" | "LGW" | "STN" | "LTN" | "LCY" | "SEN";
+  airportCode: "LHR" | "LGW" | "STN" | "LTN" | "LCY";
   name: string;
   line: string;
   lineColor: string;

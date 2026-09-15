@@ -122,7 +122,7 @@ export const getTflAlerts = async (
           shortDescription: status.reason || status.statusSeverityDescription || "",
           routeId: line.id,
           agency: "TfL",
-          isMajor: status.statusSeverity < 10 || status.statusSeverity > 10,
+          isMajor: status.statusSeverity < 9 || [11, 16, 20].includes(status.statusSeverity),
           url: undefined,
         });
 

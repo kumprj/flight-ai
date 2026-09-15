@@ -106,6 +106,51 @@ describe("TfL Utilities", () => {
       expect(alerts[0].routeId).toBe("piccadilly");
     });
 
+    it("should set isMajor to false for minor delays (severity 9) and true for severe delays (severity 6)", async () => {
+      const mockTflResponse = [
+        {
+          id: "piccadilly",
+          name: "Piccadilly",
+          lineStatuses: [
+            {
+              id: 1,
+              statusSeverity: 9,
+              statusSeverityDescription: "Minor Delays",
+              reason: "Minor delays due to train failure.",
+            },
+          ],
+        },
+        {
+          id: "elizabeth",
+          name: "Elizabeth line",
+          lineStatuses: [
+            {
+              id: 2,
+              statusSeverity: 6,
+              statusSeverityDescription: "Severe Delays",
+              reason: "Severe delays due to signal failure.",
+            },
+          ],
+        },
+      ];
+
+      mockedAxios.get.mockResolvedValueOnce({ data: mockTflResponse });
+
+      const alerts = await getTflAlerts("LHR");
+
+      expect(alerts).toHaveLength(2);
+      const minorAlert = alerts.find((a) => a.routeId === "piccadilly");
+      const severeAlert = alerts.find((a) => a.routeId === "elizabeth");
+
+      expect(minorAlert).toBeDefined();
+      expect(minorAlert?.isMajor).toBe(false);
+      expect(minorAlert?.headline).toBe("Piccadilly: Minor Delays");
+
+      expect(severeAlert).toBeDefined();
+      expect(severeAlert?.isMajor).toBe(true);
+      expect(severeAlert?.headline).toBe("Elizabeth line: Severe Delays");
+    });
+
     it("should return empty array when all services are good", async () => {
       const mockTflResponse = [
         {
