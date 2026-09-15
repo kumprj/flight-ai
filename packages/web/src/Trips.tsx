@@ -19,13 +19,14 @@ interface Trip {
   createdAt?: number;
 }
 
-interface Journey {
-  id: string;
-  flights: Trip[];
+export interface DayConnectionInfo {
   isConnecting: boolean;
-  originAirport: string;
-  destinationAirport: string;
-  date: string;
+  legIndex: number; // 0 = Leg 1, 1 = Leg 2, etc.
+  totalLegs: number;
+  allLegs: Trip[];
+  previousFlight?: Trip;
+  nextFlight?: Trip;
+  layoverMinutes?: number;
 }
 
 interface TransitStep {
@@ -56,68 +57,103 @@ interface TravelTimeData {
   stationInfo?: { agency?: string; line?: string; fareDescription?: string };
 }
 
+// Pure helper function to detect day-of connections across independent trips
+export const getDayConnectionInfo = (trip: Trip, allTrips: Trip[]): DayConnectionInfo => {
+  const tripTime = new Date(trip.revisedDate || trip.date).getTime();
+
+  // Find candidate flights within 24 hours of this trip
+  const candidateFlights = allTrips
+    .filter((other) => {
+      const otherTime = new Date(other.revisedDate || other.date).getTime();
+      return Math.abs(tripTime - otherTime) <= 24 * 60 * 60 * 1000;
+    })
+    .sort((a, b) => new Date(a.revisedDate || a.date).getTime() - new Date(b.revisedDate || b.date).getTime());
+
+  // Build connecting chains: where current destination airport matches next origin airport
+  const chains: Trip[][] = [];
+  const used = new Set<string>();
+
+  for (const candidate of candidateFlights) {
+    if (used.has(candidate.sk)) continue;
+
+    const currentChain: Trip[] = [candidate];
+    used.add(candidate.sk);
+
+    let current = candidate;
+    let foundNext = true;
+
+    while (foundNext) {
+      foundNext = false;
+      const currentArrTime = new Date(current.revisedArrivalTime || current.arrivalTime || current.date).getTime();
+
+      for (const other of candidateFlights) {
+        if (used.has(other.sk)) continue;
+        const otherDepTime = new Date(other.revisedDate || other.date).getTime();
+
+        // Destination of current matches origin of other, departing after arrival (within 14h window)
+        if (
+          current.destinationAirport === other.originAirport &&
+          otherDepTime >= currentArrTime - 30 * 60 * 1000 &&
+          otherDepTime - currentArrTime <= 14 * 60 * 60 * 1000
+        ) {
+          currentChain.push(other);
+          used.add(other.sk);
+          current = other;
+          foundNext = true;
+          break;
+        }
+      }
+    }
+
+    if (currentChain.length > 1) {
+      chains.push(currentChain);
+    }
+  }
+
+  // Check if our trip belongs to any chain
+  for (const chain of chains) {
+    const idx = chain.findIndex((f) => f.sk === trip.sk);
+    if (idx !== -1) {
+      const prev = chain[idx - 1];
+      const next = chain[idx + 1];
+      let layoverMins: number | undefined;
+
+      if (prev) {
+        const prevArr = new Date(prev.revisedArrivalTime || prev.arrivalTime || prev.date).getTime();
+        const thisDep = new Date(trip.revisedDate || trip.date).getTime();
+        layoverMins = Math.max(0, Math.round((thisDep - prevArr) / 60000));
+      }
+
+      return {
+        isConnecting: true,
+        legIndex: idx,
+        totalLegs: chain.length,
+        allLegs: chain,
+        previousFlight: prev,
+        nextFlight: next,
+        layoverMinutes: layoverMins,
+      };
+    }
+  }
+
+  return {
+    isConnecting: false,
+    legIndex: 0,
+    totalLegs: 1,
+    allLegs: [trip],
+  };
+};
+
 export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (trip: Trip) => void }) {
-  const [journeys, setJourneys] = useState<Journey[]>([]);
+  const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [testNotifying, setTestNotifying] = useState<string | null>(null);
   const [travelTimes, setTravelTimes] = useState<Record<string, TravelTimeData>>({});
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
-  const [expandedJourney, setExpandedJourney] = useState<Journey | null>(null);
+  const [expandedTrip, setExpandedTrip] = useState<Trip | null>(null);
 
   const showToast = (msg: string, type: ToastType = 'success') => setToast({ msg, type });
-
-  // Group trips into journeys (connecting flights)
-  const groupIntoJourneys = (trips: Trip[]): Journey[] => {
-    const sortedTrips = [...trips].sort((a, b) => {
-      const dateA = new Date(a.revisedDate || a.date).getTime();
-      const dateB = new Date(b.revisedDate || b.date).getTime();
-      return dateA - dateB; // Ascending order (oldest first)
-    });
-
-    const resultJourneys: Journey[] = [];
-    const used = new Set<string>();
-
-    for (const trip of sortedTrips) {
-      if (used.has(trip.sk)) continue;
-
-      const tripDate = trip.date.split('T')[0];
-      const connectedFlights = [trip];
-      used.add(trip.sk);
-
-      // Look for connecting flights on the same day (supports multi-segment chains)
-      let currentDestination = trip.destinationAirport;
-      let foundNext = true;
-      while (foundNext) {
-        foundNext = false;
-        for (const otherTrip of sortedTrips) {
-          if (used.has(otherTrip.sk)) continue;
-          const otherDate = otherTrip.date.split('T')[0];
-
-          if (tripDate === otherDate && currentDestination === otherTrip.originAirport) {
-            connectedFlights.push(otherTrip);
-            used.add(otherTrip.sk);
-            currentDestination = otherTrip.destinationAirport;
-            foundNext = true;
-            break;
-          }
-        }
-      }
-
-      const journey: Journey = {
-        id: connectedFlights.map(f => f.sk).sort().join('-'),
-        flights: connectedFlights,
-        isConnecting: connectedFlights.length > 1,
-        originAirport: connectedFlights[0].originAirport,
-        destinationAirport: connectedFlights[connectedFlights.length - 1].destinationAirport,
-        date: connectedFlights[0].date,
-      };
-
-      resultJourneys.push(journey);
-    }
-
-    return resultJourneys;
-  };
 
   useEffect(() => {
     loadTrips();
@@ -125,11 +161,11 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && expandedJourney) {
-        setExpandedJourney(null);
+      if (e.key === 'Escape' && expandedTrip) {
+        setExpandedTrip(null);
       }
     };
-    if (expandedJourney) {
+    if (expandedTrip) {
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
     } else {
@@ -139,7 +175,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [expandedJourney]);
+  }, [expandedTrip]);
 
   const isOldTrip = (dateStr: string) => {
     const tripDate = new Date(dateStr);
@@ -168,14 +204,14 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         }
       });
 
-      // Active flights: sort by soonest date first (next flight as first tile)
+      // Active flights: sort soonest date first
       activeTrips.sort((a, b) => {
         const timeA = new Date(a.revisedDate || a.date).getTime();
         const timeB = new Date(b.revisedDate || b.date).getTime();
         return timeA - timeB;
       });
 
-      // Past flights: leave sorted order as is (most recent past flight first)
+      // Past flights: most recent past flight first
       pastTrips.sort((a, b) => {
         const timeA = new Date(a.revisedDate || a.date).getTime();
         const timeB = new Date(b.revisedDate || b.date).getTime();
@@ -183,12 +219,9 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       });
 
       const sortedTrips = [...activeTrips, ...pastTrips];
+      setTrips(sortedTrips);
 
-      // Group trips into journeys
-      const groupedJourneys = groupIntoJourneys(sortedTrips);
-      setJourneys(groupedJourneys);
-
-      // Load travel times for each trip
+      // Load travel times only for flights departing from home (not intermediate connection layovers)
       loadTravelTimes(sortedTrips);
     } catch (err) {
       console.error(err);
@@ -198,25 +231,32 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     }
   };
 
-  const loadTravelTimes = async (trips: Trip[]) => {
+  const loadTravelTimes = async (allTripsList: Trip[]) => {
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
 
-      const travelTimePromises = trips.filter(trip => !isOldTrip(trip.revisedDate || trip.date)).map(async (trip) => {
-        try {
-          const res = await axios.post(`${Config.API_URL}/trips/travel-time`, {
-            homeAddress: trip.homeAddress,
-            airportCode: trip.originAirport
-          }, {
-            headers: {Authorization: `Bearer ${token}`}
-          });
-          return { tripId: trip.sk, data: res.data };
-        } catch (err) {
-          console.error(`Failed to get travel time for trip ${trip.sk}:`, err);
-          return { tripId: trip.sk, data: null };
-        }
-      });
+      // Only compute travel time from home for active flights that originate from home (Leg 1)
+      const travelTimePromises = allTripsList
+        .filter((trip) => {
+          if (isOldTrip(trip.revisedDate || trip.date)) return false;
+          const conn = getDayConnectionInfo(trip, allTripsList);
+          return conn.legIndex === 0;
+        })
+        .map(async (trip) => {
+          try {
+            const res = await axios.post(`${Config.API_URL}/trips/travel-time`, {
+              homeAddress: trip.homeAddress,
+              airportCode: trip.originAirport
+            }, {
+              headers: {Authorization: `Bearer ${token}`}
+            });
+            return { tripId: trip.sk, data: res.data };
+          } catch (err) {
+            console.error(`Failed to get travel time for trip ${trip.sk}:`, err);
+            return { tripId: trip.sk, data: null };
+          }
+        });
 
       const results = await Promise.all(travelTimePromises);
       const newTravelTimes: Record<string, TravelTimeData> = {};
@@ -252,30 +292,45 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     }
   };
 
-  const handleDeleteJourney = async (journey: Journey) => {
+  const handleDelete = async (trip: Trip) => {
     setConfirmDeleteId(null);
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
-
-      // Delete all flights in the journey
-      await Promise.all(
-        journey.flights.map((flight) =>
-          axios.delete(`${Config.API_URL}/trips`, {
-            data: { tripId: flight.sk },
-            headers: { Authorization: `Bearer ${token}` },
-          })
-        )
-      );
-
-      showToast(journey.isConnecting ? "Connecting flights deleted successfully" : "Trip deleted successfully", "success");
-      if (expandedJourney?.id === journey.id) {
-        setExpandedJourney(null);
+      await axios.delete(`${Config.API_URL}/trips`, {
+        data: { tripId: trip.sk },
+        headers: {Authorization: `Bearer ${token}`}
+      });
+      showToast("Flight deleted successfully", "success");
+      if (expandedTrip?.sk === trip.sk) {
+        setExpandedTrip(null);
       }
       loadTrips();
     } catch (err) {
       console.error(err);
-      showToast("Failed to delete trip", "error");
+      showToast("Failed to delete flight", "error");
+    }
+  };
+
+  const handleDeleteAllLegs = async (legs: Trip[]) => {
+    setConfirmDeleteId(null);
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+      await Promise.all(
+        legs.map((leg) =>
+          axios.delete(`${Config.API_URL}/trips`, {
+            data: { tripId: leg.sk },
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        )
+      );
+      showToast(`All ${legs.length} itinerary flights deleted`, "success");
+      setExpandedTrip(null);
+      loadTrips();
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to delete itinerary flights", "error");
     }
   };
 
@@ -423,7 +478,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       'ACT': 'Waco, TX',
       'TYR': 'Tyler, TX',
       'GGG': 'Longview, TX',
-      'TXK': 'Texarkana, TX',
+      'TXK': 'Texarkana, TX/AR',
       'CLL': 'College Station, TX',
       'BPT': 'Beaumont, TX',
       'CRP': 'Corpus Christi, TX',
@@ -727,7 +782,6 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
   };
 
   const formatDate = (dateStr: string) => {
-    // Parse naive local time string (e.g. "2026-03-29T14:30:00") directly to preserve intended local time
     const [datePart, timePart] = dateStr.split('T');
     if (datePart && timePart) {
       const [year, month, day] = datePart.split('-').map(Number);
@@ -782,57 +836,42 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     return { dayOfWeek: '', monthDay: '', time: '--:--' };
   };
 
-  const activeJourneys = journeys.filter((j) => {
-    const firstFlight = j.flights[0];
-    return !isOldTrip(firstFlight.revisedDate || firstFlight.date);
-  });
-  const pastJourneys = journeys.filter((j) => {
-    const firstFlight = j.flights[0];
-    return isOldTrip(firstFlight.revisedDate || firstFlight.date);
-  });
+  const formatLayover = (mins: number) => {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h > 0 && m > 0) return `${h}h ${m}m`;
+    if (h > 0) return `${h}h`;
+    return `${m}m`;
+  };
 
-  // Active flights: sort by soonest date first (next flight as first tile)
-  activeJourneys.sort((a, b) => {
-    const timeA = new Date(a.flights[0].revisedDate || a.flights[0].date).getTime();
-    const timeB = new Date(b.flights[0].revisedDate || b.flights[0].date).getTime();
-    return timeA - timeB;
-  });
+  const activeTrips = trips.filter((t) => !isOldTrip(t.revisedDate || t.date));
+  const pastTrips = trips.filter((t) => isOldTrip(t.revisedDate || t.date));
+  const upcomingCount = activeTrips.length;
+  const pastCount = pastTrips.length;
 
-  // Past flights: most recent first
-  pastJourneys.sort((a, b) => {
-    const timeA = new Date(a.flights[0].revisedDate || a.flights[0].date).getTime();
-    const timeB = new Date(b.flights[0].revisedDate || b.flights[0].date).getTime();
-    return timeB - timeA;
-  });
-
-  const upcomingCount = activeJourneys.length;
-  const pastCount = pastJourneys.length;
-
-  const renderJourneyTile = (journey: Journey) => {
-    const firstFlight = journey.flights[0];
-    const lastFlight = journey.flights[journey.flights.length - 1];
-    const effectiveDate = firstFlight.revisedDate || firstFlight.date;
+  const renderTripTile = (trip: Trip) => {
+    const effectiveDate = trip.revisedDate || trip.date;
     const formatted = formatDate(effectiveDate);
-    const arrivalFormatted = getArrivalFormatted(lastFlight);
-    const originalFormatted = firstFlight.revisedDate && firstFlight.revisedDate !== firstFlight.date ? formatDate(firstFlight.date) : null;
+    const arrivalFormatted = getArrivalFormatted(trip);
+    const originalFormatted = trip.revisedDate && trip.revisedDate !== trip.date ? formatDate(trip.date) : null;
     const old = isOldTrip(effectiveDate);
-    const isCanceled = journey.flights.some((f) => f.status === 'Canceled');
-    const isDelayed = !isCanceled && journey.flights.some((f) => f.status === 'Delayed' || Boolean(f.revisedDate && f.revisedDate !== f.date));
-    const delayMins = journey.flights.reduce((max, f) => Math.max(max, f.delayMinutes || 0), 0);
-    const tripTravelTime = travelTimes[firstFlight.sk];
+    const isCanceled = trip.status === 'Canceled';
+    const isDelayed = !isCanceled && (trip.status === 'Delayed' || Boolean(trip.revisedDate && trip.revisedDate !== trip.date));
+    const tripTravelTime = travelTimes[trip.sk];
+    const connectionInfo = getDayConnectionInfo(trip, trips);
 
     return (
       <div
-        key={journey.id}
+        key={trip.sk}
         role="button"
         tabIndex={0}
         aria-haspopup="dialog"
-        aria-label={`Flight ${journey.flights.map(f => f.flightNumber).join(' ')} from ${journey.originAirport} to ${journey.destinationAirport}`}
-        onClick={() => setExpandedJourney(journey)}
+        aria-label={`Flight ${trip.flightNumber} from ${trip.originAirport} to ${trip.destinationAirport}`}
+        onClick={() => setExpandedTrip(trip)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            setExpandedJourney(journey);
+            setExpandedTrip(trip);
           }
         }}
         className={`group relative bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg hover:border-green-600 dark:hover:border-green-500 transition-all duration-200 cursor-pointer flex flex-col justify-between text-left hover:-translate-y-0.5 ${
@@ -843,15 +882,17 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           {/* Header row: Flight # + Status Badge + Expand Icon */}
           <div className="flex items-start justify-between gap-2 mb-3">
             <div>
-              <span className="text-xl font-extrabold text-green-700 dark:text-green-500 tracking-tight group-hover:text-green-800 dark:group-hover:text-green-400 transition-colors">
-                {journey.isConnecting ? journey.flights.map(f => f.flightNumber).join(' → ') : firstFlight.flightNumber}
-              </span>
-              <div className="mt-1 flex items-center gap-1.5 flex-wrap">
-                {journey.isConnecting && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xl font-extrabold text-green-700 dark:text-green-500 tracking-tight group-hover:text-green-800 dark:group-hover:text-green-400 transition-colors">
+                  {trip.flightNumber}
+                </span>
+                {connectionInfo.isConnecting && (
                   <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
-                    Connecting ({journey.flights.length})
+                    Leg {connectionInfo.legIndex + 1} of {connectionInfo.totalLegs}
                   </span>
                 )}
+              </div>
+              <div className="mt-1 flex items-center gap-1.5 flex-wrap">
                 {isCanceled && (
                   <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300">
                     ❌ Canceled
@@ -859,10 +900,10 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                 )}
                 {isDelayed && (
                   <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
-                    ⚠️ Delayed {delayMins ? `(+${delayMins}m)` : ''}
+                    ⚠️ Delayed {trip.delayMinutes ? `(+${trip.delayMinutes}m)` : ''}
                   </span>
                 )}
-                {!isCanceled && !isDelayed && !old && !journey.isConnecting && (
+                {!isCanceled && !isDelayed && !old && !connectionInfo.isConnecting && (
                   <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200/60 dark:border-green-800/60">
                     ✈️ Scheduled
                   </span>
@@ -879,28 +920,24 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
 
           {/* Route details */}
           <div className="my-2.5">
-            <div className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white flex-wrap">
-              {journey.isConnecting ? (
-                <>
-                  {journey.flights.map((f) => (
-                    <span key={f.sk} className="flex items-center gap-2">
-                      <span>{f.originAirport}</span>
-                      <span className="text-gray-400 dark:text-gray-500 font-normal">→</span>
-                    </span>
-                  ))}
-                  <span>{journey.destinationAirport}</span>
-                </>
-              ) : (
-                <>
-                  <span>{journey.originAirport}</span>
-                  <span className="text-gray-400 dark:text-gray-500 font-normal">→</span>
-                  <span>{journey.destinationAirport}</span>
-                </>
-              )}
+            <div className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+              <span>{trip.originAirport}</span>
+              <span className="text-gray-400 dark:text-gray-500 font-normal">→</span>
+              <span>{trip.destinationAirport}</span>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
-              {getAirportCity(journey.originAirport).split(',')[0]} to {getAirportCity(journey.destinationAirport).split(',')[0]}
+              {getAirportCity(trip.originAirport).split(',')[0]} to {getAirportCity(trip.destinationAirport).split(',')[0]}
             </p>
+            {connectionInfo.nextFlight && (
+              <p className="text-[11px] text-blue-600 dark:text-blue-400 mt-1 font-medium truncate">
+                ↳ Connecting to {connectionInfo.nextFlight.flightNumber} ({connectionInfo.nextFlight.originAirport} → {connectionInfo.nextFlight.destinationAirport})
+              </p>
+            )}
+            {connectionInfo.previousFlight && (
+              <p className="text-[11px] text-purple-600 dark:text-purple-400 mt-1 font-medium truncate">
+                ↳ Connected from {connectionInfo.previousFlight.flightNumber} (arr. {formatDate(connectionInfo.previousFlight.revisedArrivalTime || connectionInfo.previousFlight.arrivalTime || connectionInfo.previousFlight.date).time})
+              </p>
+            )}
           </div>
 
           {/* Date & Time pill */}
@@ -930,7 +967,11 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
 
         {/* Tile footer */}
         <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700/60 flex items-center justify-between text-xs">
-          {tripTravelTime ? (
+          {connectionInfo.legIndex > 0 && connectionInfo.layoverMinutes !== undefined ? (
+            <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium truncate">
+              <span>⏱️ {formatLayover(connectionInfo.layoverMinutes)} layover at {trip.originAirport}</span>
+            </div>
+          ) : tripTravelTime ? (
             <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium truncate">
               <span>🚗 {tripTravelTime.durationText}</span>
               {tripTravelTime.transit && (
@@ -961,9 +1002,9 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">My Trips</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {journeys.length === 0
+              {trips.length === 0
                 ? 'No flights scheduled'
-                : `${upcomingCount} upcoming ${upcomingCount === 1 ? 'trip' : 'trips'}${pastCount > 0 ? `, ${pastCount} past` : ''}`}
+                : `${upcomingCount} upcoming ${upcomingCount === 1 ? 'flight' : 'flights'}${pastCount > 0 ? `, ${pastCount} past` : ''}`}
             </p>
           </div>
           <button
@@ -976,7 +1017,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
 
         {loading ? (
             <div className="text-center text-gray-500 py-16">Loading flights...</div>
-        ) : journeys.length === 0 ? (
+        ) : trips.length === 0 ? (
             <div className="text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
               <p className="text-gray-500 dark:text-gray-400 mb-4 text-base">No upcoming trips found.</p>
               <button
@@ -989,9 +1030,9 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         ) : (
           <div className="space-y-10">
             {/* Active Trips Section */}
-            {activeJourneys.length > 0 ? (
+            {activeTrips.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {activeJourneys.map(renderJourneyTile)}
+                {activeTrips.map(renderTripTile)}
               </div>
             ) : (
               <div className="text-center sm:text-left py-6 text-gray-500 dark:text-gray-400 text-sm bg-gray-50 dark:bg-gray-800/40 rounded-xl p-4 border border-dashed border-gray-200 dark:border-gray-700">
@@ -1000,42 +1041,40 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
             )}
 
             {/* Separator and Past Trips Section */}
-            {pastJourneys.length > 0 && (
+            {pastTrips.length > 0 && (
               <div className="pt-8 border-t border-gray-200 dark:border-gray-700/80">
                 <div className="mb-5">
                   <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Past Trips</h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                    {pastJourneys.length} previously taken {pastJourneys.length === 1 ? 'trip' : 'trips'}
+                    {pastTrips.length} previously taken {pastTrips.length === 1 ? 'flight' : 'flights'}
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {pastJourneys.map(renderJourneyTile)}
+                  {pastTrips.map(renderTripTile)}
                 </div>
               </div>
             )}
           </div>
         )}
 
-        {/* Expandable Screen Overlay Modal (fills screen as the 1 big card with scroll & X out) */}
-        {expandedJourney && (() => {
-          const firstFlight = expandedJourney.flights[0];
-          const lastFlight = expandedJourney.flights[expandedJourney.flights.length - 1];
-          const effectiveDate = firstFlight.revisedDate || firstFlight.date;
+        {/* Expandable Screen Overlay Modal */}
+        {expandedTrip && (() => {
+          const effectiveDate = expandedTrip.revisedDate || expandedTrip.date;
           const formatted = formatDate(effectiveDate);
-          const arrivalFormatted = getArrivalFormatted(lastFlight);
-          const originalFormatted = firstFlight.revisedDate && firstFlight.revisedDate !== firstFlight.date ? formatDate(firstFlight.date) : null;
+          const arrivalFormatted = getArrivalFormatted(expandedTrip);
+          const originalFormatted = expandedTrip.revisedDate && expandedTrip.revisedDate !== expandedTrip.date ? formatDate(expandedTrip.date) : null;
           const old = isOldTrip(effectiveDate);
-          const isCanceled = expandedJourney.flights.some((f) => f.status === 'Canceled');
-          const isDelayed = !isCanceled && expandedJourney.flights.some((f) => f.status === 'Delayed' || Boolean(f.revisedDate && f.revisedDate !== f.date));
-          const delayMins = expandedJourney.flights.reduce((max, f) => Math.max(max, f.delayMinutes || 0), 0);
-          const tripTravelTime = travelTimes[firstFlight.sk];
+          const isCanceled = expandedTrip.status === 'Canceled';
+          const isDelayed = !isCanceled && (expandedTrip.status === 'Delayed' || Boolean(expandedTrip.revisedDate && expandedTrip.revisedDate !== expandedTrip.date));
+          const tripTravelTime = travelTimes[expandedTrip.sk];
+          const connectionInfo = getDayConnectionInfo(expandedTrip, trips);
 
           return (
             <div
               className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
               onClick={(e) => {
                 if (e.target === e.currentTarget) {
-                  setExpandedJourney(null);
+                  setExpandedTrip(null);
                 }
               }}
               role="dialog"
@@ -1048,19 +1087,18 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
               >
                 {/* Modal Top Bar with 'X' close button */}
                 <div className="sticky top-0 z-10 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {expandedJourney.isConnecting ? 'Journey Details' : 'Flight Details'}
-                    </span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Flight Details</span>
                     <span className="text-gray-300 dark:text-gray-600">•</span>
-                    <span className="text-base font-extrabold text-green-700 dark:text-green-500">
-                      {expandedJourney.isConnecting
-                        ? expandedJourney.flights.map(f => f.flightNumber).join(' → ')
-                        : firstFlight.flightNumber}
-                    </span>
+                    <span className="text-base font-extrabold text-green-700 dark:text-green-500">{expandedTrip.flightNumber}</span>
+                    {connectionInfo.isConnecting && (
+                      <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                        Leg {connectionInfo.legIndex + 1} of {connectionInfo.totalLegs}
+                      </span>
+                    )}
                   </div>
                   <button
-                    onClick={() => setExpandedJourney(null)}
+                    onClick={() => setExpandedTrip(null)}
                     className="p-1.5 rounded-full text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                     aria-label="Close dialog"
                   >
@@ -1070,21 +1108,14 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                   </button>
                 </div>
 
-                {/* Scrollable Big Card Content (fills modal screen) */}
+                {/* Scrollable Big Card Content */}
                 <div className="overflow-y-auto p-6 space-y-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h2 id="expanded-dialog-title" className="text-3xl font-bold text-green-700 dark:text-green-600">
-                          {expandedJourney.isConnecting
-                            ? expandedJourney.flights.map(f => f.flightNumber).join(' → ')
-                            : firstFlight.flightNumber}
+                          {expandedTrip.flightNumber}
                         </h2>
-                        {expandedJourney.isConnecting && (
-                          <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
-                            Connecting ({expandedJourney.flights.length} flights)
-                          </span>
-                        )}
                         {isCanceled && (
                           <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300">
                             ❌ Canceled
@@ -1092,17 +1123,15 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                         )}
                         {isDelayed && (
                           <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
-                            ⚠️ Delayed {delayMins ? `(+${delayMins}m)` : ''}
+                            ⚠️ Delayed {expandedTrip.delayMinutes ? `(+${expandedTrip.delayMinutes}m)` : ''}
                           </span>
                         )}
                       </div>
                       <p className="text-gray-600 dark:text-gray-400 text-lg mb-1">
-                        {expandedJourney.isConnecting
-                          ? `${expandedJourney.flights.map(f => f.originAirport).join(' → ')} → ${expandedJourney.destinationAirport}`
-                          : `${expandedJourney.originAirport} → ${expandedJourney.destinationAirport}`}
+                        {expandedTrip.originAirport} → {expandedTrip.destinationAirport}
                       </p>
                       <p className="text-sm text-gray-400 dark:text-gray-500">
-                        {getAirportCity(expandedJourney.originAirport)} to {getAirportCity(expandedJourney.destinationAirport)}
+                        {getAirportCity(expandedTrip.originAirport)} to {getAirportCity(expandedTrip.destinationAirport)}
                       </p>
                     </div>
                     <div className="text-right">
@@ -1131,35 +1160,76 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                     </div>
                   </div>
 
-                  {/* Connecting Flights Breakdown (if connecting) */}
-                  {expandedJourney.isConnecting && (
-                    <div className="bg-blue-50/60 dark:bg-blue-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-900/30 space-y-2.5">
+                  {/* TODAY'S FLIGHT ITINERARY COMPONENT (when connection exists) */}
+                  {connectionInfo.isConnecting && (
+                    <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-blue-950/30 dark:to-indigo-950/30 p-4 rounded-2xl border border-blue-100 dark:border-blue-900/40 space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold uppercase tracking-wider text-blue-900 dark:text-blue-300 flex items-center gap-1.5">
-                          <span>🔀</span> Flight Connections ({expandedJourney.flights.length} flights)
+                          <span>✈️</span> Today&apos;s Flight Itinerary ({connectionInfo.totalLegs} legs)
+                        </span>
+                        <span className="text-xs text-blue-700 dark:text-blue-400 font-medium">
+                          Viewing Leg {connectionInfo.legIndex + 1} of {connectionInfo.totalLegs}
                         </span>
                       </div>
-                      <div className="divide-y divide-blue-100 dark:divide-blue-900/40">
-                        {expandedJourney.flights.map((f, idx) => {
-                          const segDep = formatDate(f.revisedDate || f.date);
-                          const segArr = getArrivalFormatted(f);
+
+                      <div className="space-y-2">
+                        {connectionInfo.allLegs.map((leg, idx) => {
+                          const isCurrent = leg.sk === expandedTrip.sk;
+                          const legDep = formatDate(leg.revisedDate || leg.date);
+                          const legArr = getArrivalFormatted(leg);
+                          const nextLeg = connectionInfo.allLegs[idx + 1];
+                          const legLayoverMins = nextLeg ? Math.round((new Date(nextLeg.revisedDate || nextLeg.date).getTime() - new Date(leg.revisedArrivalTime || leg.arrivalTime || leg.date).getTime()) / 60000) : null;
+
                           return (
-                            <div key={f.sk} className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between text-sm flex-wrap gap-2">
-                              <div className="flex items-center gap-2">
-                                <span className="w-5 h-5 rounded-full bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-xs font-bold flex items-center justify-center">
-                                  {idx + 1}
-                                </span>
-                                <span className="font-bold text-gray-900 dark:text-white">{f.flightNumber}</span>
-                                <span className="text-gray-500 dark:text-gray-400 text-xs">
-                                  {f.originAirport} → {f.destinationAirport}
-                                </span>
-                                <span className="text-xs text-gray-400 dark:text-gray-500">
-                                  ({getAirportCity(f.originAirport).split(',')[0]} → {getAirportCity(f.destinationAirport).split(',')[0]})
-                                </span>
+                            <div key={leg.sk}>
+                              <div
+                                onClick={() => setExpandedTrip(leg)}
+                                className={`p-3 rounded-xl transition-all cursor-pointer flex items-center justify-between flex-wrap gap-2 ${
+                                  isCurrent
+                                    ? 'bg-white dark:bg-gray-800 shadow-sm border-2 border-blue-600 dark:border-blue-500'
+                                    : 'bg-white/60 dark:bg-gray-800/60 hover:bg-white dark:hover:bg-gray-800 border border-blue-100/60 dark:border-gray-700'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2.5">
+                                  <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center shrink-0 ${
+                                    isCurrent
+                                      ? 'bg-blue-600 text-white'
+                                      : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                                  }`}>
+                                    {idx + 1}
+                                  </span>
+                                  <div>
+                                    <div className="flex items-center gap-1.5 font-bold text-gray-900 dark:text-white text-sm">
+                                      <span>{leg.flightNumber}</span>
+                                      <span className="text-gray-400 font-normal">•</span>
+                                      <span>{leg.originAirport} → {leg.destinationAirport}</span>
+                                      {isCurrent && (
+                                        <span className="ml-1 text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+                                          (Current)
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      {getAirportCity(leg.originAirport).split(',')[0]} to {getAirportCity(leg.destinationAirport).split(',')[0]}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-xs font-medium text-gray-700 dark:text-gray-300 text-right">
+                                  <span>🛫 {legDep.time}</span>
+                                  <span className="mx-1 text-gray-400">→</span>
+                                  <span>🛬 {legArr.time}</span>
+                                </div>
                               </div>
-                              <div className="text-xs text-gray-700 dark:text-gray-300 font-medium">
-                                🛫 {segDep.time} → 🛬 {segArr.time}
-                              </div>
+
+                              {/* Layover transfer connector */}
+                              {nextLeg && legLayoverMins !== null && (
+                                <div className="flex items-center gap-2 px-4 py-1.5 text-xs text-amber-700 dark:text-amber-400 font-medium">
+                                  <div className="w-0.5 h-4 bg-blue-300 dark:bg-blue-700 ml-2.5" />
+                                  <span>
+                                    ⏱️ {formatLayover(legLayoverMins)} layover at {leg.destinationAirport} ({getAirportCity(leg.destinationAirport).split(',')[0]})
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           );
                         })}
@@ -1170,102 +1240,128 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                   {/* Flight Route Map */}
                   <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-inner">
                     <img
-                      src={`https://maps.googleapis.com/maps/api/staticmap?size=600x200&maptype=roadmap&markers=color:green|label:A|${getAirportCity(expandedJourney.originAirport)}&markers=color:red|label:B|${getAirportCity(expandedJourney.destinationAirport)}&path=color:0x15803d|weight:3|${getAirportCity(expandedJourney.originAirport)}|${getAirportCity(expandedJourney.destinationAirport)}&key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}`}
-                      alt={`Flight route from ${expandedJourney.originAirport} to ${expandedJourney.destinationAirport}`}
+                      src={`https://maps.googleapis.com/maps/api/staticmap?size=600x200&maptype=roadmap&markers=color:green|label:A|${getAirportCity(expandedTrip.originAirport)}&markers=color:red|label:B|${getAirportCity(expandedTrip.destinationAirport)}&path=color:0x15803d|weight:3|${getAirportCity(expandedTrip.originAirport)}|${getAirportCity(expandedTrip.destinationAirport)}&key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}`}
+                      alt={`Flight route from ${expandedTrip.originAirport} to ${expandedTrip.destinationAirport}`}
                       className="w-full h-auto"
                       loading="lazy"
                     />
                   </div>
 
-                  {/* Commute and Address Details */}
+                  {/* Commute and Transfer Details */}
                   <div className="bg-gray-50 dark:bg-gray-700/30 rounded-2xl p-5 border border-gray-100 dark:border-gray-700/50">
                     <div className="text-sm text-gray-400 dark:text-gray-500 space-y-3">
-                      <div>
-                        <p className="text-xs uppercase font-medium tracking-wide">Leaving from</p>
-                        <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">{firstFlight.homeAddress}</p>
-                      </div>
-
-                      <div>
-                        <p className="text-xs uppercase font-medium tracking-wide">To Departure Airport</p>
-                        <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">
-                          {firstFlight.originAirport} ({getAirportCity(firstFlight.originAirport)})
-                        </p>
-                      </div>
-
-                      {tripTravelTime && (
-                        <div className="pt-3 border-t border-gray-200 dark:border-gray-700 space-y-3">
-                          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-semibold text-sm">
-                            <span className="text-base">🚗</span>
-                            <span>Estimated drive time: {tripTravelTime.durationText}</span>
+                      {connectionInfo.legIndex > 0 ? (
+                        <>
+                          <div>
+                            <p className="text-xs uppercase font-medium tracking-wide">Connection Origin</p>
+                            <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">
+                              Transfer at {expandedTrip.originAirport} ({getAirportCity(expandedTrip.originAirport)})
+                            </p>
                           </div>
 
-                          {tripTravelTime.transit && (
-                            <div className="text-blue-700 dark:text-blue-400 font-semibold text-sm bg-blue-50/70 dark:bg-blue-900/20 p-3.5 rounded-xl border border-blue-100 dark:border-blue-900/30">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-base">🚆</span>
-                                <span>
-                                  {tripTravelTime.stationInfo?.agency || tripTravelTime.transit.transitAgency || "Transit"}: {tripTravelTime.transit.durationText}
-                                </span>
-                              </div>
-                              {tripTravelTime.transit.transitSteps && tripTravelTime.transit.transitSteps.length > 0 ? (
-                                <div className="mt-2.5 space-y-1.5 text-xs text-gray-600 dark:text-gray-300 font-normal">
-                                  {tripTravelTime.transit.transitSteps
-                                    .filter(step => step.transitLine)
-                                    .map((step, idx) => {
-                                      const vehicleType = typeof step.vehicleType === 'string'
-                                        ? step.vehicleType.toLowerCase()
-                                        : (step.vehicleType as any)?.text?.toLowerCase() || '';
-                                      let icon = '🚆';
-                                      if (vehicleType.includes('subway') || vehicleType.includes('train')) {
-                                        icon = '🚇';
-                                      } else if (vehicleType.includes('bus')) {
-                                        icon = '🚌';
-                                      } else if (vehicleType.includes('light rail')) {
-                                        icon = '🚃';
-                                      }
-
-                                      const stopSegment = step.departureStop && step.arrivalStop
-                                        ? `${step.departureStop} to ${step.arrivalStop}`
-                                        : step.departureStop
-                                        ? `from ${step.departureStop}`
-                                        : step.arrivalStop
-                                        ? `to ${step.arrivalStop}`
-                                        : step.instruction
-                                        ? step.instruction
-                                        : step.stopName
-                                        ? `at ${step.stopName}`
-                                        : null;
-
-                                      const lineDisplay = step.lineShortName && (!step.transitLine || !step.transitLine.toLowerCase().includes(step.lineShortName.toLowerCase()))
-                                        ? (step.transitLine ? `${step.lineShortName} - ${step.transitLine}` : step.lineShortName)
-                                        : (step.transitLine || step.lineShortName || '');
-
-                                      return (
-                                        <div key={idx} className="flex items-center gap-1.5 flex-wrap">
-                                          <span>{icon}</span>
-                                          <span className="font-semibold text-gray-800 dark:text-gray-200">{lineDisplay}</span>
-                                          {stopSegment && (
-                                            <span className="text-gray-600 dark:text-gray-300 font-normal">
-                                              - {stopSegment}
-                                            </span>
-                                          )}
-                                          {step.numStops ? (
-                                            <span className="text-gray-400 dark:text-gray-500 text-[11px]">
-                                              ({step.numStops} {step.numStops === 1 ? 'stop' : 'stops'})
-                                            </span>
-                                          ) : null}
-                                        </div>
-                                      );
-                                    })}
-                                </div>
-                              ) : getTransitRouteSummary(tripTravelTime) ? (
-                                <div className="mt-2 text-xs text-gray-600 dark:text-gray-300 font-normal">
-                                  {getTransitRouteSummary(tripTravelTime)}
-                                </div>
-                              ) : null}
+                          {connectionInfo.previousFlight && (
+                            <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                Connecting from <span className="font-bold text-gray-800 dark:text-gray-200">{connectionInfo.previousFlight.flightNumber}</span> ({connectionInfo.previousFlight.originAirport} → {connectionInfo.previousFlight.destinationAirport})
+                              </p>
+                              {connectionInfo.layoverMinutes !== undefined && (
+                                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 mt-1">
+                                  ⏱️ Scheduled Layover: {formatLayover(connectionInfo.layoverMinutes)}
+                                </p>
+                              )}
                             </div>
                           )}
-                        </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <p className="text-xs uppercase font-medium tracking-wide">Leaving from</p>
+                            <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">{expandedTrip.homeAddress}</p>
+                          </div>
+
+                          <div>
+                            <p className="text-xs uppercase font-medium tracking-wide">To Departure Airport</p>
+                            <p className="font-semibold text-gray-800 dark:text-gray-200 text-base mt-0.5">
+                              {expandedTrip.originAirport} ({getAirportCity(expandedTrip.originAirport)})
+                            </p>
+                          </div>
+
+                          {tripTravelTime && (
+                            <div className="pt-3 border-t border-gray-200 dark:border-gray-700 space-y-3">
+                              <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-semibold text-sm">
+                                <span className="text-base">🚗</span>
+                                <span>Estimated drive time: {tripTravelTime.durationText}</span>
+                              </div>
+
+                              {tripTravelTime.transit && (
+                                <div className="text-blue-700 dark:text-blue-400 font-semibold text-sm bg-blue-50/70 dark:bg-blue-900/20 p-3.5 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-base">🚆</span>
+                                    <span>
+                                      {tripTravelTime.stationInfo?.agency || tripTravelTime.transit.transitAgency || "Transit"}: {tripTravelTime.transit.durationText}
+                                    </span>
+                                  </div>
+                                  {tripTravelTime.transit.transitSteps && tripTravelTime.transit.transitSteps.length > 0 ? (
+                                    <div className="mt-2.5 space-y-1.5 text-xs text-gray-600 dark:text-gray-300 font-normal">
+                                      {tripTravelTime.transit.transitSteps
+                                        .filter((step) => step.transitLine)
+                                        .map((step, idx) => {
+                                          const vehicleType = typeof step.vehicleType === 'string'
+                                            ? step.vehicleType.toLowerCase()
+                                            : (step.vehicleType as any)?.text?.toLowerCase() || '';
+                                          let icon = '🚆';
+                                          if (vehicleType.includes('subway') || vehicleType.includes('train')) {
+                                            icon = '🚇';
+                                          } else if (vehicleType.includes('bus')) {
+                                            icon = '🚌';
+                                          } else if (vehicleType.includes('light rail')) {
+                                            icon = '🚃';
+                                          }
+
+                                          const stopSegment = step.departureStop && step.arrivalStop
+                                            ? `${step.departureStop} to ${step.arrivalStop}`
+                                            : step.departureStop
+                                            ? `from ${step.departureStop}`
+                                            : step.arrivalStop
+                                            ? `to ${step.arrivalStop}`
+                                            : step.instruction
+                                            ? step.instruction
+                                            : step.stopName
+                                            ? `at ${step.stopName}`
+                                            : null;
+
+                                          const lineDisplay = step.lineShortName && (!step.transitLine || !step.transitLine.toLowerCase().includes(step.lineShortName.toLowerCase()))
+                                            ? (step.transitLine ? `${step.lineShortName} - ${step.transitLine}` : step.lineShortName)
+                                            : (step.transitLine || step.lineShortName || '');
+
+                                          return (
+                                            <div key={idx} className="flex items-center gap-1.5 flex-wrap">
+                                              <span>{icon}</span>
+                                              <span className="font-semibold text-gray-800 dark:text-gray-200">{lineDisplay}</span>
+                                              {stopSegment && (
+                                                <span className="text-gray-600 dark:text-gray-300 font-normal">
+                                                  - {stopSegment}
+                                                </span>
+                                              )}
+                                              {step.numStops ? (
+                                                <span className="text-gray-400 dark:text-gray-500 text-[11px]">
+                                                  ({step.numStops} {step.numStops === 1 ? 'stop' : 'stops'})
+                                                </span>
+                                              ) : null}
+                                            </div>
+                                          );
+                                        })}
+                                    </div>
+                                  ) : getTransitRouteSummary(tripTravelTime) ? (
+                                    <div className="mt-2 text-xs text-gray-600 dark:text-gray-300 font-normal">
+                                      {getTransitRouteSummary(tripTravelTime)}
+                                    </div>
+                                  ) : null}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -1273,26 +1369,36 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                   {/* Action Buttons */}
                   <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
                     <button
-                        onClick={() => handleTestNotify(firstFlight)}
-                        disabled={testNotifying === firstFlight.sk || old}
+                        onClick={() => handleTestNotify(expandedTrip)}
+                        disabled={testNotifying === expandedTrip.sk || old}
                         className={`px-4 py-2 text-sm font-medium rounded-xl border transition-colors cursor-pointer ${
-                          testNotifying === firstFlight.sk || old
+                          testNotifying === expandedTrip.sk || old
                             ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed opacity-50'
                             : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-500 hover:bg-amber-100 dark:hover:bg-amber-900/50 border-amber-200 dark:border-amber-800'
                         }`}
                     >
-                      {testNotifying === firstFlight.sk ? 'Sending...' : 'Test Notify'}
+                      {testNotifying === expandedTrip.sk ? 'Sending...' : 'Test Notify'}
                     </button>
-                    {confirmDeleteId === expandedJourney.id ? (
+                    {confirmDeleteId === expandedTrip.sk ? (
                         <>
                           <button
-                              onClick={() => handleDeleteJourney(expandedJourney)}
+                              onClick={() => handleDelete(expandedTrip)}
                               className="px-4 py-2 text-sm font-medium rounded-xl border bg-red-600 text-white hover:bg-red-700 border-red-600 transition-colors cursor-pointer"
                           >
-                            Confirm Delete
+                            Delete This Flight
                           </button>
+                          {connectionInfo.isConnecting && (
+                            <button
+                                onClick={() => handleDeleteAllLegs(connectionInfo.allLegs)}
+                                className="px-4 py-2 text-sm font-medium rounded-xl border bg-red-700 text-white hover:bg-red-800 border-red-700 transition-colors cursor-pointer"
+                            >
+                              Delete All {connectionInfo.totalLegs} Legs
+                            </button>
+                          )}
                           <button
-                              onClick={() => setConfirmDeleteId(null)}
+                              onClick={() => {
+                                setConfirmDeleteId(null);
+                              }}
                               className="px-4 py-2 text-sm font-medium rounded-xl border bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700 transition-colors cursor-pointer"
                           >
                             Cancel
@@ -1300,7 +1406,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                         </>
                     ) : (
                         <button
-                            onClick={() => setConfirmDeleteId(expandedJourney.id)}
+                            onClick={() => setConfirmDeleteId(expandedTrip.sk)}
                             disabled={old}
                             className={`px-4 py-2 text-sm font-medium rounded-xl border transition-colors cursor-pointer ${
                               old
@@ -1308,13 +1414,13 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                                 : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 border-red-200 dark:border-red-800'
                             }`}
                         >
-                          {expandedJourney.isConnecting ? 'Delete Journey' : 'Delete'}
+                          Delete
                         </button>
                     )}
                     <button
                         onClick={() => {
-                          setExpandedJourney(null);
-                          onEdit(firstFlight);
+                          setExpandedTrip(null);
+                          onEdit(expandedTrip);
                         }}
                         disabled={old}
                         className={`px-4 py-2 text-sm font-medium rounded-xl border transition-colors cursor-pointer ${
@@ -1323,10 +1429,10 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                             : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-500 hover:bg-green-100 dark:hover:bg-green-900/50 border-green-200 dark:border-green-800'
                         }`}
                     >
-                      Edit Trip
+                      Edit Flight
                     </button>
                     <button
-                        onClick={() => setExpandedJourney(null)}
+                        onClick={() => setExpandedTrip(null)}
                         className="px-4 py-2 text-sm font-medium rounded-xl border bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 border-gray-200 dark:border-gray-600 transition-colors cursor-pointer"
                     >
                       Close

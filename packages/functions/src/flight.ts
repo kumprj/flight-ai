@@ -20,16 +20,29 @@ export const search: APIGatewayProxyHandlerV2 = async (event) => {
     // Connecting flights: parse segments and search for each
     try {
       const segments = JSON.parse(segmentsParam);
-      const allResults = [];
-
-      for (const segment of segments) {
-        if (segment.origin && segment.destination && date) {
-          const segmentResults = await Flights.searchByRoute(segment.origin, segment.destination, date);
-          allResults.push(...segmentResults);
+      if (Array.isArray(segments) && segments.length > 1) {
+        const segmentList = [];
+        for (const segment of segments) {
+          if (segment.origin && segment.destination && date) {
+            const segmentFlights = await Flights.searchByRoute(segment.origin, segment.destination, date);
+            segmentList.push({
+              origin: segment.origin,
+              destination: segment.destination,
+              flights: segmentFlights,
+            });
+          }
         }
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            isMultiSegment: true,
+            segments: segmentList,
+          }),
+        };
+      } else if (Array.isArray(segments) && segments.length === 1 && segments[0].origin && segments[0].destination && date) {
+        results = await Flights.searchByRoute(segments[0].origin, segments[0].destination, date);
       }
-
-      results = allResults;
     } catch (err) {
       console.error('Failed to parse segments:', err);
       return {

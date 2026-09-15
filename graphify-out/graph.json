@@ -339,7 +339,33 @@
       "file_type": "code",
       "norm_label": "flightdata",
       "source_file": "packages/web/src/App.tsx",
+      "source_location": "L20"
+    },
+    {
+      "id": "packages_web_src_app_flightsegment",
+      "label": "FlightSegment",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "flightsegment",
+      "source_file": "packages/web/src/App.tsx",
       "source_location": "L15"
+    },
+    {
+      "id": "packages_web_src_app_multisegmentresult",
+      "label": "MultiSegmentResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "multisegmentresult",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L41"
     },
     {
       "id": "packages_web_src_app_step",
@@ -352,7 +378,7 @@
       "file_type": "code",
       "norm_label": "step",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L36"
+      "source_location": "L47"
     },
     {
       "id": "packages_web_src_app_trip",
@@ -365,7 +391,7 @@
       "file_type": "code",
       "norm_label": "trip",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L24"
+      "source_location": "L29"
     },
     {
       "id": "packages_web_src_datepicker_props",
@@ -446,6 +472,19 @@
       "source_location": "L3"
     },
     {
+      "id": "packages_web_src_trips_dayconnectioninfo",
+      "label": "DayConnectionInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "dayconnectioninfo",
+      "source_file": "packages/web/src/Trips.tsx",
+      "source_location": "L22"
+    },
+    {
       "id": "packages_web_src_trips_transitstep",
       "label": "TransitStep",
       "_callable": true,
@@ -456,7 +495,7 @@
       "file_type": "code",
       "norm_label": "transitstep",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L22"
+      "source_location": "L32"
     },
     {
       "id": "packages_web_src_trips_traveltimedata",
@@ -469,7 +508,7 @@
       "file_type": "code",
       "norm_label": "traveltimedata",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L35"
+      "source_location": "L45"
     },
     {
       "id": "packages_web_src_trips_trip",
@@ -1000,7 +1039,7 @@
       "file_type": "code",
       "norm_label": "app()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L38"
+      "source_location": "L49"
     },
     {
       "id": "packages_web_src_types_google_maps_d_autocomplete_addlistener",
@@ -1183,6 +1222,18 @@
       "source_location": "L11"
     },
     {
+      "id": "packages_web_src_trips_getdayconnectioninfo",
+      "label": "getDayConnectionInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "getdayconnectioninfo()",
+      "source_file": "packages/web/src/Trips.tsx",
+      "source_location": "L61"
+    },
+    {
       "id": "packages_web_src_trips_trips",
       "label": "Trips()",
       "_callable": true,
@@ -1192,7 +1243,7 @@
       "file_type": "code",
       "norm_label": "trips()",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L50"
+      "source_location": "L147"
     },
     {
       "id": "packages_core_src_flights_aeroheaders",
@@ -5940,7 +5991,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L646",
+      "source_location": "L758",
       "weight": 1.0
     },
     {
@@ -5952,7 +6003,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L647",
+      "source_location": "L759",
       "weight": 1.0
     },
     {
@@ -5965,6 +6016,18 @@
       "context": "call",
       "source_file": "packages/web/src/CalendarImport.tsx",
       "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_trips_trips",
+      "target": "packages_web_src_trips_getdayconnectioninfo",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/Trips.tsx",
+      "source_location": "L243",
       "weight": 1.0
     },
     {
@@ -11287,7 +11350,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_app_flightdata",
+      "target": "packages_web_src_app_flightsegment",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11298,13 +11361,35 @@
     },
     {
       "source": "packages_web_src_app",
+      "target": "packages_web_src_app_flightdata",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
       "target": "packages_web_src_app_trip",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L24",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_app_multisegmentresult",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -11315,7 +11400,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L36",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -11326,7 +11411,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L38",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -11485,7 +11570,18 @@
     },
     {
       "source": "packages_web_src_trips",
-      "target": "packages_web_src_trips_transitstep",
+      "target": "packages_web_src_trips_trips",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/Trips.tsx",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_trips",
+      "target": "packages_web_src_trips_dayconnectioninfo",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11496,24 +11592,35 @@
     },
     {
       "source": "packages_web_src_trips",
+      "target": "packages_web_src_trips_transitstep",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/Trips.tsx",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_trips",
       "target": "packages_web_src_trips_traveltimedata",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L35",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
       "source": "packages_web_src_trips",
-      "target": "packages_web_src_trips_trips",
+      "target": "packages_web_src_trips_getdayconnectioninfo",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L50",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -12717,5 +12824,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6ff5d86482d460a42d363c4558ddf4308d8e057e"
+  "built_at_commit": "90684a0700e02971306045f6d8a3ea7f7f46a77f"
 }
