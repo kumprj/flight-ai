@@ -81,10 +81,25 @@ export const GoogleMaps = {
 
             if (step.transitDetails) {
               const line = step.transitDetails.transitLine;
-              const lineName = line?.name || line?.nameShort;
+              const vehicleType = typeof line?.vehicle?.name === "object" ? line.vehicle.name.text : line?.vehicle?.name;
+              const isBus = line?.vehicle?.type === "BUS" || vehicleType?.toLowerCase()?.includes("bus");
+
+              let lineName: string | undefined;
+              if (line?.nameShort && line?.name) {
+                if (line.name.toLowerCase().includes(line.nameShort.toLowerCase())) {
+                  lineName = line.name;
+                } else if (isBus) {
+                  lineName = `${line.nameShort} - ${line.name}`;
+                } else {
+                  lineName = line.name;
+                }
+              } else {
+                lineName = line?.nameShort || line?.name;
+              }
+
               if (!transitLine && lineName) {
                 transitLine = lineName;
-                transitAgency = line.agencies?.[0]?.name;
+                transitAgency = line?.agencies?.[0]?.name;
               }
 
               // Collect all unique transit lines for the full route
@@ -96,11 +111,12 @@ export const GoogleMaps = {
               const arrivalStop = step.transitDetails.stopDetails?.arrivalStop?.name;
 
               stepInfo.transitLine = lineName;
+              stepInfo.lineShortName = line?.nameShort;
               stepInfo.transitAgency = line?.agencies?.[0]?.name;
               stepInfo.departureStop = departureStop;
               stepInfo.arrivalStop = arrivalStop;
               stepInfo.stopName = departureStop || arrivalStop || step.transitDetails.stopDetails?.name;
-              stepInfo.vehicleType = typeof line?.vehicle?.name === "object" ? line.vehicle.name.text : line?.vehicle?.name;
+              stepInfo.vehicleType = vehicleType;
               stepInfo.numStops = step.transitDetails.numStops;
             }
 

@@ -29,6 +29,7 @@ interface TransitStep {
   distanceMeters?: number;
   durationSeconds?: number;
   transitLine?: string;
+  lineShortName?: string;
 }
 
 interface TravelTimeData {
@@ -652,16 +653,19 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     const steps = travelTime.transit.transitSteps?.filter((s) => s.transitLine) || [];
     if (steps.length > 0) {
       const stepDescriptions = steps.map((s) => {
+        const lineName = s.lineShortName && !s.transitLine?.toLowerCase().includes(s.lineShortName.toLowerCase())
+          ? `${s.lineShortName} - ${s.transitLine}`
+          : s.transitLine || '';
         if (s.departureStop && s.arrivalStop) {
-          return `${s.transitLine}: ${s.departureStop} to ${s.arrivalStop}`;
+          return `${lineName} - ${s.departureStop} to ${s.arrivalStop}`;
         } else if (s.departureStop) {
-          return `${s.transitLine} from ${s.departureStop}`;
+          return `${lineName} from ${s.departureStop}`;
         } else if (s.arrivalStop) {
-          return `${s.transitLine} to ${s.arrivalStop}`;
+          return `${lineName} to ${s.arrivalStop}`;
         } else if (s.instruction) {
-          return `${s.transitLine} (${s.instruction})`;
+          return `${lineName} (${s.instruction})`;
         }
-        return s.transitLine;
+        return lineName;
       });
       return stepDescriptions.join(' → ');
     }
@@ -1002,13 +1006,17 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                                         ? `at ${step.stopName}`
                                         : null;
 
+                                      const lineDisplay = step.lineShortName && (!step.transitLine || !step.transitLine.toLowerCase().includes(step.lineShortName.toLowerCase()))
+                                        ? (step.transitLine ? `${step.lineShortName} - ${step.transitLine}` : step.lineShortName)
+                                        : (step.transitLine || step.lineShortName || '');
+
                                       return (
                                         <div key={idx} className="flex items-center gap-1.5 flex-wrap">
                                           <span>{icon}</span>
-                                          <span className="font-semibold text-gray-800 dark:text-gray-200">{step.transitLine}</span>
+                                          <span className="font-semibold text-gray-800 dark:text-gray-200">{lineDisplay}</span>
                                           {stopSegment && (
                                             <span className="text-gray-600 dark:text-gray-300 font-normal">
-                                              : {stopSegment}
+                                              - {stopSegment}
                                             </span>
                                           )}
                                           {step.numStops ? (

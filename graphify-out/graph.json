@@ -92,7 +92,7 @@
       "file_type": "code",
       "norm_label": "ctaalert",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L80"
+      "source_location": "L81"
     },
     {
       "id": "packages_core_src_types_ctastationinfo",
@@ -105,7 +105,7 @@
       "file_type": "code",
       "norm_label": "ctastationinfo",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L92"
+      "source_location": "L93"
     },
     {
       "id": "packages_core_src_types_mtaalert",
@@ -118,7 +118,7 @@
       "file_type": "code",
       "norm_label": "mtaalert",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L103"
+      "source_location": "L104"
     },
     {
       "id": "packages_core_src_types_multimodaltraveltime",
@@ -131,7 +131,7 @@
       "file_type": "code",
       "norm_label": "multimodaltraveltime",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L126"
+      "source_location": "L127"
     },
     {
       "id": "packages_core_src_types_notificationpreferences",
@@ -157,7 +157,7 @@
       "file_type": "code",
       "norm_label": "nyctransitstationinfo",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L113"
+      "source_location": "L114"
     },
     {
       "id": "packages_core_src_types_profile",
@@ -183,7 +183,7 @@
       "file_type": "code",
       "norm_label": "transitstationinfo",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L124"
+      "source_location": "L125"
     },
     {
       "id": "packages_core_src_types_transitstep",
@@ -209,7 +209,7 @@
       "file_type": "code",
       "norm_label": "traveltimeinfo",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L69"
+      "source_location": "L70"
     },
     {
       "id": "packages_core_src_types_trip",
@@ -469,7 +469,7 @@
       "file_type": "code",
       "norm_label": "traveltimedata",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L34"
+      "source_location": "L35"
     },
     {
       "id": "packages_web_src_trips_trip",
@@ -1192,7 +1192,7 @@
       "file_type": "code",
       "norm_label": "trips()",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L49"
+      "source_location": "L50"
     },
     {
       "id": "packages_core_src_flights_aeroheaders",
@@ -10006,7 +10006,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L103",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -10017,7 +10017,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L113",
+      "source_location": "L114",
       "weight": 1.0
     },
     {
@@ -10028,7 +10028,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L124",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -10039,7 +10039,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L126",
+      "source_location": "L127",
       "weight": 1.0
     },
     {
@@ -10094,7 +10094,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L69",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -10105,7 +10105,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L80",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -10116,7 +10116,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L92",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -11502,7 +11502,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -11513,7 +11513,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -12717,5 +12717,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "bee2dfb844e8cc66f62a0014bbfb951bd9da4f43"
+  "built_at_commit": "6ff5d86482d460a42d363c4558ddf4308d8e057e"
 }

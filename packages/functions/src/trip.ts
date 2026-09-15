@@ -231,11 +231,11 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
           .filter((s) => s.transitLine)
           .map((s) => {
             const stopSeg = s.departureStop && s.arrivalStop
-              ? `: ${s.departureStop} to ${s.arrivalStop}`
+              ? ` - ${s.departureStop} to ${s.arrivalStop}`
               : s.departureStop
-              ? `: from ${s.departureStop}`
+              ? ` - from ${s.departureStop}`
               : s.arrivalStop
-              ? `: to ${s.arrivalStop}`
+              ? ` - to ${s.arrivalStop}`
               : '';
             return `   • ${s.transitLine}${stopSeg}`;
           })
@@ -312,11 +312,11 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
         <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #bfdbfe; font-size: 13px; color: #1e3a8a;">
           ${travelEstimate.transit.transitSteps.filter((s) => s.transitLine).map((s) => {
             const stopSeg = s.departureStop && s.arrivalStop
-              ? `: ${s.departureStop} to ${s.arrivalStop}`
+              ? ` - ${s.departureStop} to ${s.arrivalStop}`
               : s.departureStop
-              ? `: from ${s.departureStop}`
+              ? ` - from ${s.departureStop}`
               : s.arrivalStop
-              ? `: to ${s.arrivalStop}`
+              ? ` - to ${s.arrivalStop}`
               : '';
             return `<div style="margin-top: 4px;">• <strong>${s.transitLine}</strong>${stopSeg}</div>`;
           }).join('')}

@@ -58,6 +58,7 @@ export interface TransitStep {
   distanceMeters?: number;
   durationSeconds?: number;
   transitLine?: string;
+  lineShortName?: string;
   transitAgency?: string;
   stopName?: string;
   departureStop?: string;
