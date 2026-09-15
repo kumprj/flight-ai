@@ -161,15 +161,54 @@ export interface LondonTransitStationInfo {
   fareDescription: string;
 }
 
-export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | BartStationInfo | LondonTransitStationInfo;
+export interface WmataAlert {
+  id: string;
+  headline: string;
+  shortDescription: string;
+  linesAffected: string[];
+  incidentType: string;
+  isMajor: boolean;
+}
+
+export interface WmataStationInfo {
+  agency: "WMATA";
+  airportCode: "DCA" | "IAD";
+  name: string;
+  line: string;
+  lineColor: string;
+  primaryLines: string[];
+  stationLocation: string;
+  fareDescription: string;
+}
+
+export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | BartStationInfo | LondonTransitStationInfo | WmataStationInfo;
+
+/**
+ * Normalised transit alert used across all agencies.
+ * Each agency adapter converts its native alert type to this shape.
+ */
+export interface TransitAlert {
+  /** Unique identifier for the alert (agency-scoped). */
+  id: string;
+  /** One-line human-readable summary, suitable for SMS and notifications. */
+  headline: string;
+  /** Extended description; may be the same as headline for brief alerts. */
+  shortDescription: string;
+  /** Whether this alert represents a major disruption (delays, cancellations). */
+  isMajor: boolean;
+  /** Transit agency name (e.g. "CTA", "MTA", "TfL", "BART"). */
+  agency: string;
+  /** Route / line identifier (e.g. "Blue Line", "A", "Elizabeth line"). */
+  routeId?: string;
+  /** URL for more detail (optional). */
+  url?: string;
+}
 
 export interface MultiModalTravelTime {
   drive: TravelTimeInfo;
   transit?: TravelTimeInfo;
-  ctaAlerts?: CtaAlert[];
-  mtaAlerts?: MtaAlert[];
-  tflAlerts?: TflAlert[];
-  bartAlerts?: BartAlert[];
+  /** Normalised alerts from whichever transit agency serves the destination airport. */
+  alerts?: TransitAlert[];
   stationInfo?: TransitStationInfo;
 }
 

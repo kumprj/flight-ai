@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MtaAlert, NycTransitStationInfo } from "./types";
+import { MtaAlert, NycTransitStationInfo, TransitAlert } from "./types";
 
 const MTA_ALL_ALERTS_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fall-alerts.json";
 
@@ -140,3 +140,18 @@ export const formatMtaAlertsSummary = (
   const first = alerts[0];
   return `ℹ️ ${lineName}: ${first.headline}`;
 };
+
+/**
+ * Normalise native MTA alerts to the shared TransitAlert shape.
+ */
+export const mtaToTransitAlerts = (alerts: MtaAlert[], agency = "MTA"): TransitAlert[] =>
+  alerts.map((a) => ({
+    id: a.id,
+    headline: a.headline,
+    shortDescription: a.shortDescription,
+    isMajor: a.isMajor ?? false,
+    agency,
+    routeId: a.routeId,
+    url: a.url,
+  }));
+

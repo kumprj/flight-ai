@@ -1,12 +1,79 @@
 import axios from "axios";
 import { getAirportAddress } from "./airports";
-import { TravelTimeInfo, MultiModalTravelTime, TransitStep } from "./types";
-import { isChicagoAirport, getCtaAlerts, getCtaStationInfo, formatCtaAlertsSummary } from "./cta";
-import { isNycAirport, getMtaAlerts, getNycStationInfo, formatMtaAlertsSummary } from "./mta";
-import { isLondonAirport, getTflAlerts, getLondonStationInfo, formatTflAlertsSummary } from "./tfl";
-import { isBartAirport, getBartAlerts, getBartStationInfo, formatBartAlertsSummary } from "./bart";
+import { TravelTimeInfo, MultiModalTravelTime, TransitAlert, TransitStep, TransitStationInfo } from "./types";
+import { isChicagoAirport, getCtaAlerts, getCtaStationInfo, formatCtaAlertsSummary, ctaToTransitAlerts } from "./cta";
+import { isNycAirport, getMtaAlerts, getNycStationInfo, formatMtaAlertsSummary, mtaToTransitAlerts } from "./mta";
+import { isLondonAirport, getTflAlerts, getLondonStationInfo, formatTflAlertsSummary, tflToTransitAlerts } from "./tfl";
+import { isBartAirport, getBartAlerts, getBartStationInfo, formatBartAlertsSummary, bartToTransitAlerts } from "./bart";
+import { isDcAirport, getWmataAlerts, getWmataStationInfo, formatWmataAlertsSummary, wmataToTransitAlerts } from "./wmata";
 
 const ROUTES_API_URL = "https://routes.googleapis.com/directions/v2:computeRoutes";
+
+// ---------------------------------------------------------------------------
+// Transit agency registry
+// ---------------------------------------------------------------------------
+// Each entry describes one supported transit agency. To add a new city:
+//   1. Create a module following the cta/mta/tfl/bart pattern.
+//   2. Add a single entry here — no other files need to change.
+// ---------------------------------------------------------------------------
+
+export interface TransitAgencyConfig {
+  /** Human-readable agency name used as fallback display label. */
+  name: string;
+  /** Returns true when the destination airport code is served by this agency. */
+  isMatch: (airportCode: string) => boolean;
+  /** Fetches live alerts; resolves to [] on any error. */
+  fetchAlerts: (airportCode: string) => Promise<any[]>;
+  /** Returns static station / fare info for the airport, or null if unsupported. */
+  getStationInfo: (airportCode: string) => TransitStationInfo | null;
+  /** Formats a human-readable one-line summary from native alert objects. */
+  formatSummary: (alerts: any[], lineName: string) => string;
+  /** Normalises native alert objects to the shared TransitAlert shape. */
+  toTransitAlerts: (alerts: any[]) => TransitAlert[];
+}
+
+export const TRANSIT_REGISTRY: TransitAgencyConfig[] = [
+  {
+    name: "CTA",
+    isMatch: isChicagoAirport,
+    fetchAlerts: getCtaAlerts,
+    getStationInfo: getCtaStationInfo,
+    formatSummary: formatCtaAlertsSummary,
+    toTransitAlerts: ctaToTransitAlerts,
+  },
+  {
+    name: "MTA",
+    isMatch: isNycAirport,
+    fetchAlerts: getMtaAlerts,
+    getStationInfo: getNycStationInfo,
+    formatSummary: formatMtaAlertsSummary,
+    toTransitAlerts: mtaToTransitAlerts,
+  },
+  {
+    name: "TfL",
+    isMatch: isLondonAirport,
+    fetchAlerts: getTflAlerts,
+    getStationInfo: getLondonStationInfo,
+    formatSummary: formatTflAlertsSummary,
+    toTransitAlerts: tflToTransitAlerts,
+  },
+  {
+    name: "BART",
+    isMatch: isBartAirport,
+    fetchAlerts: getBartAlerts,
+    getStationInfo: getBartStationInfo,
+    formatSummary: formatBartAlertsSummary,
+    toTransitAlerts: bartToTransitAlerts,
+  },
+  {
+    name: "WMATA",
+    isMatch: isDcAirport,
+    fetchAlerts: getWmataAlerts,
+    getStationInfo: getWmataStationInfo,
+    formatSummary: formatWmataAlertsSummary,
+    toTransitAlerts: wmataToTransitAlerts,
+  },
+];
 
 export const GoogleMaps = {
   /**
@@ -60,7 +127,6 @@ export const GoogleMaps = {
       throw new Error(`No ${mode.toLowerCase()} route found`);
     }
 
-
     const durationSeconds = parseInt(route.duration?.replace("s", "") || "0", 10);
 
     let transitLine: string | undefined;
@@ -73,7 +139,6 @@ export const GoogleMaps = {
       for (const leg of route.legs) {
         if (leg.steps) {
           for (const step of leg.steps) {
-            // Extract step details for full route
             const instruction = step.navigationInstruction?.instructions || step.instruction;
             const stepInfo: TransitStep = {
               instruction,
@@ -122,7 +187,6 @@ export const GoogleMaps = {
               stepInfo.numStops = step.transitDetails.numStops;
             }
 
-            // Add all steps for now to debug
             transitSteps.push(stepInfo);
           }
         }
@@ -133,7 +197,6 @@ export const GoogleMaps = {
         transitLine = transitLines.join(' / ');
       }
     }
-
 
     return {
       durationSeconds,
@@ -149,7 +212,7 @@ export const GoogleMaps = {
 
   /**
    * Calculate travel times for both Drive and Public Transit (when enabled),
-   * including live Chicago CTA alerts and station information when applicable.
+   * including live transit alerts and station information for any supported agency.
    */
   getMultiModalTravelTime: async (
     origin: string,
@@ -168,116 +231,69 @@ export const GoogleMaps = {
         })
       : Promise.resolve(undefined);
 
-    // 3. If Chicago airport (ORD/MDW), fetch live CTA alerts
-    const isCta = isChicagoAirport(destination);
-    const ctaAlertsPromise = isCta && includeTransit
-      ? getCtaAlerts(destination).catch(() => [])
-      : Promise.resolve(undefined);
+    // 3. Match destination to a registered transit agency (at most one will match)
+    const matchedAgency = TRANSIT_REGISTRY.find((a) => a.isMatch(destination));
 
-    // 4. If New York airport (JFK/LGA/EWR), fetch live MTA alerts
-    const isNyc = isNycAirport(destination);
-    const mtaAlertsPromise = isNyc && includeTransit
-      ? getMtaAlerts(destination).catch(() => [])
-      : Promise.resolve(undefined);
+    // 4. Fetch live alerts and static station info from the matched agency, if any
+    const alertsPromise: Promise<any[] | undefined> =
+      matchedAgency && includeTransit
+        ? matchedAgency.fetchAlerts(destination).catch(() => [])
+        : Promise.resolve(undefined);
 
-    // 5. If London airport (LHR/LGW/STN/LTN/LCY), fetch live TfL alerts
-    const isLondon = isLondonAirport(destination);
-    const tflAlertsPromise = isLondon && includeTransit
-      ? getTflAlerts(destination).catch(() => [])
-      : Promise.resolve(undefined);
-
-    // 6. If San Francisco airport (SFO/OAK), fetch live BART alerts
-    const isBart = isBartAirport(destination);
-    const bartAlertsPromise = isBart && includeTransit
-      ? getBartAlerts(destination).catch(() => [])
-      : Promise.resolve(undefined);
-
-    const [drive, transit, ctaAlerts, mtaAlerts, tflAlerts, bartAlerts] = await Promise.all([
+    const [drive, transit, nativeAlerts] = await Promise.all([
       drivePromise,
       transitPromise,
-      ctaAlertsPromise,
-      mtaAlertsPromise,
-      tflAlertsPromise,
-      bartAlertsPromise,
+      alertsPromise,
     ]);
 
-    const stationInfo = isCta
-      ? getCtaStationInfo(destination) || undefined
-      : isNyc
-      ? getNycStationInfo(destination) || undefined
-      : isLondon
-      ? getLondonStationInfo(destination) || undefined
-      : isBart
-      ? getBartStationInfo(destination) || undefined
+    const stationInfo = matchedAgency
+      ? matchedAgency.getStationInfo(destination) || undefined
       : undefined;
 
-    return {
-      drive,
-      transit,
-      ctaAlerts,
-      mtaAlerts,
-      tflAlerts,
-      bartAlerts,
-      stationInfo,
-    };
+    const alerts =
+      nativeAlerts && nativeAlerts.length > 0
+        ? matchedAgency!.toTransitAlerts(nativeAlerts)
+        : nativeAlerts !== undefined
+        ? [] // agency matched but returned no alerts
+        : undefined; // no agency matched (non-transit airport)
+
+    return { drive, transit, alerts, stationInfo };
   },
 };
 
 /**
- * Resolves transit agency name, line display name, and formatted alert summary for a multimodal travel time estimate.
+ * Resolves transit agency name, line display name, and formatted alert summary
+ * for a multimodal travel time estimate.
  */
 export const resolveTransitAlertSummary = (travelEstimate: MultiModalTravelTime): {
   transitAgency: string;
   transitLineName: string;
   transitAlertsSummary?: string;
 } => {
+  const agency = travelEstimate.stationInfo?.agency ?? "Public Transit";
+  const lineName = travelEstimate.stationInfo?.line;
+
+  const transitAgency = agency;
+  const transitLineName =
+    lineName ||
+    (travelEstimate.transit?.transitLine
+      ? `${travelEstimate.transit.transitLine} (${agency})`
+      : `${agency} Public Transit`);
+
   let transitAlertsSummary: string | undefined;
 
-  if (travelEstimate.ctaAlerts && travelEstimate.ctaAlerts.length > 0) {
-    transitAlertsSummary = formatCtaAlertsSummary(
-      travelEstimate.ctaAlerts,
-      travelEstimate.stationInfo?.line || "CTA Transit"
-    );
-  } else if (travelEstimate.mtaAlerts && travelEstimate.mtaAlerts.length > 0) {
-    transitAlertsSummary = formatMtaAlertsSummary(
-      travelEstimate.mtaAlerts,
-      travelEstimate.stationInfo?.line || "MTA Transit"
-    );
-  } else if (travelEstimate.tflAlerts && travelEstimate.tflAlerts.length > 0) {
-    transitAlertsSummary = formatTflAlertsSummary(
-      travelEstimate.tflAlerts,
-      travelEstimate.stationInfo?.line || "TfL Transit"
-    );
-  } else if (travelEstimate.bartAlerts && travelEstimate.bartAlerts.length > 0) {
-    transitAlertsSummary = formatBartAlertsSummary(
-      travelEstimate.bartAlerts,
-      travelEstimate.stationInfo?.line || "BART"
-    );
+  if (travelEstimate.alerts && travelEstimate.alerts.length > 0) {
+    const alerts = travelEstimate.alerts;
+    const major = alerts.find((a) => a.isMajor);
+    const displayLine = lineName || alerts[0].agency;
+    if (major) {
+      transitAlertsSummary = `⚠️ ${displayLine}: ${major.headline}`;
+    } else {
+      transitAlertsSummary = `ℹ️ ${displayLine}: ${alerts[0].headline}`;
+    }
   }
 
-  const transitAgency =
-    travelEstimate.stationInfo?.agency ||
-    (travelEstimate.ctaAlerts
-      ? "CTA"
-      : travelEstimate.mtaAlerts
-      ? "MTA"
-      : travelEstimate.tflAlerts
-      ? "TfL"
-      : travelEstimate.bartAlerts
-      ? "BART"
-      : "Public Transit");
-
-  const transitLineName =
-    travelEstimate.stationInfo?.line ||
-    (travelEstimate.transit?.transitLine
-      ? `${travelEstimate.transit.transitLine} (${transitAgency})`
-      : `${transitAgency} Public Transit`);
-
-  return {
-    transitAgency,
-    transitLineName,
-    transitAlertsSummary,
-  };
+  return { transitAgency, transitLineName, transitAlertsSummary };
 };
 
 /**
