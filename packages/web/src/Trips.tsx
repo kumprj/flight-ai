@@ -13,6 +13,7 @@ interface Trip {
   originAirport: string;
   destinationAirport: string;
   homeAddress: string;
+  timezone?: string;
   status?: string;
   revisedDate?: string;
   delayMinutes?: number;
@@ -246,7 +247,9 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           try {
             const res = await axios.post(`${Config.API_URL}/trips/travel-time`, {
               homeAddress: trip.homeAddress,
-              airportCode: trip.originAirport
+              airportCode: trip.originAirport,
+              flightDate: trip.revisedDate || trip.date,
+              timezone: trip.originAirport || trip.timezone,
             }, {
               headers: {Authorization: `Bearer ${token}`}
             });
