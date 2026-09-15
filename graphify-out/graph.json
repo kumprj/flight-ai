@@ -4,71 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "id": "packages_web_src_calendarimport_props",
-      "label": "Props",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "props",
-      "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_calendarflight",
-      "label": "CalendarFlight",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "calendarflight",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_googleoauthresponse",
-      "label": "GoogleOAuthResponse",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "googleoauthresponse",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_googletokenclient",
-      "label": "GoogleTokenClient",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "googletokenclient",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L19"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_googletokenclientconfig",
-      "label": "GoogleTokenClientConfig",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "googletokenclientconfig",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L23"
-    },
-    {
       "id": "packages_core_src_maps_transitagencyconfig",
       "label": "TransitAgencyConfig",
       "_callable": true,
@@ -469,7 +404,7 @@
       "file_type": "code",
       "norm_label": "multisegmentresult",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L41"
+      "source_location": "L44"
     },
     {
       "id": "packages_web_src_app_step",
@@ -482,7 +417,7 @@
       "file_type": "code",
       "norm_label": "step",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L47"
+      "source_location": "L50"
     },
     {
       "id": "packages_web_src_app_trip",
@@ -496,6 +431,32 @@
       "norm_label": "trip",
       "source_file": "packages/web/src/App.tsx",
       "source_location": "L29"
+    },
+    {
+      "id": "packages_web_src_calendarimport_existingtriplike",
+      "label": "ExistingTripLike",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "existingtriplike",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "packages_web_src_calendarimport_props",
+      "label": "Props",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "props",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L14"
     },
     {
       "id": "packages_web_src_datepicker_props",
@@ -628,6 +589,58 @@
       "source_location": "L7"
     },
     {
+      "id": "packages_web_src_utils_googlecalendar_calendarflight",
+      "label": "CalendarFlight",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "calendarflight",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_googleoauthresponse",
+      "label": "GoogleOAuthResponse",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "googleoauthresponse",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_googletokenclient",
+      "label": "GoogleTokenClient",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "googletokenclient",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_googletokenclientconfig",
+      "label": "GoogleTokenClientConfig",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "googletokenclientconfig",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L23"
+    },
+    {
       "id": "packages_core_src_flights_flightresult",
       "label": "FlightResult",
       "_callable": true,
@@ -652,138 +665,6 @@
       "norm_label": "resource",
       "source_file": "sst-env.d.ts",
       "source_location": "L8"
-    },
-    {
-      "id": "packages_web_src_calendarimport_calendarimport",
-      "label": "CalendarImport()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "calendarimport()",
-      "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L10"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_cachetoken",
-      "label": "cacheToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "cachetoken()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L49"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_fetchcalendarevents",
-      "label": "fetchCalendarEvents()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "fetchcalendarevents()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L103"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_getaccesstoken",
-      "label": "getAccessToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "getaccesstoken()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L76"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_getcachedtoken",
-      "label": "getCachedToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "getcachedtoken()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L37"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_getgoogleaccounts",
-      "label": "getGoogleAccounts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "getgoogleaccounts()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L29"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_googletokenclient_requestaccesstoken",
-      "label": ".requestAccessToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": ".requestaccesstoken()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L20"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_parseflightsfromevents",
-      "label": "parseFlightsFromEvents()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "parseflightsfromevents()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L152"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_parseroute",
-      "label": "parseRoute()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "parseroute()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L125"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_scancalendarforflights",
-      "label": "scanCalendarForFlights()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "scancalendarforflights()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L201"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_waitforgis",
-      "label": "waitForGIS()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "waitforgis()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L57"
     },
     {
       "id": "packages_core_src_bart_alertmatchesairport",
@@ -1158,6 +1039,18 @@
       "source_location": "L64"
     },
     {
+      "id": "packages_core_src_dateutils_filternewflights",
+      "label": "filterNewFlights()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "filternewflights()",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L167"
+    },
+    {
       "id": "packages_core_src_dateutils_formatflightdate",
       "label": "formatFlightDate()",
       "_callable": true,
@@ -1204,6 +1097,42 @@
       "norm_label": "formatleavetime()",
       "source_file": "packages/core/src/dateUtils.ts",
       "source_location": "L76"
+    },
+    {
+      "id": "packages_core_src_dateutils_gettripdateonly",
+      "label": "getTripDateOnly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "gettripdateonly()",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L134"
+    },
+    {
+      "id": "packages_core_src_dateutils_istripalreadytracked",
+      "label": "isTripAlreadyTracked()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "istripalreadytracked()",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L144"
+    },
+    {
+      "id": "packages_core_src_dateutils_normalizeflightnumber",
+      "label": "normalizeFlightNumber()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "normalizeflightnumber()",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L125"
     },
     {
       "id": "packages_core_src_dateutils_parseflighttimetoutc",
@@ -1374,18 +1303,6 @@
       "source_location": "L99"
     },
     {
-      "id": "packages_web_src_app_app",
-      "label": "App()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "app()",
-      "source_file": "packages/web/src/App.tsx",
-      "source_location": "L49"
-    },
-    {
       "id": "packages_web_src_types_google_maps_d_autocomplete_addlistener",
       "label": ".addListener()",
       "_callable": true,
@@ -1518,6 +1435,66 @@
       "source_location": "L15"
     },
     {
+      "id": "packages_web_src_app_app",
+      "label": "App()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "app()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L80"
+    },
+    {
+      "id": "packages_web_src_app_formatdateonly",
+      "label": "formatDateOnly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "formatdateonly()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L66"
+    },
+    {
+      "id": "packages_web_src_app_gettripdateonly",
+      "label": "getTripDateOnly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "gettripdateonly()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L74"
+    },
+    {
+      "id": "packages_web_src_app_parselocaldate",
+      "label": "parseLocalDate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "parselocaldate()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L52"
+    },
+    {
+      "id": "packages_web_src_calendarimport_calendarimport",
+      "label": "CalendarImport()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "calendarimport()",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L21"
+    },
+    {
       "id": "packages_web_src_datepicker_customdatepicker",
       "label": "CustomDatePicker()",
       "_callable": true,
@@ -1588,6 +1565,126 @@
       "norm_label": "trips()",
       "source_file": "packages/web/src/Trips.tsx",
       "source_location": "L147"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_cachetoken",
+      "label": "cacheToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "cachetoken()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L49"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_fetchcalendarevents",
+      "label": "fetchCalendarEvents()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "fetchcalendarevents()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L103"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_getaccesstoken",
+      "label": "getAccessToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "getaccesstoken()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L76"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_getcachedtoken",
+      "label": "getCachedToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "getcachedtoken()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_getgoogleaccounts",
+      "label": "getGoogleAccounts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "getgoogleaccounts()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_googletokenclient_requestaccesstoken",
+      "label": ".requestAccessToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": ".requestaccesstoken()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_parseflightsfromevents",
+      "label": "parseFlightsFromEvents()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "parseflightsfromevents()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L152"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_parseroute",
+      "label": "parseRoute()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "parseroute()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L125"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_scancalendarforflights",
+      "label": "scanCalendarForFlights()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "scancalendarforflights()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L201"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_waitforgis",
+      "label": "waitForGIS()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "waitforgis()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L57"
     },
     {
       "id": "packages_core_src_flights_aeroheaders",
@@ -1786,28 +1883,6 @@
       "source_file": "packages/web/index.html",
       "source_location": "L1-L16",
       "source_url": null
-    },
-    {
-      "id": "packages_web_src_calendarimport",
-      "label": "CalendarImport.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "calendarimport.tsx",
-      "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar",
-      "label": "googleCalendar.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "googleCalendar.ts",
-      "file_type": "code",
-      "norm_label": "googlecalendar.ts",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L1"
     },
     {
       "id": "packages_core_src_bart",
@@ -3990,6 +4065,17 @@
       "source_location": "L1"
     },
     {
+      "id": "packages_web_src_calendarimport",
+      "label": "CalendarImport.tsx",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "calendarimport.tsx",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "packages_web_src_config",
       "label": "config.ts",
       "_origin": "ast",
@@ -4075,6 +4161,17 @@
       "file_type": "code",
       "norm_label": "trips.tsx",
       "source_file": "packages/web/src/Trips.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar",
+      "label": "googleCalendar.ts",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "googlecalendar.ts",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
       "source_location": "L1"
     },
     {
@@ -6003,6 +6100,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_src_dateutils_filternewflights",
+      "target": "packages_core_src_dateutils_istripalreadytracked",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_src_dateutils_formatflightdate",
       "target": "packages_core_src_dateutils_formatflighttime",
       "relation": "calls",
@@ -6060,6 +6169,30 @@
       "context": "call",
       "source_file": "packages/core/src/dateUtils.ts",
       "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_dateutils_istripalreadytracked",
+      "target": "packages_core_src_dateutils_normalizeflightnumber",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_dateutils_istripalreadytracked",
+      "target": "packages_core_src_dateutils_gettripdateonly",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L150",
       "weight": 1.0
     },
     {
@@ -6503,7 +6636,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L902",
+      "source_location": "L1030",
       "weight": 1.0
     },
     {
@@ -6515,7 +6648,67 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L903",
+      "source_location": "L1031",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app_app",
+      "target": "packages_core_src_dateutils_normalizeflightnumber",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app_app",
+      "target": "packages_web_src_app_formatdateonly",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app_app",
+      "target": "packages_web_src_app_gettripdateonly",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app_app",
+      "target": "packages_core_src_dateutils_filternewflights",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app_app",
+      "target": "packages_web_src_app_parselocaldate",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -6527,7 +6720,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L25",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_calendarimport_calendarimport",
+      "target": "packages_core_src_dateutils_filternewflights",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -6875,7 +7080,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L5",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -7528,6 +7733,18 @@
     },
     {
       "source": "packages_core_test_dateutils_test",
+      "target": "packages_core_src_dateutils_filternewflights",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/dateUtils.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_dateutils_test",
       "target": "packages_core_src_dateutils_formatflightdate",
       "relation": "imports",
       "_origin": "ast",
@@ -7565,6 +7782,42 @@
     {
       "source": "packages_core_test_dateutils_test",
       "target": "packages_core_src_dateutils_formatleavetime",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/dateUtils.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_dateutils_test",
+      "target": "packages_core_src_dateutils_gettripdateonly",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/dateUtils.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_dateutils_test",
+      "target": "packages_core_src_dateutils_istripalreadytracked",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/dateUtils.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_dateutils_test",
+      "target": "packages_core_src_dateutils_normalizeflightnumber",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8584,6 +8837,18 @@
     },
     {
       "source": "packages_web_src_app",
+      "target": "packages_core_src_dateutils_filternewflights",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
       "target": "packages_core_src_dateutils_formatflightdate",
       "relation": "imports",
       "_origin": "ast",
@@ -8607,6 +8872,30 @@
       "weight": 1.0
     },
     {
+      "source": "packages_web_src_app",
+      "target": "packages_core_src_dateutils_normalizeflightnumber",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_calendarimport",
+      "target": "packages_web_src_config_config",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
       "source": "packages_web_src_calendarimport",
       "target": "packages_web_src_utils_googlecalendar_calendarflight",
       "relation": "imports",
@@ -8615,7 +8904,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L2",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -8627,7 +8916,19 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L2",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_calendarimport",
+      "target": "packages_core_src_dateutils_filternewflights",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -9521,6 +9822,18 @@
     },
     {
       "source": "packages_web_src_calendarimport",
+      "target": "packages_web_src_config",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_calendarimport",
       "target": "packages_web_src_utils_googlecalendar",
       "relation": "imports_from",
       "_origin": "ast",
@@ -9528,7 +9841,19 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L2",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_calendarimport",
+      "target": "packages_web_src_utils_flighttimes",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -9797,6 +10122,18 @@
     },
     {
       "source": "packages_web_src_utils_flighttimes",
+      "target": "packages_core_src_dateutils_filternewflights",
+      "relation": "re_exports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "re-export",
+      "source_file": "packages/web/src/utils/flightTimes.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_utils_flighttimes",
       "target": "packages_core_src_dateutils_formatflightdate",
       "relation": "re_exports",
       "_origin": "ast",
@@ -9834,6 +10171,42 @@
     {
       "source": "packages_web_src_utils_flighttimes",
       "target": "packages_core_src_dateutils_formatleavetime",
+      "relation": "re_exports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "re-export",
+      "source_file": "packages/web/src/utils/flightTimes.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_utils_flighttimes",
+      "target": "packages_core_src_dateutils_gettripdateonly",
+      "relation": "re_exports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "re-export",
+      "source_file": "packages/web/src/utils/flightTimes.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_utils_flighttimes",
+      "target": "packages_core_src_dateutils_istripalreadytracked",
+      "relation": "re_exports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "re-export",
+      "source_file": "packages/web/src/utils/flightTimes.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_utils_flighttimes",
+      "target": "packages_core_src_dateutils_normalizeflightnumber",
       "relation": "re_exports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10854,6 +11227,50 @@
       "confidence_score": 1.0,
       "source_file": "packages/core/src/dateUtils.ts",
       "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_dateutils",
+      "target": "packages_core_src_dateutils_normalizeflightnumber",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_dateutils",
+      "target": "packages_core_src_dateutils_gettripdateonly",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_dateutils",
+      "target": "packages_core_src_dateutils_istripalreadytracked",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_dateutils",
+      "target": "packages_core_src_dateutils_filternewflights",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -12734,7 +13151,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L41",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -12745,7 +13162,40 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L47",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_app_parselocaldate",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_app_formatdateonly",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_app_gettripdateonly",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -12756,7 +13206,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L49",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -12772,24 +13222,35 @@
     },
     {
       "source": "packages_web_src_calendarimport",
-      "target": "packages_web_src_calendarimport_calendarimport",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L10",
-      "weight": 1.0
-    },
-    {
-      "source": "packages_web_src_calendarimport",
       "target": "packages_web_src_calendarimport_props",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L4",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_calendarimport",
+      "target": "packages_web_src_calendarimport_calendarimport",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_calendarimport",
+      "target": "packages_web_src_calendarimport_existingtriplike",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -14469,5 +14930,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4952fb82558eae0fcfd6457ce4047a8157737b84"
+  "built_at_commit": "cb6f48913dafe05a8a3cb225dae7751929427bf2"
 }
