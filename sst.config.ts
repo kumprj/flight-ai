@@ -123,6 +123,7 @@ export default $config({
       environment: {
         WORKER_ARN: notifyWorker.arn,
         AERODATABOX_API_KEY: process.env.AERODATABOX_API_KEY!,
+        GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY!,
       },
       permissions: [
         {actions: ["lambda:InvokeFunction"], resources: [notifyWorker.arn]}
@@ -130,9 +131,9 @@ export default $config({
       timeout: "5 minutes",
     });
 
-// EventBridge rule to trigger every hour
+// EventBridge rule to trigger every 30 minutes
     const eventRule = new aws.cloudwatch.EventRule("HourlyTripCheck", {
-      scheduleExpression: "rate(1 hour)",
+      scheduleExpression: "rate(30 minutes)",
     });
 
     new aws.cloudwatch.EventTarget("HourlyTripCheckTarget", {
@@ -251,6 +252,14 @@ export default $config({
 
     api.route("POST /profile/verify/confirm", {
       handler: "packages/functions/src/profile.confirmVerification",
+    });
+
+    api.route("POST /feedback", {
+      handler: "packages/functions/src/feedback.submit",
+      environment: {
+        GITHUB_TOKEN: process.env.GITHUB_TOKEN || "",
+        GITHUB_REPO: process.env.GITHUB_REPO || "kumprj/flight-ai",
+      },
     });
 
 

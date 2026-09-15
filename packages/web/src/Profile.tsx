@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Config } from './config';
-import { fetchAuthSession } from 'aws-amplify/auth';
+import { fetchAuthSession, signOut } from 'aws-amplify/auth';
 import Toast, { type ToastType } from './Toast';
 import AddressAutocomplete from './AddressAutocomplete';
 
@@ -18,9 +18,10 @@ interface UserProfile {
 
 interface ProfileProps {
   onBack: () => void;
+  onOpenFeedback?: () => void;
 }
 
-export default function Profile({ onBack }: ProfileProps) {
+export default function Profile({ onBack, onOpenFeedback }: ProfileProps) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -176,9 +177,34 @@ export default function Profile({ onBack }: ProfileProps) {
         )}
 
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">My Profile</h2>
-          <button onClick={onBack} className="text-green-700 hover:text-green-800 text-sm font-semibold">
-            Back
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label="Back to Trips"
+              className="p-1.5 -ml-1.5 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">My Profile</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Preferences & notifications</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => signOut()}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 rounded-lg transition-colors cursor-pointer border border-red-200/80 dark:border-red-900/60 active:scale-95"
+            title="Sign out of your account"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Sign Out
           </button>
         </div>
 
@@ -362,14 +388,14 @@ export default function Profile({ onBack }: ProfileProps) {
                         className="w-4 h-4 mt-0.5 text-blue-600 focus:ring-2 focus:ring-blue-500 rounded"
                     />
                     <div className="ml-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-medium">🚆 Public Transportation</span>
                         <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 rounded">
-                          Chicago CTA, NYC MTA & Boston MBTA
+                          Chicago, NYC, Boston, SF, DC & London
                         </span>
                       </div>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        Get comparative alerts showing both Drive and Transit travel times (Blue/Orange Line to ORD/MDW via Ventra, Subway/AirTrain to JFK/LGA/EWR via OMNY, Silver/Blue Line to BOS via CharlieCard) plus live service delays.
+                        Get comparative alerts showing both Drive and Transit travel times plus live service delays for supported cities (Chicago, New York, Boston, San Francisco, Washington D.C., and London).
                       </p>
                     </div>
                   </label>
@@ -378,6 +404,31 @@ export default function Profile({ onBack }: ProfileProps) {
                   When enabled, departure notifications include both Drive vs. Public Transit estimates.
                 </p>
               </div>
+
+              {onOpenFeedback && (
+                <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-800/60 border border-gray-200/60 dark:border-gray-700/60">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-green-100 dark:bg-green-900/40 flex items-center justify-center text-green-700 dark:text-green-400 shrink-0">
+                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Help & Feedback</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Report a bug or suggest an improvement</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={onOpenFeedback}
+                      className="px-3.5 py-2 text-xs font-semibold text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                    >
+                      Send Feedback
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <button
                   type="submit"

@@ -13,6 +13,7 @@
 
 body {
   transition: background-color 0.3s, color 0.3s;
+  -webkit-tap-highlight-color: transparent;
 }
 @keyframes slideIn {
   from { transform: translateY(-100%); opacity: 0; }
@@ -21,4 +22,34 @@ body {
 
 .animate-bounce-in {
   animation: slideIn 0.3s ease-out forwards;
+}
+
+gmp-place-autocomplete {
+  width: 100%;
+  display: block;
+  min-height: 48px;
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  background-color: #f9fafb;
+  color-scheme: light dark;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+:is(.dark) gmp-place-autocomplete {
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) gmp-place-autocomplete {
+    background-color: #1f2937;
+    color: #f3f4f6;
+  }
+}
+
+gmp-place-autocomplete:focus-within {
+  border-color: #16a34a;
+  outline: none;
 }

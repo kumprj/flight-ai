@@ -172,3 +172,90 @@ export const filterNewFlights = <T extends { flightNumber: string; date: string 
   if (!Array.isArray(existingTrips) || existingTrips.length === 0) return candidateFlights;
   return candidateFlights.filter((flight) => !isTripAlreadyTracked(flight, existingTrips));
 };
+
+/**
+ * Determines whether a drive time change warrants a notification alert.
+ * Returns true if lastNotifiedDriveMinutes is defined and the absolute difference
+ * between currentDriveMinutes and lastNotifiedDriveMinutes is strictly greater than thresholdMinutes (default 15).
+ */
+export const shouldAlertDriveTimeChange = (
+  currentDriveMinutes: number,
+  lastNotifiedDriveMinutes?: number,
+  thresholdMinutes: number = 15
+): boolean => {
+  if (lastNotifiedDriveMinutes === undefined || lastNotifiedDriveMinutes === null) {
+    return false;
+  }
+  return Math.abs(currentDriveMinutes - lastNotifiedDriveMinutes) > thresholdMinutes;
+};
+
+/**
+ * Information regarding how many days away a flight departure is.
+ */
+export interface DaysAwayInfo {
+  diffDays: number;
+  label: string;
+  urgency: 'today' | 'tomorrow' | 'upcoming' | 'past';
+}
+
+/**
+ * Calculates calendar days away from a reference date (default: today local)
+ * for a naive flight date string.
+ *
+ * @param dateStr - Naive local ISO flight departure string (e.g. "2026-05-20T14:30:00") or ISO string
+ * @param referenceDate - Optional reference date to compare against (defaults to current date)
+ */
+export const calculateDaysAway = (
+  dateStr: string,
+  referenceDate: Date = new Date()
+): DaysAwayInfo => {
+  if (!dateStr) {
+    return { diffDays: 0, label: '', urgency: 'upcoming' };
+  }
+
+  const [datePart] = dateStr.split(/[T ]/);
+  let flightYear: number;
+  let flightMonth: number;
+  let flightDay: number;
+
+  if (datePart && datePart.includes('-')) {
+    const parts = datePart.split('-').map(Number);
+    flightYear = parts[0];
+    flightMonth = parts[1] - 1;
+    flightDay = parts[2];
+  } else {
+    const d = new Date(dateStr);
+    flightYear = d.getFullYear();
+    flightMonth = d.getMonth();
+    flightDay = d.getDate();
+  }
+
+  const flightMidnight = new Date(flightYear, flightMonth, flightDay);
+  if (isNaN(flightMidnight.getTime())) {
+    return { diffDays: 0, label: '', urgency: 'upcoming' };
+  }
+
+  const refMidnight = new Date(
+    referenceDate.getFullYear(),
+    referenceDate.getMonth(),
+    referenceDate.getDate()
+  );
+
+  const diffMs = flightMidnight.getTime() - refMidnight.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    return { diffDays, label: 'Today', urgency: 'today' };
+  }
+  if (diffDays === 1) {
+    return { diffDays, label: 'Tomorrow', urgency: 'tomorrow' };
+  }
+  if (diffDays > 1) {
+    return { diffDays, label: `${diffDays} days away`, urgency: 'upcoming' };
+  }
+  if (diffDays === -1) {
+    return { diffDays, label: 'Yesterday', urgency: 'past' };
+  }
+  return { diffDays, label: `${Math.abs(diffDays)} days ago`, urgency: 'past' };
+};
+

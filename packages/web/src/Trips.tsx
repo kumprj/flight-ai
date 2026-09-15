@@ -1,8 +1,9 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import axios from 'axios';
 import {Config} from './config';
 import {fetchAuthSession} from 'aws-amplify/auth';
 import Toast, { type ToastType } from './Toast';
+import { calculateDaysAway } from './utils/flightTimes';
 
 interface Trip {
   sk: string;
@@ -151,7 +152,10 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
   const [travelTimes, setTravelTimes] = useState<Record<string, TravelTimeData>>({});
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
+  const [visibleActiveCount, setVisibleActiveCount] = useState(9);
+  const [visiblePastCount, setVisiblePastCount] = useState(3);
   const [expandedTrip, setExpandedTrip] = useState<Trip | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const showToast = (msg: string, type: ToastType = 'success') => setToast({ msg, type });
 
@@ -221,8 +225,8 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
       const sortedTrips = [...activeTrips, ...pastTrips];
       setTrips(sortedTrips);
 
-      // Load travel times only for flights departing from home (not intermediate connection layovers)
-      loadTravelTimes(sortedTrips);
+      // Load travel times only for active flights departing from home up to the initial pagination limit
+      loadTravelTimes(activeTrips.slice(0, visibleActiveCount));
     } catch (err) {
       console.error(err);
       showToast("Failed to load trips", "error");
@@ -267,10 +271,22 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
           newTravelTimes[result.tripId] = result.data;
         }
       });
-      setTravelTimes(newTravelTimes);
+      setTravelTimes((prev) => ({ ...prev, ...newTravelTimes }));
     } catch (err) {
       console.error("Failed to load travel times:", err);
     }
+  };
+
+  const handleLoadMoreActive = () => {
+    const nextCount = visibleActiveCount + 9;
+    const activeTripsList = trips.filter((t) => !isOldTrip(t.revisedDate || t.date));
+    const newSlice = activeTripsList.slice(visibleActiveCount, nextCount);
+    setVisibleActiveCount(nextCount);
+    loadTravelTimes(newSlice);
+  };
+
+  const handleLoadMorePast = () => {
+    setVisiblePastCount((prev) => prev + 3);
   };
 
   const handleTestNotify = async (trip: Trip) => {
@@ -846,8 +862,30 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     return `${m}m`;
   };
 
-  const activeTrips = trips.filter((t) => !isOldTrip(t.revisedDate || t.date));
-  const pastTrips = trips.filter((t) => isOldTrip(t.revisedDate || t.date));
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const allActiveTrips = useMemo(() => trips.filter((t) => !isOldTrip(t.revisedDate || t.date)), [trips]);
+  const allPastTrips = useMemo(() => trips.filter((t) => isOldTrip(t.revisedDate || t.date)), [trips]);
+
+  const matchesSearch = (trip: Trip) => {
+    if (!normalizedQuery) return true;
+    const origin = (trip.originAirport || '').toLowerCase();
+    const dest = (trip.destinationAirport || '').toLowerCase();
+    const originCity = (getAirportCity(trip.originAirport) || '').toLowerCase();
+    const destCity = (getAirportCity(trip.destinationAirport) || '').toLowerCase();
+    const flightNum = (trip.flightNumber || '').toLowerCase();
+
+    return (
+      origin.includes(normalizedQuery) ||
+      dest.includes(normalizedQuery) ||
+      originCity.includes(normalizedQuery) ||
+      destCity.includes(normalizedQuery) ||
+      flightNum.includes(normalizedQuery)
+    );
+  };
+
+  const activeTrips = useMemo(() => allActiveTrips.filter(matchesSearch), [allActiveTrips, normalizedQuery]);
+  const pastTrips = useMemo(() => allPastTrips.filter(matchesSearch), [allPastTrips, normalizedQuery]);
   const upcomingCount = activeTrips.length;
   const pastCount = pastTrips.length;
 
@@ -861,6 +899,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     const isDelayed = !isCanceled && (trip.status === 'Delayed' || Boolean(trip.revisedDate && trip.revisedDate !== trip.date));
     const tripTravelTime = travelTimes[trip.sk];
     const connectionInfo = getDayConnectionInfo(trip, trips);
+    const daysAway = calculateDaysAway(effectiveDate);
 
     return (
       <div
@@ -881,7 +920,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
         }`}
       >
         <div>
-          {/* Header row: Flight # + Status Badge + Expand Icon */}
+          {/* Header row: Flight # + Status Badge + Days Away Badge */}
           <div className="flex items-start justify-between gap-2 mb-3">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -913,11 +952,23 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
               </div>
             </div>
 
-            <div className="p-1.5 rounded-lg text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:bg-green-50 dark:group-hover:bg-green-900/30 transition-all">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-              </svg>
-            </div>
+            {daysAway.label && (
+              <div className="shrink-0 pt-0.5">
+                <span
+                  className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-colors ${
+                    daysAway.urgency === 'today'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border border-green-200/80 dark:border-green-700/60'
+                      : daysAway.urgency === 'tomorrow'
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60'
+                      : daysAway.urgency === 'upcoming'
+                      ? 'bg-gray-100 text-gray-700 dark:bg-gray-700/60 dark:text-gray-300 border border-gray-200/60 dark:border-gray-600/60'
+                      : 'bg-gray-100/70 text-gray-500 dark:bg-gray-800/60 dark:text-gray-400 border border-gray-200/40 dark:border-gray-700/40'
+                  }`}
+                >
+                  {daysAway.label}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Route details */}
@@ -1006,15 +1057,50 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {trips.length === 0
                 ? 'No flights scheduled'
-                : `${upcomingCount} upcoming ${upcomingCount === 1 ? 'flight' : 'flights'}${pastCount > 0 ? `, ${pastCount} past` : ''}`}
+                : normalizedQuery
+                ? `${upcomingCount} upcoming${pastCount > 0 ? `, ${pastCount} past` : ''} matching "${searchQuery}"`
+                : `${allActiveTrips.length} upcoming ${allActiveTrips.length === 1 ? 'flight' : 'flights'}${allPastTrips.length > 0 ? `, ${allPastTrips.length} past` : ''}`}
             </p>
           </div>
-          <button
-              onClick={onBack}
-              className="px-4 py-2 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 transition-colors shadow-sm self-start sm:self-auto cursor-pointer text-sm flex items-center gap-1.5"
-          >
-            <span>+</span> Add New
-          </button>
+          <div className="relative w-full sm:w-72">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setVisibleActiveCount(9);
+                setVisiblePastCount(3);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setSearchQuery('');
+                }
+              }}
+              placeholder="Search airport (e.g. ORD)..."
+              className="w-full pl-9 pr-8 py-2 text-sm bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all shadow-sm"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setVisibleActiveCount(9);
+                  setVisiblePastCount(3);
+                }}
+                className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
+                title="Clear search"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
         {loading ? (
@@ -1029,16 +1115,47 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                 Track your first flight
               </button>
             </div>
+        ) : activeTrips.length === 0 && pastTrips.length === 0 && normalizedQuery ? (
+            <div className="text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-3 text-gray-400">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <p className="text-gray-700 dark:text-gray-200 font-semibold mb-1">No trips found</p>
+              <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm max-w-sm mx-auto">
+                No flights to or from &ldquo;{searchQuery}&rdquo; were found.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors cursor-pointer font-medium text-sm"
+              >
+                Clear search
+              </button>
+            </div>
         ) : (
           <div className="space-y-10">
             {/* Active Trips Section */}
             {activeTrips.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {activeTrips.map(renderTripTile)}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {activeTrips.slice(0, visibleActiveCount).map(renderTripTile)}
+                </div>
+                {visibleActiveCount < activeTrips.length && (
+                  <div className="mt-6 text-center">
+                    <button
+                      onClick={() => handleLoadMoreActive()}
+                      className="px-6 py-2 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                    >
+                      Load More Active Flights
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center sm:text-left py-6 text-gray-500 dark:text-gray-400 text-sm bg-gray-50 dark:bg-gray-800/40 rounded-xl p-4 border border-dashed border-gray-200 dark:border-gray-700">
-                No active flights scheduled.
+                {normalizedQuery ? `No active flights to or from "${searchQuery}".` : 'No active flights scheduled.'}
               </div>
             )}
 
@@ -1048,12 +1165,22 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                 <div className="mb-5">
                   <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Past Trips</h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                    {pastTrips.length} previously taken {pastTrips.length === 1 ? 'flight' : 'flights'}
+                    {pastTrips.length} previously taken {pastTrips.length === 1 ? 'flight' : 'flights'}{normalizedQuery ? ` matching "${searchQuery}"` : ''}
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {pastTrips.map(renderTripTile)}
+                  {pastTrips.slice(0, visiblePastCount).map(renderTripTile)}
                 </div>
+                {visiblePastCount < pastTrips.length && (
+                  <div className="mt-6 text-center">
+                    <button
+                      onClick={() => handleLoadMorePast()}
+                      className="px-6 py-2 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                    >
+                      Load More Past Flights
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

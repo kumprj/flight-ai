@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {Config} from './config';
-import {fetchAuthSession, getCurrentUser, signInWithRedirect, signOut} from 'aws-amplify/auth';
+import {fetchAuthSession, getCurrentUser, signInWithRedirect} from 'aws-amplify/auth';
 import {Hub} from 'aws-amplify/utils';
 import Trips from './Trips';
 import {useState, useEffect} from 'react';
@@ -9,6 +9,7 @@ import CustomDatePicker from './DatePicker';
 import {formatFlightDate, formatFlightTimeOnly, filterNewFlights, normalizeFlightNumber} from './utils/flightTimes';
 import Profile from './Profile';
 import CalendarImport from './CalendarImport';
+import FeedbackModal from './FeedbackModal';
 import Onboarding from './Onboarding';
 import type { CalendarFlight } from './utils/googleCalendar';
 
@@ -97,6 +98,7 @@ function App() {
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [showCalendarImport, setShowCalendarImport] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = loading
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null); // null = loading
 
@@ -705,55 +707,39 @@ function App() {
         )}
 
         <div
-                  className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-6 flex flex-col items-center font-sans">
+                  className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-6 pb-28 sm:pb-32 flex flex-col items-center font-sans">
 
                 <header
-                    className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800 transition-all duration-200`}>
-                  <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent">
-                    Make My Flight
-                  </h1>
-                  <div className="flex gap-4 text-sm font-medium">
-                    <button
-                        onClick={() => {
-                          if (editingTrip) handleCancel();
-                          setView('list');
-                        }}
-                        className={`${
-                            view === 'list'
-                                ? 'text-green-700 border-b-2 border-green-700'
-                                : 'text-gray-500 hover:text-green-600 hover:border-b-2 hover:border-green-300'
-                        } pb-1 transition-all cursor-pointer border-b-2 border-transparent`}
-                    >
-                      My Trips
-                    </button>
-                    <button
-                        onClick={() => {
-                          if (editingTrip) handleCancel();
-                          setView('profile');
-                        }}
-                        className={`${
-                            view === 'profile'
-                                ? 'text-green-700 border-b-2 border-green-700'
-                                : 'text-gray-500 hover:text-green-600 hover:border-b-2 hover:border-green-300'
-                        } pb-1 transition-all cursor-pointer border-b-2 border-transparent`}
-                    >
-                      Profile
-                    </button>
-                    <button
-                        onClick={() => signOut()}
-                        className="text-gray-400 hover:text-red-500 pb-1 transition-colors cursor-pointer"
-                    >
-                      Sign Out
-                    </button>
+                    className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} flex items-center justify-between mb-8 pb-4 border-b border-gray-100 dark:border-gray-800 transition-all duration-200`}>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-green-700 to-green-600 flex items-center justify-center text-white shadow-sm shadow-green-700/25">
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z" />
+                      </svg>
+                    </div>
+                    <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent">
+                      Make My Flight
+                    </h1>
                   </div>
 
+                  <button
+                      type="button"
+                      onClick={() => setShowFeedbackModal(true)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white bg-gray-100/70 dark:bg-gray-800/70 hover:bg-gray-200/80 dark:hover:bg-gray-700/80 rounded-full transition-all cursor-pointer active:scale-95"
+                      title="Send feedback or report an issue"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span>Feedback</span>
+                  </button>
                 </header>
 
                 <main className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} transition-all duration-200`}>
                   {view === 'list' ? (
                       <Trips onBack={() => setView('add')} onEdit={handleEdit}/>
                   ) : view === 'profile' ? (
-                      <Profile onBack={() => setView('list')}/>
+                      <Profile onBack={() => setView('list')} onOpenFeedback={() => setShowFeedbackModal(true)}/>
                   ) : (
                       <>
                         {step === 'input' && (
@@ -1122,6 +1108,85 @@ function App() {
                       </>
                   )}
                 </main>
+
+                <nav
+                    aria-label="Bottom Navigation"
+                    className="fixed bottom-5 sm:bottom-6 inset-x-0 z-40 flex justify-center pointer-events-none px-4"
+                    style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+                >
+                  <div
+                      role="tablist"
+                      aria-label="Application tabs"
+                      className="pointer-events-auto inline-flex items-center gap-1 sm:gap-1.5 p-1.5 rounded-full bg-white/80 dark:bg-gray-900/85 backdrop-blur-xl border border-gray-200/80 dark:border-gray-700/80 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.45)] ring-1 ring-black/5 dark:ring-white/10 transition-all duration-200"
+                  >
+                    <button
+                        role="tab"
+                        aria-selected={view === 'list'}
+                        onClick={() => {
+                          if (editingTrip || view === 'add') handleCancel();
+                          setView('list');
+                        }}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 active:scale-95 cursor-pointer ${
+                            view === 'list'
+                                ? 'bg-green-700 text-white shadow-sm font-semibold'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/70'
+                        }`}
+                    >
+                      <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z" />
+                      </svg>
+                      <span>Trips</span>
+                    </button>
+
+                    <button
+                        role="tab"
+                        aria-selected={view === 'add'}
+                        onClick={() => {
+                          if (editingTrip) handleCancel();
+                          else {
+                            setStep('input');
+                            setSearchResults([]);
+                            setMultiSegments(null);
+                            setCurrentSegmentIdx(0);
+                            setSelectedSegments([]);
+                            setSelectedFlight(null);
+                          }
+                          setView('add');
+                        }}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 active:scale-95 cursor-pointer ${
+                            view === 'add'
+                                ? 'bg-green-700 text-white shadow-sm font-semibold'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/70'
+                        }`}
+                    >
+                      <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                      <span>Add New</span>
+                    </button>
+
+                    <button
+                        role="tab"
+                        aria-selected={view === 'profile'}
+                        onClick={() => {
+                          if (editingTrip || view === 'add') handleCancel();
+                          setView('profile');
+                        }}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 active:scale-95 cursor-pointer ${
+                            view === 'profile'
+                                ? 'bg-green-700 text-white shadow-sm font-semibold'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/70'
+                        }`}
+                    >
+                      <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      <span>Profile</span>
+                    </button>
+                  </div>
+                </nav>
               </div>
 
         {showCalendarImport && (
@@ -1129,6 +1194,14 @@ function App() {
                 onImport={handleCalendarImport}
                 onClose={() => setShowCalendarImport(false)}
                 homeAddress={homeAddress}
+            />
+        )}
+
+        {showFeedbackModal && (
+            <FeedbackModal
+                isOpen={showFeedbackModal}
+                onClose={() => setShowFeedbackModal(false)}
+                onSuccess={(msg) => showToast(msg, 'success')}
             />
         )}
       </div>

@@ -4,17 +4,17 @@
   "graph": {},
   "nodes": [
     {
-      "id": "packages_core_src_maps_transitagencyconfig",
-      "label": "TransitAgencyConfig",
+      "id": "packages_core_src_airports_airportinfo",
+      "label": "AirportInfo",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 0,
+      "community_name": "index.ts",
       "file_type": "code",
-      "norm_label": "transitagencyconfig",
-      "source_file": "packages/core/src/maps.ts",
-      "source_location": "L21"
+      "norm_label": "airportinfo",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L1"
     },
     {
       "id": "packages_core_src_types_bartalert",
@@ -23,11 +23,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "bartalert",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L125"
+      "source_location": "L130"
     },
     {
       "id": "packages_core_src_types_bartstationinfo",
@@ -36,141 +36,76 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "bartstationinfo",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L133"
+      "source_location": "L138"
     },
     {
-      "id": "packages_core_src_types_ctaalert",
-      "label": "CtaAlert",
+      "id": "packages_core_src_feedback_formatgithubissueparams",
+      "label": "FormatGitHubIssueParams",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "ctaalert",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L81"
+      "norm_label": "formatgithubissueparams",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L3"
     },
     {
-      "id": "packages_core_src_types_ctastationinfo",
-      "label": "CtaStationInfo",
+      "id": "packages_core_src_feedback_formattedgithubissue",
+      "label": "FormattedGitHubIssue",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "ctastationinfo",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L93"
+      "norm_label": "formattedgithubissue",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L13"
     },
     {
-      "id": "packages_core_src_types_londontransitstationinfo",
-      "label": "LondonTransitStationInfo",
+      "id": "packages_core_src_types_feedbackdiagnostics",
+      "label": "FeedbackDiagnostics",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "londontransitstationinfo",
+      "norm_label": "feedbackdiagnostics",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L153"
+      "source_location": "L243"
     },
     {
-      "id": "packages_core_src_types_mbtaalert",
-      "label": "MbtaAlert",
+      "id": "packages_core_src_types_feedbacktype",
+      "label": "FeedbackType",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "mbtaalert",
+      "norm_label": "feedbacktype",
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L184"
+      "source_location": "L241"
     },
     {
-      "id": "packages_core_src_types_mbtastationinfo",
-      "label": "MbtaStationInfo",
+      "id": "packages_core_src_dateutils_daysawayinfo",
+      "label": "DaysAwayInfo",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 2,
+      "community_name": "trip.ts",
       "file_type": "code",
-      "norm_label": "mbtastationinfo",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L194"
-    },
-    {
-      "id": "packages_core_src_types_mtaalert",
-      "label": "MtaAlert",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "mtaalert",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L104"
-    },
-    {
-      "id": "packages_core_src_types_multimodaltraveltime",
-      "label": "MultiModalTravelTime",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "multimodaltraveltime",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L228"
-    },
-    {
-      "id": "packages_core_src_types_notificationpreferences",
-      "label": "NotificationPreferences",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "notificationpreferences",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L50"
-    },
-    {
-      "id": "packages_core_src_types_nyctransitstationinfo",
-      "label": "NycTransitStationInfo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "nyctransitstationinfo",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L114"
-    },
-    {
-      "id": "packages_core_src_types_profile",
-      "label": "Profile",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "profile",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L25"
+      "norm_label": "daysawayinfo",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L195"
     },
     {
       "id": "packages_core_src_types_schedulerpayload",
@@ -178,129 +113,12 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "schedulerpayload",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L39"
-    },
-    {
-      "id": "packages_core_src_types_tflalert",
-      "label": "TflAlert",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "tflalert",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L143"
-    },
-    {
-      "id": "packages_core_src_types_transitalert",
-      "label": "TransitAlert",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "transitalert",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L211"
-    },
-    {
-      "id": "packages_core_src_types_transitstationinfo",
-      "label": "TransitStationInfo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "transitstationinfo",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L205"
-    },
-    {
-      "id": "packages_core_src_types_transitstep",
-      "label": "TransitStep",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "transitstep",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L56"
-    },
-    {
-      "id": "packages_core_src_types_traveltimeinfo",
-      "label": "TravelTimeInfo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "traveltimeinfo",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L70"
-    },
-    {
-      "id": "packages_core_src_types_trip",
-      "label": "Trip",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "trip",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_types_wmataalert",
-      "label": "WmataAlert",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "wmataalert",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L164"
-    },
-    {
-      "id": "packages_core_src_types_wmatastationinfo",
-      "label": "WmataStationInfo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "wmatastationinfo",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L173"
-    },
-    {
-      "id": "packages_core_src_airports_airportinfo",
-      "label": "AirportInfo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
       "community": 2,
       "community_name": "trip.ts",
       "file_type": "code",
-      "norm_label": "airportinfo",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L1"
+      "norm_label": "schedulerpayload",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L41"
     },
     {
       "id": "packages_web_src_types_google_maps_d_addresscomponent",
@@ -313,7 +131,7 @@
       "file_type": "code",
       "norm_label": "addresscomponent",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L31"
+      "source_location": "L94"
     },
     {
       "id": "packages_web_src_types_google_maps_d_autocomplete",
@@ -326,7 +144,7 @@
       "file_type": "code",
       "norm_label": "autocomplete",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L2"
+      "source_location": "L65"
     },
     {
       "id": "packages_web_src_types_google_maps_d_autocompleteoptions",
@@ -339,7 +157,7 @@
       "file_type": "code",
       "norm_label": "autocompleteoptions",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L11"
+      "source_location": "L74"
     },
     {
       "id": "packages_web_src_types_google_maps_d_componentrestrictions",
@@ -352,7 +170,85 @@
       "file_type": "code",
       "norm_label": "componentrestrictions",
       "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L79"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_fetchfieldsoptions",
+      "label": "FetchFieldsOptions",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": "fetchfieldsoptions",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L25"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_place",
+      "label": "Place",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": "place",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placeautocompleteelement",
+      "label": "PlaceAutocompleteElement",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": "placeautocompleteelement",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L40"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placeautocompleteelementoptions",
+      "label": "PlaceAutocompleteElementOptions",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": "placeautocompleteelementoptions",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L2"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placeprediction",
+      "label": "PlacePrediction",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": "placeprediction",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
       "source_location": "L16"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placepredictionselectevent",
+      "label": "PlacePredictionSelectEvent",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": "placepredictionselectevent",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L21"
     },
     {
       "id": "packages_web_src_types_google_maps_d_placeresult",
@@ -365,7 +261,7 @@
       "file_type": "code",
       "norm_label": "placeresult",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L20"
+      "source_location": "L83"
     },
     {
       "id": "packages_web_src_types_google_maps_d_window",
@@ -378,7 +274,33 @@
       "file_type": "code",
       "norm_label": "window",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L42"
+      "source_location": "L113"
+    },
+    {
+      "id": "packages_core_src_types_londontransitstationinfo",
+      "label": "LondonTransitStationInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "londontransitstationinfo",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L158"
+    },
+    {
+      "id": "packages_core_src_types_tflalert",
+      "label": "TflAlert",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "tflalert",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L148"
     },
     {
       "id": "packages_web_src_addressautocomplete_addressautocompleteprops",
@@ -404,7 +326,7 @@
       "file_type": "code",
       "norm_label": "flightdata",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "packages_web_src_app_flightsegment",
@@ -417,7 +339,7 @@
       "file_type": "code",
       "norm_label": "flightsegment",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "packages_web_src_app_multisegmentresult",
@@ -430,7 +352,7 @@
       "file_type": "code",
       "norm_label": "multisegmentresult",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L44"
+      "source_location": "L45"
     },
     {
       "id": "packages_web_src_app_step",
@@ -443,7 +365,7 @@
       "file_type": "code",
       "norm_label": "step",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L50"
+      "source_location": "L51"
     },
     {
       "id": "packages_web_src_app_trip",
@@ -456,7 +378,7 @@
       "file_type": "code",
       "norm_label": "trip",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L29"
+      "source_location": "L30"
     },
     {
       "id": "packages_web_src_calendarimport_existingtriplike",
@@ -496,6 +418,45 @@
       "norm_label": "props",
       "source_file": "packages/web/src/DatePicker.tsx",
       "source_location": "L33"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_currenttripcontext",
+      "label": "CurrentTripContext",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "currenttripcontext",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_feedbackmodalprops",
+      "label": "FeedbackModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbackmodalprops",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_feedbacktype",
+      "label": "FeedbackType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbacktype",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L6"
     },
     {
       "id": "packages_web_src_onboarding_onboardingprops",
@@ -573,7 +534,7 @@
       "file_type": "code",
       "norm_label": "dayconnectioninfo",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
       "id": "packages_web_src_trips_transitstep",
@@ -586,7 +547,7 @@
       "file_type": "code",
       "norm_label": "transitstep",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L33"
+      "source_location": "L34"
     },
     {
       "id": "packages_web_src_trips_traveltimedata",
@@ -599,7 +560,7 @@
       "file_type": "code",
       "norm_label": "traveltimedata",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L46"
+      "source_location": "L47"
     },
     {
       "id": "packages_web_src_trips_trip",
@@ -612,7 +573,7 @@
       "file_type": "code",
       "norm_label": "trip",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L7"
+      "source_location": "L8"
     },
     {
       "id": "packages_web_src_utils_googlecalendar_calendarflight",
@@ -680,6 +641,175 @@
       "source_location": "L9"
     },
     {
+      "id": "packages_core_src_types_ctaalert",
+      "label": "CtaAlert",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "ctaalert",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L86"
+    },
+    {
+      "id": "packages_core_src_types_ctastationinfo",
+      "label": "CtaStationInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "ctastationinfo",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L98"
+    },
+    {
+      "id": "packages_core_src_types_mbtaalert",
+      "label": "MbtaAlert",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "mbtaalert",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L189"
+    },
+    {
+      "id": "packages_core_src_types_mbtastationinfo",
+      "label": "MbtaStationInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "mbtastationinfo",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L199"
+    },
+    {
+      "id": "packages_core_src_types_wmataalert",
+      "label": "WmataAlert",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "wmataalert",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L169"
+    },
+    {
+      "id": "packages_core_src_types_wmatastationinfo",
+      "label": "WmataStationInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "wmatastationinfo",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L178"
+    },
+    {
+      "id": "packages_core_src_types_feedbacksubmission",
+      "label": "FeedbackSubmission",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "feedbacksubmission",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L255"
+    },
+    {
+      "id": "packages_core_src_types_multimodaltraveltime",
+      "label": "MultiModalTravelTime",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "multimodaltraveltime",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L233"
+    },
+    {
+      "id": "packages_core_src_types_notificationpreferences",
+      "label": "NotificationPreferences",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "notificationpreferences",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L55"
+    },
+    {
+      "id": "packages_core_src_types_profile",
+      "label": "Profile",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "profile",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L27"
+    },
+    {
+      "id": "packages_core_src_types_transitstep",
+      "label": "TransitStep",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "transitstep",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L61"
+    },
+    {
+      "id": "packages_core_src_types_traveltimeinfo",
+      "label": "TravelTimeInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "traveltimeinfo",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L75"
+    },
+    {
+      "id": "packages_core_src_types_trip",
+      "label": "Trip",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "trip",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "sst_env_d_resource",
       "label": "Resource",
       "_callable": true,
@@ -693,12 +823,101 @@
       "source_location": "L8"
     },
     {
+      "id": "packages_core_src_maps_transitagencyconfig",
+      "label": "TransitAgencyConfig",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "transitagencyconfig",
+      "source_file": "packages/core/src/maps.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "packages_core_src_types_mtaalert",
+      "label": "MtaAlert",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "mtaalert",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L109"
+    },
+    {
+      "id": "packages_core_src_types_nyctransitstationinfo",
+      "label": "NycTransitStationInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "nyctransitstationinfo",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L119"
+    },
+    {
+      "id": "packages_core_src_types_transitalert",
+      "label": "TransitAlert",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "transitalert",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L216"
+    },
+    {
+      "id": "packages_core_src_types_transitstationinfo",
+      "label": "TransitStationInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "transitstationinfo",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L210"
+    },
+    {
+      "id": "packages_core_src_airports_getairportaddress",
+      "label": "getAirportAddress()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "index.ts",
+      "file_type": "code",
+      "norm_label": "getairportaddress()",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L278"
+    },
+    {
+      "id": "packages_core_src_airports_getairportlabel",
+      "label": "getAirportLabel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "index.ts",
+      "file_type": "code",
+      "norm_label": "getairportlabel()",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L283"
+    },
+    {
       "id": "packages_core_src_bart_alertmatchesairport",
       "label": "alertMatchesAirport()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "alertmatchesairport()",
       "source_file": "packages/core/src/bart.ts",
@@ -710,7 +929,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "barttotransitalerts()",
       "source_file": "packages/core/src/bart.ts",
@@ -722,7 +941,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "formatbartalertssummary()",
       "source_file": "packages/core/src/bart.ts",
@@ -734,7 +953,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "getbartalerts()",
       "source_file": "packages/core/src/bart.ts",
@@ -746,7 +965,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "getbartstationinfo()",
       "source_file": "packages/core/src/bart.ts",
@@ -758,335 +977,47 @@
       "_callable": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "isbartairport()",
       "source_file": "packages/core/src/bart.ts",
       "source_location": "L35"
     },
     {
-      "id": "packages_core_src_cta_ctatotransitalerts",
-      "label": "ctaToTransitAlerts()",
+      "id": "packages_core_src_feedback_formatgithubissue",
+      "label": "formatGitHubIssue()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "ctatotransitalerts()",
-      "source_file": "packages/core/src/cta.ts",
-      "source_location": "L130"
+      "norm_label": "formatgithubissue()",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L37"
     },
     {
-      "id": "packages_core_src_cta_formatctaalertssummary",
-      "label": "formatCtaAlertsSummary()",
+      "id": "packages_functions_src_feedback_getauthdetails",
+      "label": "getAuthDetails()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "formatctaalertssummary()",
-      "source_file": "packages/core/src/cta.ts",
-      "source_location": "L106"
+      "norm_label": "getauthdetails()",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L7"
     },
     {
-      "id": "packages_core_src_cta_getctaalerts",
-      "label": "getCtaAlerts()",
+      "id": "packages_functions_src_feedback_submit",
+      "label": "submit()",
       "_callable": true,
       "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "getctaalerts()",
-      "source_file": "packages/core/src/cta.ts",
-      "source_location": "L50"
-    },
-    {
-      "id": "packages_core_src_cta_getctastationinfo",
-      "label": "getCtaStationInfo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "getctastationinfo()",
-      "source_file": "packages/core/src/cta.ts",
-      "source_location": "L41"
-    },
-    {
-      "id": "packages_core_src_cta_ischicagoairport",
-      "label": "isChicagoAirport()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "ischicagoairport()",
-      "source_file": "packages/core/src/cta.ts",
+      "norm_label": "submit()",
+      "source_file": "packages/functions/src/feedback.ts",
       "source_location": "L33"
-    },
-    {
-      "id": "packages_core_src_mbta_formatmbtaalertssummary",
-      "label": "formatMbtaAlertsSummary()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "formatmbtaalertssummary()",
-      "source_file": "packages/core/src/mbta.ts",
-      "source_location": "L106"
-    },
-    {
-      "id": "packages_core_src_mbta_getmbtaalerts",
-      "label": "getMbtaAlerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "getmbtaalerts()",
-      "source_file": "packages/core/src/mbta.ts",
-      "source_location": "L38"
-    },
-    {
-      "id": "packages_core_src_mbta_getmbtastationinfo",
-      "label": "getMbtaStationInfo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "getmbtastationinfo()",
-      "source_file": "packages/core/src/mbta.ts",
-      "source_location": "L30"
-    },
-    {
-      "id": "packages_core_src_mbta_isbostonairport",
-      "label": "isBostonAirport()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "isbostonairport()",
-      "source_file": "packages/core/src/mbta.ts",
-      "source_location": "L22"
-    },
-    {
-      "id": "packages_core_src_mbta_mbtatotransitalerts",
-      "label": "mbtaToTransitAlerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "mbtatotransitalerts()",
-      "source_file": "packages/core/src/mbta.ts",
-      "source_location": "L126"
-    },
-    {
-      "id": "packages_core_src_mta_formatmtaalertssummary",
-      "label": "formatMtaAlertsSummary()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "formatmtaalertssummary()",
-      "source_file": "packages/core/src/mta.ts",
-      "source_location": "L127"
-    },
-    {
-      "id": "packages_core_src_mta_getmtaalerts",
-      "label": "getMtaAlerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "getmtaalerts()",
-      "source_file": "packages/core/src/mta.ts",
-      "source_location": "L59"
-    },
-    {
-      "id": "packages_core_src_mta_getnycstationinfo",
-      "label": "getNycStationInfo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "getnycstationinfo()",
-      "source_file": "packages/core/src/mta.ts",
-      "source_location": "L50"
-    },
-    {
-      "id": "packages_core_src_mta_isnycairport",
-      "label": "isNycAirport()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "isnycairport()",
-      "source_file": "packages/core/src/mta.ts",
-      "source_location": "L42"
-    },
-    {
-      "id": "packages_core_src_mta_mtatotransitalerts",
-      "label": "mtaToTransitAlerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "mtatotransitalerts()",
-      "source_file": "packages/core/src/mta.ts",
-      "source_location": "L147"
-    },
-    {
-      "id": "packages_core_src_tfl_formattflalertssummary",
-      "label": "formatTflAlertsSummary()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "formattflalertssummary()",
-      "source_file": "packages/core/src/tfl.ts",
-      "source_location": "L145"
-    },
-    {
-      "id": "packages_core_src_tfl_getlondonstationinfo",
-      "label": "getLondonStationInfo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "getlondonstationinfo()",
-      "source_file": "packages/core/src/tfl.ts",
-      "source_location": "L70"
-    },
-    {
-      "id": "packages_core_src_tfl_gettflalerts",
-      "label": "getTflAlerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "gettflalerts()",
-      "source_file": "packages/core/src/tfl.ts",
-      "source_location": "L79"
-    },
-    {
-      "id": "packages_core_src_tfl_islondonairport",
-      "label": "isLondonAirport()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "islondonairport()",
-      "source_file": "packages/core/src/tfl.ts",
-      "source_location": "L62"
-    },
-    {
-      "id": "packages_core_src_tfl_tfltotransitalerts",
-      "label": "tflToTransitAlerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "tfltotransitalerts()",
-      "source_file": "packages/core/src/tfl.ts",
-      "source_location": "L165"
-    },
-    {
-      "id": "packages_core_src_wmata_formatwmataalertssummary",
-      "label": "formatWmataAlertsSummary()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "formatwmataalertssummary()",
-      "source_file": "packages/core/src/wmata.ts",
-      "source_location": "L114"
-    },
-    {
-      "id": "packages_core_src_wmata_getwmataalerts",
-      "label": "getWmataAlerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "getwmataalerts()",
-      "source_file": "packages/core/src/wmata.ts",
-      "source_location": "L48"
-    },
-    {
-      "id": "packages_core_src_wmata_getwmatastationinfo",
-      "label": "getWmataStationInfo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "getwmatastationinfo()",
-      "source_file": "packages/core/src/wmata.ts",
-      "source_location": "L40"
-    },
-    {
-      "id": "packages_core_src_wmata_isdcairport",
-      "label": "isDcAirport()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "isdcairport()",
-      "source_file": "packages/core/src/wmata.ts",
-      "source_location": "L32"
-    },
-    {
-      "id": "packages_core_src_wmata_wmatatotransitalerts",
-      "label": "wmataToTransitAlerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "wmatatotransitalerts()",
-      "source_file": "packages/core/src/wmata.ts",
-      "source_location": "L134"
-    },
-    {
-      "id": "packages_core_src_airports_getairportaddress",
-      "label": "getAirportAddress()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "getairportaddress()",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L278"
-    },
-    {
-      "id": "packages_core_src_airports_getairportlabel",
-      "label": "getAirportLabel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "getairportlabel()",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L283"
     },
     {
       "id": "packages_core_src_airports_getairporttimezone",
@@ -1099,6 +1030,18 @@
       "norm_label": "getairporttimezone()",
       "source_file": "packages/core/src/airports.ts",
       "source_location": "L275"
+    },
+    {
+      "id": "packages_core_src_dateutils_calculatedaysaway",
+      "label": "calculateDaysAway()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "calculatedaysaway()",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L208"
     },
     {
       "id": "packages_core_src_dateutils_calculatehoursuntilflight",
@@ -1245,6 +1188,18 @@
       "source_location": "L8"
     },
     {
+      "id": "packages_core_src_dateutils_shouldalertdrivetimechange",
+      "label": "shouldAlertDriveTimeChange()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "shouldalertdrivetimechange()",
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L181"
+    },
+    {
       "id": "packages_core_src_maps_formatstopsegment",
       "label": "formatStopSegment()",
       "_callable": true,
@@ -1269,18 +1224,6 @@
       "source_location": "L301"
     },
     {
-      "id": "packages_core_src_twilio_getclient",
-      "label": "getClient()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "getclient()",
-      "source_file": "packages/core/src/twilio.ts",
-      "source_location": "L4"
-    },
-    {
       "id": "packages_functions_src_cron_handler",
       "label": "handler()",
       "_callable": true,
@@ -1290,7 +1233,7 @@
       "file_type": "code",
       "norm_label": "handler()",
       "source_file": "packages/functions/src/cron.ts",
-      "source_location": "L15"
+      "source_location": "L17"
     },
     {
       "id": "packages_functions_src_notify_handler",
@@ -1326,7 +1269,7 @@
       "file_type": "code",
       "norm_label": "gettraveltime()",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L351"
+      "source_location": "L354"
     },
     {
       "id": "packages_functions_src_trip_getuseridfromtoken",
@@ -1350,7 +1293,7 @@
       "file_type": "code",
       "norm_label": "list()",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L83"
+      "source_location": "L84"
     },
     {
       "id": "packages_functions_src_trip_remove",
@@ -1362,7 +1305,7 @@
       "file_type": "code",
       "norm_label": "remove()",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L406"
+      "source_location": "L410"
     },
     {
       "id": "packages_functions_src_trip_testnotify",
@@ -1374,7 +1317,7 @@
       "file_type": "code",
       "norm_label": "testnotify()",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L142"
+      "source_location": "L144"
     },
     {
       "id": "packages_functions_src_trip_update",
@@ -1386,7 +1329,7 @@
       "file_type": "code",
       "norm_label": "update()",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L99"
+      "source_location": "L100"
     },
     {
       "id": "packages_web_src_types_google_maps_d_autocomplete_addlistener",
@@ -1398,7 +1341,7 @@
       "file_type": "code",
       "norm_label": ".addlistener()",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L7"
+      "source_location": "L70"
     },
     {
       "id": "packages_web_src_types_google_maps_d_autocomplete_constructor",
@@ -1410,7 +1353,7 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L3"
+      "source_location": "L66"
     },
     {
       "id": "packages_web_src_types_google_maps_d_autocomplete_getplace",
@@ -1422,7 +1365,7 @@
       "file_type": "code",
       "norm_label": ".getplace()",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L8"
+      "source_location": "L71"
     },
     {
       "id": "packages_web_src_types_google_maps_d_lat",
@@ -1434,7 +1377,7 @@
       "file_type": "code",
       "norm_label": "lat()",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L25"
+      "source_location": "L34"
     },
     {
       "id": "packages_web_src_types_google_maps_d_lng",
@@ -1446,7 +1389,151 @@
       "file_type": "code",
       "norm_label": "lng()",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L26"
+      "source_location": "L35"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_place_fetchfields",
+      "label": ".fetchFields()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": ".fetchfields()",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placeautocompleteelement_addeventlistener",
+      "label": ".addEventListener()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": ".addeventlistener()",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L48"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placeautocompleteelement_blur",
+      "label": ".blur()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": ".blur()",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L47"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placeautocompleteelement_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L41"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placeautocompleteelement_focus",
+      "label": ".focus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": ".focus()",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L46"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placeautocompleteelement_removeeventlistener",
+      "label": ".removeEventListener()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": ".removeeventlistener()",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L58"
+    },
+    {
+      "id": "packages_web_src_types_google_maps_d_placeprediction_toplace",
+      "label": ".toPlace()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": ".toplace()",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "packages_core_src_tfl_formattflalertssummary",
+      "label": "formatTflAlertsSummary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "formattflalertssummary()",
+      "source_file": "packages/core/src/tfl.ts",
+      "source_location": "L145"
+    },
+    {
+      "id": "packages_core_src_tfl_getlondonstationinfo",
+      "label": "getLondonStationInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "getlondonstationinfo()",
+      "source_file": "packages/core/src/tfl.ts",
+      "source_location": "L70"
+    },
+    {
+      "id": "packages_core_src_tfl_gettflalerts",
+      "label": "getTflAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "gettflalerts()",
+      "source_file": "packages/core/src/tfl.ts",
+      "source_location": "L79"
+    },
+    {
+      "id": "packages_core_src_tfl_islondonairport",
+      "label": "isLondonAirport()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "islondonairport()",
+      "source_file": "packages/core/src/tfl.ts",
+      "source_location": "L62"
+    },
+    {
+      "id": "packages_core_src_tfl_tfltotransitalerts",
+      "label": "tflToTransitAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "tfltotransitalerts()",
+      "source_file": "packages/core/src/tfl.ts",
+      "source_location": "L165"
     },
     {
       "id": "fix_all_fix_cta",
@@ -1506,7 +1593,7 @@
       "file_type": "code",
       "norm_label": "addressautocomplete()",
       "source_file": "packages/web/src/AddressAutocomplete.tsx",
-      "source_location": "L54"
+      "source_location": "L90"
     },
     {
       "id": "packages_web_src_addressautocomplete_loadgooglemapsscript",
@@ -1530,7 +1617,7 @@
       "file_type": "code",
       "norm_label": "app()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L80"
+      "source_location": "L81"
     },
     {
       "id": "packages_web_src_app_formatdateonly",
@@ -1542,7 +1629,7 @@
       "file_type": "code",
       "norm_label": "formatdateonly()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L66"
+      "source_location": "L67"
     },
     {
       "id": "packages_web_src_app_gettripdateonly",
@@ -1554,7 +1641,7 @@
       "file_type": "code",
       "norm_label": "gettripdateonly()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L74"
+      "source_location": "L75"
     },
     {
       "id": "packages_web_src_app_parselocaldate",
@@ -1566,7 +1653,7 @@
       "file_type": "code",
       "norm_label": "parselocaldate()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L52"
+      "source_location": "L53"
     },
     {
       "id": "packages_web_src_calendarimport_calendarimport",
@@ -1593,6 +1680,18 @@
       "source_location": "L40"
     },
     {
+      "id": "packages_web_src_feedbackmodal_feedbackmodal",
+      "label": "FeedbackModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbackmodal()",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L29"
+    },
+    {
       "id": "packages_web_src_onboarding_onboarding",
       "label": "Onboarding()",
       "_callable": true,
@@ -1614,7 +1713,7 @@
       "file_type": "code",
       "norm_label": "profile()",
       "source_file": "packages/web/src/Profile.tsx",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
       "id": "packages_web_src_toast_toast",
@@ -1638,7 +1737,7 @@
       "file_type": "code",
       "norm_label": "getdayconnectioninfo()",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L61"
+      "source_location": "L62"
     },
     {
       "id": "packages_web_src_trips_trips",
@@ -1650,7 +1749,7 @@
       "file_type": "code",
       "norm_label": "trips()",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L147"
+      "source_location": "L148"
     },
     {
       "id": "packages_web_src_utils_googlecalendar_cachetoken",
@@ -1833,6 +1932,198 @@
       "source_location": "L4"
     },
     {
+      "id": "packages_core_src_cta_ctatotransitalerts",
+      "label": "ctaToTransitAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "ctatotransitalerts()",
+      "source_file": "packages/core/src/cta.ts",
+      "source_location": "L130"
+    },
+    {
+      "id": "packages_core_src_cta_formatctaalertssummary",
+      "label": "formatCtaAlertsSummary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "formatctaalertssummary()",
+      "source_file": "packages/core/src/cta.ts",
+      "source_location": "L106"
+    },
+    {
+      "id": "packages_core_src_cta_getctaalerts",
+      "label": "getCtaAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "getctaalerts()",
+      "source_file": "packages/core/src/cta.ts",
+      "source_location": "L50"
+    },
+    {
+      "id": "packages_core_src_cta_getctastationinfo",
+      "label": "getCtaStationInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "getctastationinfo()",
+      "source_file": "packages/core/src/cta.ts",
+      "source_location": "L41"
+    },
+    {
+      "id": "packages_core_src_cta_ischicagoairport",
+      "label": "isChicagoAirport()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "ischicagoairport()",
+      "source_file": "packages/core/src/cta.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "packages_core_src_mbta_formatmbtaalertssummary",
+      "label": "formatMbtaAlertsSummary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "formatmbtaalertssummary()",
+      "source_file": "packages/core/src/mbta.ts",
+      "source_location": "L106"
+    },
+    {
+      "id": "packages_core_src_mbta_getmbtaalerts",
+      "label": "getMbtaAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "getmbtaalerts()",
+      "source_file": "packages/core/src/mbta.ts",
+      "source_location": "L38"
+    },
+    {
+      "id": "packages_core_src_mbta_getmbtastationinfo",
+      "label": "getMbtaStationInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "getmbtastationinfo()",
+      "source_file": "packages/core/src/mbta.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "packages_core_src_mbta_isbostonairport",
+      "label": "isBostonAirport()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "isbostonairport()",
+      "source_file": "packages/core/src/mbta.ts",
+      "source_location": "L22"
+    },
+    {
+      "id": "packages_core_src_mbta_mbtatotransitalerts",
+      "label": "mbtaToTransitAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "mbtatotransitalerts()",
+      "source_file": "packages/core/src/mbta.ts",
+      "source_location": "L126"
+    },
+    {
+      "id": "packages_core_src_wmata_formatwmataalertssummary",
+      "label": "formatWmataAlertsSummary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "formatwmataalertssummary()",
+      "source_file": "packages/core/src/wmata.ts",
+      "source_location": "L114"
+    },
+    {
+      "id": "packages_core_src_wmata_getwmataalerts",
+      "label": "getWmataAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "getwmataalerts()",
+      "source_file": "packages/core/src/wmata.ts",
+      "source_location": "L48"
+    },
+    {
+      "id": "packages_core_src_wmata_getwmatastationinfo",
+      "label": "getWmataStationInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "getwmatastationinfo()",
+      "source_file": "packages/core/src/wmata.ts",
+      "source_location": "L40"
+    },
+    {
+      "id": "packages_core_src_wmata_isdcairport",
+      "label": "isDcAirport()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "isdcairport()",
+      "source_file": "packages/core/src/wmata.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "packages_core_src_wmata_wmatatotransitalerts",
+      "label": "wmataToTransitAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "wmatatotransitalerts()",
+      "source_file": "packages/core/src/wmata.ts",
+      "source_location": "L134"
+    },
+    {
+      "id": "packages_core_src_twilio_getclient",
+      "label": "getClient()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "twilio.ts",
+      "file_type": "code",
+      "norm_label": "getclient()",
+      "source_file": "packages/core/src/twilio.ts",
+      "source_location": "L4"
+    },
+    {
       "id": "packages_functions_src_profile_confirmverification",
       "label": "confirmVerification()",
       "_callable": true,
@@ -1842,7 +2133,7 @@
       "file_type": "code",
       "norm_label": "confirmverification()",
       "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L189"
+      "source_location": "L191"
     },
     {
       "id": "packages_functions_src_profile_decodejwt",
@@ -1890,7 +2181,7 @@
       "file_type": "code",
       "norm_label": "sendverification()",
       "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L129"
+      "source_location": "L130"
     },
     {
       "id": "packages_functions_src_profile_update",
@@ -1941,6 +2232,66 @@
       "source_location": "L3"
     },
     {
+      "id": "packages_core_src_mta_formatmtaalertssummary",
+      "label": "formatMtaAlertsSummary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "formatmtaalertssummary()",
+      "source_file": "packages/core/src/mta.ts",
+      "source_location": "L127"
+    },
+    {
+      "id": "packages_core_src_mta_getmtaalerts",
+      "label": "getMtaAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "getmtaalerts()",
+      "source_file": "packages/core/src/mta.ts",
+      "source_location": "L59"
+    },
+    {
+      "id": "packages_core_src_mta_getnycstationinfo",
+      "label": "getNycStationInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "getnycstationinfo()",
+      "source_file": "packages/core/src/mta.ts",
+      "source_location": "L50"
+    },
+    {
+      "id": "packages_core_src_mta_isnycairport",
+      "label": "isNycAirport()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "isnycairport()",
+      "source_file": "packages/core/src/mta.ts",
+      "source_location": "L42"
+    },
+    {
+      "id": "packages_core_src_mta_mtatotransitalerts",
+      "label": "mtaToTransitAlerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "mtatotransitalerts()",
+      "source_file": "packages/core/src/mta.ts",
+      "source_location": "L147"
+    },
+    {
       "id": "pnpm_workspace",
       "label": "pnpm Monorepo Workspace Configuration",
       "_origin": "ast",
@@ -1971,11 +2322,66 @@
       "source_url": null
     },
     {
+      "id": "packages_core_src_airports",
+      "label": "airports.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "index.ts",
+      "file_type": "code",
+      "norm_label": "airports.ts",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_airports_airports",
+      "label": "AIRPORTS",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "index.ts",
+      "file_type": "code",
+      "norm_label": "airports",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "packages_core_src_index",
+      "label": "index.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "index.ts",
+      "file_type": "code",
+      "norm_label": "index.ts",
+      "source_file": "packages/core/src/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_timezones",
+      "label": "timezones.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "index.ts",
+      "file_type": "code",
+      "norm_label": "timezones.ts",
+      "source_file": "packages/core/src/timezones.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_test_airports_test",
+      "label": "airports.test.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "index.ts",
+      "file_type": "code",
+      "norm_label": "airports.test.ts",
+      "source_file": "packages/core/test/airports.test.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "packages_core_src_bart",
       "label": "bart.ts",
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "bart.ts",
       "source_file": "packages/core/src/bart.ts",
@@ -1986,7 +2392,7 @@
       "label": "BART_STATIONS",
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "bart_stations",
       "source_file": "packages/core/src/bart.ts",
@@ -1997,7 +2403,7 @@
       "label": "OAK_KEYWORDS",
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "oak_keywords",
       "source_file": "packages/core/src/bart.ts",
@@ -2008,7 +2414,7 @@
       "label": "SFO_KEYWORDS",
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "sfo_keywords",
       "source_file": "packages/core/src/bart.ts",
@@ -2019,230 +2425,21 @@
       "label": "SYSTEM_KEYWORDS",
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "system_keywords",
       "source_file": "packages/core/src/bart.ts",
       "source_location": "L30"
     },
     {
-      "id": "packages_core_src_cta",
-      "label": "cta.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "cta.ts",
-      "source_file": "packages/core/src/cta.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_cta_chicago_stations",
-      "label": "CHICAGO_STATIONS",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "chicago_stations",
-      "source_file": "packages/core/src/cta.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "packages_core_src_maps",
-      "label": "maps.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "maps.ts",
-      "source_file": "packages/core/src/maps.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_maps_transit_registry",
-      "label": "TRANSIT_REGISTRY",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "transit_registry",
-      "source_file": "packages/core/src/maps.ts",
-      "source_location": "L36"
-    },
-    {
-      "id": "packages_core_src_mbta",
-      "label": "mbta.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "mbta.ts",
-      "source_file": "packages/core/src/mbta.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_mbta_boston_stations",
-      "label": "BOSTON_STATIONS",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "boston_stations",
-      "source_file": "packages/core/src/mbta.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "packages_core_src_mta",
-      "label": "mta.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "mta.ts",
-      "source_file": "packages/core/src/mta.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_mta_nyc_stations",
-      "label": "NYC_STATIONS",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "nyc_stations",
-      "source_file": "packages/core/src/mta.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "packages_core_src_tfl",
-      "label": "tfl.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "tfl.ts",
-      "source_file": "packages/core/src/tfl.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_tfl_london_stations",
-      "label": "LONDON_STATIONS",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "london_stations",
-      "source_file": "packages/core/src/tfl.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "packages_core_src_types",
-      "label": "types.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "types.ts",
-      "source_file": "packages/core/src/types.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_wmata",
-      "label": "wmata.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "wmata.ts",
-      "source_file": "packages/core/src/wmata.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_wmata_dc_stations",
-      "label": "DC_STATIONS",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "dc_stations",
-      "source_file": "packages/core/src/wmata.ts",
-      "source_location": "L6"
-    },
-    {
       "id": "packages_core_test_bart_test",
       "label": "bart.test.ts",
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "code",
       "norm_label": "bart.test.ts",
       "source_file": "packages/core/test/bart.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_test_cta_test",
-      "label": "cta.test.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "cta.test.ts",
-      "source_file": "packages/core/test/cta.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_test_mbta_test",
-      "label": "mbta.test.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "mbta.test.ts",
-      "source_file": "packages/core/test/mbta.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_test_mta_test",
-      "label": "mta.test.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "mta.test.ts",
-      "source_file": "packages/core/test/mta.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_test_tfl_test",
-      "label": "tfl.test.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "tfl.test.ts",
-      "source_file": "packages/core/test/tfl.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_test_tfl_test_mockedaxios",
-      "label": "mockedAxios",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "mockedaxios",
-      "source_file": "packages/core/test/tfl.test.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "packages_core_test_wmata_test",
-      "label": "wmata.test.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "maps.ts",
-      "file_type": "code",
-      "norm_label": "wmata.test.ts",
-      "source_file": "packages/core/test/wmata.test.ts",
       "source_location": "L1"
     },
     {
@@ -2250,7 +2447,7 @@
       "label": "gtfs-realtime-bindings",
       "_origin": "ast",
       "community": 1,
-      "community_name": "maps.ts",
+      "community_name": "bart.ts",
       "file_type": "concept",
       "norm_label": "gtfs-realtime-bindings",
       "source_file": "packages/core/package.json",
@@ -2399,6 +2596,160 @@
       "norm_label": "use the glossary's vocabulary",
       "source_file": "docs/agents/domain.md",
       "source_location": "L23"
+    },
+    {
+      "id": "packages_web_package_devdependencies",
+      "label": "devDependencies",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "devdependencies",
+      "source_file": "packages/web/package.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "packages_web_package_devdependencies_eslint",
+      "label": "eslint",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "eslint",
+      "source_file": "packages/web/package.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "packages_web_package_devdependencies_eslint_js",
+      "label": "@eslint/js",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@eslint/js",
+      "source_file": "packages/web/package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "packages_web_package_devdependencies_eslint_plugin_react_hooks",
+      "label": "eslint-plugin-react-hooks",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "eslint-plugin-react-hooks",
+      "source_file": "packages/web/package.json",
+      "source_location": "L30"
+    },
+    {
+      "id": "packages_web_package_devdependencies_eslint_plugin_react_refresh",
+      "label": "eslint-plugin-react-refresh",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "eslint-plugin-react-refresh",
+      "source_file": "packages/web/package.json",
+      "source_location": "L31"
+    },
+    {
+      "id": "packages_web_package_devdependencies_globals",
+      "label": "globals",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "globals",
+      "source_file": "packages/web/package.json",
+      "source_location": "L32"
+    },
+    {
+      "id": "packages_web_package_devdependencies_tailwindcss",
+      "label": "tailwindcss",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "tailwindcss",
+      "source_file": "packages/web/package.json",
+      "source_location": "L33"
+    },
+    {
+      "id": "packages_web_package_devdependencies_types_node",
+      "label": "@types/node",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@types/node",
+      "source_file": "packages/web/package.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "packages_web_package_devdependencies_types_react",
+      "label": "@types/react",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@types/react",
+      "source_file": "packages/web/package.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "packages_web_package_devdependencies_types_react_dom",
+      "label": "@types/react-dom",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@types/react-dom",
+      "source_file": "packages/web/package.json",
+      "source_location": "L27"
+    },
+    {
+      "id": "packages_web_package_devdependencies_typescript",
+      "label": "typescript",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "typescript",
+      "source_file": "packages/web/package.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "packages_web_package_devdependencies_typescript_eslint",
+      "label": "typescript-eslint",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "typescript-eslint",
+      "source_file": "packages/web/package.json",
+      "source_location": "L35"
+    },
+    {
+      "id": "packages_web_package_devdependencies_vite",
+      "label": "vite",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "vite",
+      "source_file": "packages/web/package.json",
+      "source_location": "L36"
+    },
+    {
+      "id": "packages_web_package_devdependencies_vitejs_plugin_react",
+      "label": "@vitejs/plugin-react",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@vitejs/plugin-react",
+      "source_file": "packages/web/package.json",
+      "source_location": "L28"
     },
     {
       "id": "packages_functions_package",
@@ -3357,180 +3708,81 @@
       "source_location": "L16"
     },
     {
-      "id": "packages_web_package_devdependencies",
-      "label": "devDependencies",
+      "id": "packages_core_src_dynamodb_database",
+      "label": "Database",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "devdependencies",
-      "source_file": "packages/web/package.json",
-      "source_location": "L23"
+      "norm_label": "database",
+      "source_file": "packages/core/src/dynamodb.ts",
+      "source_location": "L9"
     },
     {
-      "id": "packages_web_package_devdependencies_eslint",
-      "label": "eslint",
+      "id": "packages_core_src_feedback",
+      "label": "core/src/feedback.ts",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "eslint",
-      "source_file": "packages/web/package.json",
-      "source_location": "L29"
-    },
-    {
-      "id": "packages_web_package_devdependencies_eslint_js",
-      "label": "@eslint/js",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@eslint/js",
-      "source_file": "packages/web/package.json",
-      "source_location": "L24"
-    },
-    {
-      "id": "packages_web_package_devdependencies_eslint_plugin_react_hooks",
-      "label": "eslint-plugin-react-hooks",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "eslint-plugin-react-hooks",
-      "source_file": "packages/web/package.json",
-      "source_location": "L30"
-    },
-    {
-      "id": "packages_web_package_devdependencies_eslint_plugin_react_refresh",
-      "label": "eslint-plugin-react-refresh",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "eslint-plugin-react-refresh",
-      "source_file": "packages/web/package.json",
-      "source_location": "L31"
-    },
-    {
-      "id": "packages_web_package_devdependencies_globals",
-      "label": "globals",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "globals",
-      "source_file": "packages/web/package.json",
-      "source_location": "L32"
-    },
-    {
-      "id": "packages_web_package_devdependencies_tailwindcss",
-      "label": "tailwindcss",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "tailwindcss",
-      "source_file": "packages/web/package.json",
-      "source_location": "L33"
-    },
-    {
-      "id": "packages_web_package_devdependencies_types_node",
-      "label": "@types/node",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@types/node",
-      "source_file": "packages/web/package.json",
-      "source_location": "L25"
-    },
-    {
-      "id": "packages_web_package_devdependencies_types_react",
-      "label": "@types/react",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@types/react",
-      "source_file": "packages/web/package.json",
-      "source_location": "L26"
-    },
-    {
-      "id": "packages_web_package_devdependencies_types_react_dom",
-      "label": "@types/react-dom",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@types/react-dom",
-      "source_file": "packages/web/package.json",
-      "source_location": "L27"
-    },
-    {
-      "id": "packages_web_package_devdependencies_typescript",
-      "label": "typescript",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "typescript",
-      "source_file": "packages/web/package.json",
-      "source_location": "L34"
-    },
-    {
-      "id": "packages_web_package_devdependencies_typescript_eslint",
-      "label": "typescript-eslint",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "typescript-eslint",
-      "source_file": "packages/web/package.json",
-      "source_location": "L35"
-    },
-    {
-      "id": "packages_web_package_devdependencies_vite",
-      "label": "vite",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "vite",
-      "source_file": "packages/web/package.json",
-      "source_location": "L36"
-    },
-    {
-      "id": "packages_web_package_devdependencies_vitejs_plugin_react",
-      "label": "@vitejs/plugin-react",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@vitejs/plugin-react",
-      "source_file": "packages/web/package.json",
-      "source_location": "L28"
-    },
-    {
-      "id": "packages_core_src_airports",
-      "label": "airports.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "airports.ts",
-      "source_file": "packages/core/src/airports.ts",
+      "norm_label": "core/src/feedback.ts",
+      "source_file": "packages/core/src/feedback.ts",
       "source_location": "L1"
     },
     {
-      "id": "packages_core_src_airports_airports",
-      "label": "AIRPORTS",
+      "id": "packages_core_src_feedback_type_labels",
+      "label": "TYPE_LABELS",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "airports",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L7"
+      "norm_label": "type_labels",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L26"
+    },
+    {
+      "id": "packages_core_src_feedback_type_prefixes",
+      "label": "TYPE_PREFIXES",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "type_prefixes",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "packages_core_test_feedback_test",
+      "label": "feedback.test.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "feedback.test.ts",
+      "source_file": "packages/core/test/feedback.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_functions_src_feedback",
+      "label": "functions/src/feedback.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "functions/src/feedback.ts",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_functions_src_feedback_corsheaders",
+      "label": "corsHeaders",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "corsheaders",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L26"
     },
     {
       "id": "packages_core_src_dateutils",
@@ -3541,17 +3793,6 @@
       "file_type": "code",
       "norm_label": "dateutils.ts",
       "source_file": "packages/core/src/dateUtils.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_index",
-      "label": "index.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "index.ts",
-      "source_file": "packages/core/src/index.ts",
       "source_location": "L1"
     },
     {
@@ -3566,50 +3807,6 @@
       "source_location": "L87"
     },
     {
-      "id": "packages_core_src_timezones",
-      "label": "timezones.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "timezones.ts",
-      "source_file": "packages/core/src/timezones.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_twilio",
-      "label": "twilio.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "twilio.ts",
-      "source_file": "packages/core/src/twilio.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_twilio_messenger",
-      "label": "Messenger",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "messenger",
-      "source_file": "packages/core/src/twilio.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "packages_core_test_airports_test",
-      "label": "airports.test.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "airports.test.ts",
-      "source_file": "packages/core/test/airports.test.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "packages_core_test_dateutils_test",
       "label": "dateUtils.test.ts",
       "_origin": "ast",
@@ -3618,17 +3815,6 @@
       "file_type": "code",
       "norm_label": "dateutils.test.ts",
       "source_file": "packages/core/test/dateUtils.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_test_delays_test",
-      "label": "delays.test.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "delays.test.ts",
-      "source_file": "packages/core/test/delays.test.ts",
       "source_location": "L1"
     },
     {
@@ -3652,6 +3838,39 @@
       "norm_label": "mockedaxios",
       "source_file": "packages/core/test/maps.test.ts",
       "source_location": "L6"
+    },
+    {
+      "id": "packages_functions_src_cron",
+      "label": "cron.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "cron.ts",
+      "source_file": "packages/functions/src/cron.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_functions_src_cron_dynamodb",
+      "label": "dynamodb",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "dynamodb",
+      "source_file": "packages/functions/src/cron.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "packages_functions_src_cron_lambda",
+      "label": "lambda",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "lambda",
+      "source_file": "packages/functions/src/cron.ts",
+      "source_location": "L15"
     },
     {
       "id": "packages_functions_src_notify",
@@ -3742,6 +3961,28 @@
       "source_location": "L1"
     },
     {
+      "id": "ref_aws_sdk_client_lambda",
+      "label": "@aws-sdk/client-lambda",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "concept",
+      "norm_label": "@aws-sdk/client-lambda",
+      "source_file": "packages/functions/package.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "ref_aws_sdk_client_ses",
+      "label": "@aws-sdk/client-ses",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "concept",
+      "norm_label": "@aws-sdk/client-ses",
+      "source_file": "package.json",
+      "source_location": "L27"
+    },
+    {
       "id": "packages_web_src_types_google_maps_d",
       "label": "google-maps.d.ts",
       "_origin": "ast",
@@ -3753,6 +3994,17 @@
       "source_location": "L1"
     },
     {
+      "id": "packages_web_src_types_google_maps_d_google_maps",
+      "label": "google.maps",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "google-maps.d.ts",
+      "file_type": "code",
+      "norm_label": "google.maps",
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L101"
+    },
+    {
       "id": "packages_web_src_types_google_maps_d_google_maps_event",
       "label": "google.maps.event",
       "_origin": "ast",
@@ -3761,7 +4013,7 @@
       "file_type": "code",
       "norm_label": "google.maps.event",
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L38"
+      "source_location": "L109"
     },
     {
       "id": "packages_web_src_types_google_maps_d_google_maps_places",
@@ -3797,6 +4049,50 @@
       "norm_label": "triage labels",
       "source_file": "docs/agents/triage-labels.md",
       "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_tfl",
+      "label": "tfl.ts",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "tfl.ts",
+      "source_file": "packages/core/src/tfl.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_tfl_london_stations",
+      "label": "LONDON_STATIONS",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "london_stations",
+      "source_file": "packages/core/src/tfl.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "packages_core_test_tfl_test",
+      "label": "tfl.test.ts",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "tfl.test.ts",
+      "source_file": "packages/core/test/tfl.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_test_tfl_test_mockedaxios",
+      "label": "mockedAxios",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "tfl.ts",
+      "file_type": "code",
+      "norm_label": "mockedaxios",
+      "source_file": "packages/core/test/tfl.test.ts",
+      "source_location": "L12"
     },
     {
       "id": "resolve_simple",
@@ -3986,6 +4282,17 @@
       "source_location": "L3"
     },
     {
+      "id": "packages_functions_tsconfig_compileroptions_types",
+      "label": "types",
+      "_origin": "ast",
+      "community": 26,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "types",
+      "source_file": "packages/functions/tsconfig.json",
+      "source_location": "L14"
+    },
+    {
       "id": "packages_functions_tsconfig_include",
       "label": "include",
       "_origin": "ast",
@@ -3994,7 +4301,7 @@
       "file_type": "code",
       "norm_label": "include",
       "source_file": "packages/functions/tsconfig.json",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "packages_functions_tsconfig_paths_flight_ai_core",
@@ -4105,6 +4412,28 @@
       "norm_label": "datepicker.tsx",
       "source_file": "packages/web/src/DatePicker.tsx",
       "source_location": "L1"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal",
+      "label": "FeedbackModal.tsx",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbackmodal.tsx",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_type_options",
+      "label": "TYPE_OPTIONS",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "type_options",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L22"
     },
     {
       "id": "packages_web_src_main",
@@ -4250,6 +4579,17 @@
       "source_location": "L115"
     },
     {
+      "id": "packages_core_test_delays_test",
+      "label": "delays.test.ts",
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "flights.ts",
+      "file_type": "code",
+      "norm_label": "delays.test.ts",
+      "source_file": "packages/core/test/delays.test.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "packages_functions_src_flight",
       "label": "flight.ts",
       "_origin": "ast",
@@ -4258,6 +4598,105 @@
       "file_type": "code",
       "norm_label": "flight.ts",
       "source_file": "packages/functions/src/flight.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_cta",
+      "label": "cta.ts",
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "cta.ts",
+      "source_file": "packages/core/src/cta.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_cta_chicago_stations",
+      "label": "CHICAGO_STATIONS",
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "chicago_stations",
+      "source_file": "packages/core/src/cta.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "packages_core_test_cta_test",
+      "label": "cta.test.ts",
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "cta.ts",
+      "file_type": "code",
+      "norm_label": "cta.test.ts",
+      "source_file": "packages/core/test/cta.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_mbta",
+      "label": "mbta.ts",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "mbta.ts",
+      "source_file": "packages/core/src/mbta.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_mbta_boston_stations",
+      "label": "BOSTON_STATIONS",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "boston_stations",
+      "source_file": "packages/core/src/mbta.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "packages_core_test_mbta_test",
+      "label": "mbta.test.ts",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "mbta.ts",
+      "file_type": "code",
+      "norm_label": "mbta.test.ts",
+      "source_file": "packages/core/test/mbta.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_wmata",
+      "label": "wmata.ts",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "wmata.ts",
+      "source_file": "packages/core/src/wmata.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_wmata_dc_stations",
+      "label": "DC_STATIONS",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "dc_stations",
+      "source_file": "packages/core/src/wmata.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "packages_core_test_wmata_test",
+      "label": "wmata.test.ts",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "wmata.ts",
+      "file_type": "code",
+      "norm_label": "wmata.test.ts",
+      "source_file": "packages/core/test/wmata.test.ts",
       "source_location": "L1"
     },
     {
@@ -4314,6 +4753,175 @@
       "norm_label": "exclude",
       "source_file": "tsconfig.json",
       "source_location": "L2"
+    },
+    {
+      "id": "packages_core_src_types",
+      "label": "types.ts",
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "types.ts",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig",
+      "label": "query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "frontmatter": {
+        "type": "query",
+        "date": "2026-09-14T20:26:38.731599+00:00",
+        "question": "Why does getAirportTimezone() connect Make My Flight Core Backend &amp; Data to AWS Serverless SDK Dependencies?",
+        "contributor": "graphify",
+        "outcome": "useful",
+        "source_nodes": "[&quot;packages_core_src_airports_getairporttimezone&quot;, &quot;packages_functions_src_cron&quot;, &quot;packages_functions_src_notify&quot;]"
+      },
+      "node_kind": "page",
+      "norm_label": "query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_answer",
+      "label": "Answer",
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "answer",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_outcome",
+      "label": "Outcome",
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "outcome",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "label": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "q: why does getairporttimezone() connect make my flight core backend & data to aws serverless sdk dependencies?",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_source_nodes",
+      "label": "Source Nodes",
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "source nodes",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai",
+      "label": "query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "frontmatter": {
+        "type": "query",
+        "date": "2026-09-14T20:30:43.914836+00:00",
+        "question": "How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+        "contributor": "graphify",
+        "outcome": "useful",
+        "source_nodes": "[&quot;packages_core_src_maps_googlemaps&quot;, &quot;packages_core_src_maps_gettraveltime&quot;, &quot;packages_functions_src_notify&quot;, &quot;packages_functions_src_trip&quot;]"
+      },
+      "node_kind": "page",
+      "norm_label": "query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_answer",
+      "label": "Answer",
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "answer",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_outcome",
+      "label": "Outcome",
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "outcome",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "label": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "q: how does traffic prediction work from departure airport to google maps routes api in make my flight?",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_source_nodes",
+      "label": "Source Nodes",
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "source nodes",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "packages_core_src_twilio",
+      "label": "twilio.ts",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "twilio.ts",
+      "file_type": "code",
+      "norm_label": "twilio.ts",
+      "source_file": "packages/core/src/twilio.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_twilio_messenger",
+      "label": "Messenger",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "twilio.ts",
+      "file_type": "code",
+      "norm_label": "messenger",
+      "source_file": "packages/core/src/twilio.ts",
+      "source_location": "L8"
     },
     {
       "id": "packages_core_package",
@@ -4514,17 +5122,6 @@
       "source_location": "L6"
     },
     {
-      "id": "packages_core_src_dynamodb_database",
-      "label": "Database",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "database",
-      "source_file": "packages/core/src/dynamodb.ts",
-      "source_location": "L9"
-    },
-    {
       "id": "packages_core_src_dynamodb_docclient",
       "label": "docClient",
       "_origin": "ast",
@@ -4534,39 +5131,6 @@
       "norm_label": "docclient",
       "source_file": "packages/core/src/dynamodb.ts",
       "source_location": "L7"
-    },
-    {
-      "id": "packages_functions_src_cron",
-      "label": "cron.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "cron.ts",
-      "source_file": "packages/functions/src/cron.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_functions_src_cron_dynamodb",
-      "label": "dynamodb",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "dynamodb",
-      "source_file": "packages/functions/src/cron.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "packages_functions_src_cron_lambda",
-      "label": "lambda",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "code",
-      "norm_label": "lambda",
-      "source_file": "packages/functions/src/cron.ts",
-      "source_location": "L13"
     },
     {
       "id": "packages_functions_src_profile",
@@ -4654,17 +5218,6 @@
       "file_type": "concept",
       "norm_label": "@aws-sdk/client-dynamodb",
       "source_file": "packages/core/package.json",
-      "source_location": "L10"
-    },
-    {
-      "id": "ref_aws_sdk_client_lambda",
-      "label": "@aws-sdk/client-lambda",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "core/package.json",
-      "file_type": "concept",
-      "norm_label": "@aws-sdk/client-lambda",
-      "source_file": "packages/functions/package.json",
       "source_location": "L10"
     },
     {
@@ -5589,6 +6142,61 @@
       "source_location": "L4"
     },
     {
+      "id": "packages_core_src_maps",
+      "label": "maps.ts",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "maps.ts",
+      "source_file": "packages/core/src/maps.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_maps_transit_registry",
+      "label": "TRANSIT_REGISTRY",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "transit_registry",
+      "source_file": "packages/core/src/maps.ts",
+      "source_location": "L36"
+    },
+    {
+      "id": "packages_core_src_mta",
+      "label": "mta.ts",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "mta.ts",
+      "source_file": "packages/core/src/mta.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_mta_nyc_stations",
+      "label": "NYC_STATIONS",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "nyc_stations",
+      "source_file": "packages/core/src/mta.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "packages_core_test_mta_test",
+      "label": "mta.test.ts",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "mta.test.ts",
+      "source_file": "packages/core/test/mta.test.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "packages_core_sst_env_d",
       "label": "core/sst-env.d.ts",
       "_origin": "ast",
@@ -6036,17 +6644,6 @@
       "source_location": "L24"
     },
     {
-      "id": "ref_aws_sdk_client_ses",
-      "label": "@aws-sdk/client-ses",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "package.json",
-      "file_type": "concept",
-      "norm_label": "@aws-sdk/client-ses",
-      "source_file": "package.json",
-      "source_location": "L27"
-    },
-    {
       "id": "ref_dotenv",
       "label": "dotenv",
       "_origin": "ast",
@@ -6112,7 +6709,7 @@
       "node_kind": "heading",
       "norm_label": "database schema (dynamodb single-table design)",
       "source_file": "GEMINI.md",
-      "source_location": "L56"
+      "source_location": "L57"
     },
     {
       "id": "gemini_development_operations",
@@ -6124,7 +6721,7 @@
       "node_kind": "heading",
       "norm_label": "development & operations",
       "source_file": "GEMINI.md",
-      "source_location": "L85"
+      "source_location": "L89"
     },
     {
       "id": "gemini_key_domain_logic_conventions",
@@ -6136,7 +6733,7 @@
       "node_kind": "heading",
       "norm_label": "key domain logic & conventions",
       "source_file": "GEMINI.md",
-      "source_location": "L69"
+      "source_location": "L70"
     },
     {
       "id": "gemini_make_my_flight_makemyflight",
@@ -6160,7 +6757,7 @@
       "node_kind": "heading",
       "norm_label": "monorepo architecture",
       "source_file": "GEMINI.md",
-      "source_location": "L14"
+      "source_location": "L15"
     },
     {
       "id": "gemini_overview",
@@ -6364,6 +6961,18 @@
     },
     {
       "source": "packages_functions_src_cron_handler",
+      "target": "packages_core_src_dateutils_shouldalertdrivetimechange",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/functions/src/cron.ts",
+      "source_location": "L314",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_cron_handler",
       "target": "packages_core_src_dateutils_parseflighttimetoutc",
       "relation": "calls",
       "_origin": "ast",
@@ -6371,7 +6980,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/cron.ts",
-      "source_location": "L51",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -6383,7 +6992,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/cron.ts",
-      "source_location": "L52",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback_submit",
+      "target": "packages_functions_src_feedback_getauthdetails",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback_submit",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -6431,7 +7064,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/notify.ts",
-      "source_location": "L161",
+      "source_location": "L177",
       "weight": 1.0
     },
     {
@@ -6443,7 +7076,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/notify.ts",
-      "source_location": "L163",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -6455,7 +7088,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/notify.ts",
-      "source_location": "L214",
+      "source_location": "L240",
       "weight": 1.0
     },
     {
@@ -6479,7 +7112,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L190",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -6491,7 +7124,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L210",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -6539,7 +7172,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L130",
+      "source_location": "L131",
       "weight": 1.0
     },
     {
@@ -6575,7 +7208,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L55",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -6587,7 +7220,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L352",
+      "source_location": "L355",
       "weight": 1.0
     },
     {
@@ -6599,7 +7232,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L372",
+      "source_location": "L376",
       "weight": 1.0
     },
     {
@@ -6611,7 +7244,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L84",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -6623,7 +7256,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L407",
+      "source_location": "L411",
       "weight": 1.0
     },
     {
@@ -6635,7 +7268,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L143",
+      "source_location": "L145",
       "weight": 1.0
     },
     {
@@ -6647,7 +7280,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L169",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -6659,7 +7292,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L182",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -6671,7 +7304,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L183",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -6683,7 +7316,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L193",
+      "source_location": "L196",
       "weight": 1.0
     },
     {
@@ -6695,7 +7328,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L203",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -6707,7 +7340,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L328",
+      "source_location": "L331",
       "weight": 1.0
     },
     {
@@ -6719,7 +7352,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L100",
+      "source_location": "L101",
       "weight": 1.0
     },
     {
@@ -6731,7 +7364,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L110",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -6743,7 +7376,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/AddressAutocomplete.tsx",
-      "source_location": "L67",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -6755,7 +7388,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L1030",
+      "source_location": "L1016",
       "weight": 1.0
     },
     {
@@ -6767,7 +7400,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L1031",
+      "source_location": "L1017",
       "weight": 1.0
     },
     {
@@ -6779,7 +7412,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L107",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -6791,7 +7424,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L109",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -6803,7 +7436,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L109",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -6815,7 +7448,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L132",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
@@ -6827,7 +7460,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L184",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -6863,7 +7496,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L243",
+      "source_location": "L247",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_trips_trips",
+      "target": "packages_core_src_dateutils_calculatedaysaway",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/web/src/Trips.tsx",
+      "source_location": "L902",
       "weight": 1.0
     },
     {
@@ -7060,6 +7705,18 @@
     },
     {
       "source": "packages_core_src_index",
+      "target": "packages_core_src_feedback",
+      "relation": "re_exports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "export",
+      "source_file": "packages/core/src/index.ts",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_index",
       "target": "packages_core_src_maps",
       "relation": "re_exports",
       "_origin": "ast",
@@ -7176,6 +7833,30 @@
       "context": "export",
       "source_file": "packages/web/src/utils/flightTimes.ts",
       "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback_formatgithubissueparams",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback_formatgithubissueparams",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -7524,6 +8205,30 @@
       "context": "import",
       "source_file": "packages/core/src/dateUtils.ts",
       "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -7876,6 +8581,18 @@
     },
     {
       "source": "packages_core_test_dateutils_test",
+      "target": "packages_core_src_dateutils_calculatedaysaway",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/dateUtils.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_dateutils_test",
       "target": "packages_core_src_dateutils_calculatehoursuntilflight",
       "relation": "imports",
       "_origin": "ast",
@@ -8019,6 +8736,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_test_dateutils_test",
+      "target": "packages_core_src_dateutils_shouldalertdrivetimechange",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/dateUtils.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_test_delays_test",
       "target": "packages_core_src_flights_flights",
       "relation": "imports",
@@ -8100,6 +8829,18 @@
       "context": "import",
       "source_file": "packages/core/test/delays.test.ts",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_test_feedback_test",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/feedback.test.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -8440,6 +9181,18 @@
     },
     {
       "source": "packages_functions_src_cron",
+      "target": "packages_core_src_dateutils_shouldalertdrivetimechange",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/cron.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_cron",
       "target": "packages_core_src_flights_flights",
       "relation": "imports",
       "_origin": "ast",
@@ -8448,6 +9201,66 @@
       "context": "import",
       "source_file": "packages/functions/src/cron.ts",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_cron",
+      "target": "packages_core_src_maps_googlemaps",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/cron.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_dynamodb_database",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -8980,7 +9793,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_onboarding_onboarding",
+      "target": "packages_web_src_feedbackmodal_feedbackmodal",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8992,7 +9805,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_utils_googlecalendar_calendarflight",
+      "target": "packages_web_src_onboarding_onboarding",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9000,6 +9813,18 @@
       "context": "import",
       "source_file": "packages/web/src/App.tsx",
       "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_utils_googlecalendar_calendarflight",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -9159,6 +9984,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_config_config",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
       "source": "packages_web_src_main",
       "target": "packages_web_src_app_app",
       "relation": "imports",
@@ -9315,6 +10152,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_web_src_trips",
+      "target": "packages_core_src_dateutils_calculatedaysaway",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/Trips.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
       "source": "packages_web_src_utils_googlecalendar",
       "target": "packages_web_src_config_config",
       "relation": "imports",
@@ -9396,6 +10245,18 @@
       "context": "import",
       "source_file": "packages/core/src/dynamodb.ts",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_types",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -9627,6 +10488,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_test_feedback_test",
+      "target": "packages_core_src_feedback",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/feedback.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_test_maps_test",
       "target": "packages_core_src_maps",
       "relation": "imports_from",
@@ -9732,6 +10605,18 @@
       "context": "import",
       "source_file": "packages/functions/src/cron.ts",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_index",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -9976,7 +10861,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_onboarding",
+      "target": "packages_web_src_feedbackmodal",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9988,7 +10873,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_utils_googlecalendar",
+      "target": "packages_web_src_onboarding",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9996,6 +10881,18 @@
       "context": "import",
       "source_file": "packages/web/src/App.tsx",
       "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_utils_googlecalendar",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L14",
       "type_only": true,
       "weight": 1.0
     },
@@ -10129,6 +11026,30 @@
       "context": "import",
       "source_file": "packages/web/src/DatePicker.tsx",
       "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "ref_react",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_config",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -10324,6 +11245,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_web_src_trips",
+      "target": "packages_web_src_utils_flighttimes",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/Trips.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
       "source": "packages_web_src_utils_googlecalendar",
       "target": "packages_web_src_config",
       "relation": "imports_from",
@@ -10380,6 +11313,30 @@
       "confidence_score": 1.0,
       "context": "re-export",
       "source_file": "packages/core/src/timezones.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_utils_flighttimes",
+      "target": "packages_core_src_dateutils_calculatedaysaway",
+      "relation": "re_exports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "re-export",
+      "source_file": "packages/web/src/utils/flightTimes.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_utils_flighttimes",
+      "target": "packages_core_src_dateutils_daysawayinfo",
+      "relation": "re_exports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "re-export",
+      "source_file": "packages/web/src/utils/flightTimes.ts",
       "source_location": "L1",
       "weight": 1.0
     },
@@ -10763,7 +11720,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "GEMINI.md",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -10785,7 +11742,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "GEMINI.md",
-      "source_location": "L56",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
@@ -10796,7 +11753,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "GEMINI.md",
-      "source_location": "L69",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -10807,7 +11764,95 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "GEMINI.md",
-      "source_location": "L85",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_answer",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_outcome",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_source_nodes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_answer",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_outcome",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_source_nodes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -11538,6 +12583,39 @@
     },
     {
       "source": "packages_core_src_dateutils",
+      "target": "packages_core_src_dateutils_shouldalertdrivetimechange",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_dateutils",
+      "target": "packages_core_src_dateutils_daysawayinfo",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L195",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_dateutils",
+      "target": "packages_core_src_dateutils_calculatedaysaway",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/dateUtils.ts",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_dateutils",
       "target": "packages_core_src_dateutils_parseflighttimetoutc",
       "relation": "contains",
       "_origin": "ast",
@@ -11633,6 +12711,61 @@
       "confidence_score": 1.0,
       "source_file": "packages/core/src/dynamodb.ts",
       "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_formattedgithubissue",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_type_prefixes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_type_labels",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_formatgithubissueparams",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -12006,7 +13139,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L104",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -12017,7 +13150,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L114",
+      "source_location": "L119",
       "weight": 1.0
     },
     {
@@ -12028,7 +13161,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L125",
+      "source_location": "L130",
       "weight": 1.0
     },
     {
@@ -12039,7 +13172,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L133",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -12050,7 +13183,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L143",
+      "source_location": "L148",
       "weight": 1.0
     },
     {
@@ -12061,7 +13194,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L153",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -12072,7 +13205,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L164",
+      "source_location": "L169",
       "weight": 1.0
     },
     {
@@ -12083,7 +13216,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L173",
+      "source_location": "L178",
       "weight": 1.0
     },
     {
@@ -12094,7 +13227,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L184",
+      "source_location": "L189",
       "weight": 1.0
     },
     {
@@ -12105,7 +13238,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L194",
+      "source_location": "L199",
       "weight": 1.0
     },
     {
@@ -12116,7 +13249,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L205",
+      "source_location": "L210",
       "weight": 1.0
     },
     {
@@ -12127,7 +13260,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L211",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
@@ -12138,7 +13271,40 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L228",
+      "source_location": "L233",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_types",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L241",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_types",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L243",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_types",
+      "target": "packages_core_src_types_feedbacksubmission",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -12149,7 +13315,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L25",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -12160,7 +13326,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L39",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -12171,7 +13337,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L50",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -12182,7 +13348,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L56",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -12193,7 +13359,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L70",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -12204,7 +13370,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L81",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -12215,7 +13381,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
-      "source_location": "L93",
+      "source_location": "L98",
       "weight": 1.0
     },
     {
@@ -12644,7 +13810,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/cron.ts",
-      "source_location": "L12",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -12655,7 +13821,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/cron.ts",
-      "source_location": "L13",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -12666,7 +13832,40 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/cron.ts",
-      "source_location": "L15",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_functions_src_feedback_corsheaders",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_functions_src_feedback_submit",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_functions_src_feedback_getauthdetails",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -12732,7 +13931,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L129",
+      "source_location": "L130",
       "weight": 1.0
     },
     {
@@ -12754,7 +13953,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L189",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
@@ -12814,13 +14013,24 @@
     },
     {
       "source": "packages_functions_src_trip",
+      "target": "packages_functions_src_trip_update",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/src/trip.ts",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_trip",
       "target": "packages_functions_src_trip_testnotify",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L142",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -12864,7 +14074,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L351",
+      "source_location": "L354",
       "weight": 1.0
     },
     {
@@ -12875,7 +14085,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L406",
+      "source_location": "L410",
       "weight": 1.0
     },
     {
@@ -12897,18 +14107,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L83",
-      "weight": 1.0
-    },
-    {
-      "source": "packages_functions_src_trip",
-      "target": "packages_functions_src_trip_update",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "packages/functions/src/trip.ts",
-      "source_location": "L99",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -12919,7 +14118,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/functions/tsconfig.json",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -12942,6 +14141,17 @@
       "confidence_score": 1.0,
       "source_file": "packages/functions/tsconfig.json",
       "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_tsconfig_compileroptions",
+      "target": "packages_functions_tsconfig_compileroptions_types",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/tsconfig.json",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -13458,7 +14668,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/AddressAutocomplete.tsx",
-      "source_location": "L54",
+      "source_location": "L90",
       "weight": 1.0
     },
     {
@@ -13469,7 +14679,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -13480,7 +14690,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -13491,7 +14701,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -13502,7 +14712,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L44",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -13513,7 +14723,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -13524,7 +14734,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -13535,7 +14745,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L66",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -13546,7 +14756,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -13557,7 +14767,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L80",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -13638,6 +14848,61 @@
       "weight": 1.0
     },
     {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_feedbackmodalprops",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_type_options",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_feedbackmodal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_feedbacktype",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_currenttripcontext",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
       "source": "packages_web_src_onboarding",
       "target": "packages_web_src_onboarding_onboarding",
       "relation": "contains",
@@ -13678,7 +14943,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Profile.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -13733,7 +14998,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L147",
+      "source_location": "L148",
       "weight": 1.0
     },
     {
@@ -13744,7 +15009,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -13755,7 +15020,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L33",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -13766,7 +15031,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -13777,7 +15042,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L61",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -13788,7 +15053,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Trips.tsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -13804,79 +15069,13 @@
     },
     {
       "source": "packages_web_src_types_google_maps_d",
-      "target": "packages_web_src_types_google_maps_d_autocompleteoptions",
+      "target": "packages_web_src_types_google_maps_d_google_maps",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "packages_web_src_types_google_maps_d",
-      "target": "packages_web_src_types_google_maps_d_componentrestrictions",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L16",
-      "weight": 1.0
-    },
-    {
-      "source": "packages_web_src_types_google_maps_d",
-      "target": "packages_web_src_types_google_maps_d_autocomplete",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L2",
-      "weight": 1.0
-    },
-    {
-      "source": "packages_web_src_types_google_maps_d",
-      "target": "packages_web_src_types_google_maps_d_placeresult",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "packages_web_src_types_google_maps_d",
-      "target": "packages_web_src_types_google_maps_d_lat",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L25",
-      "weight": 1.0
-    },
-    {
-      "source": "packages_web_src_types_google_maps_d",
-      "target": "packages_web_src_types_google_maps_d_lng",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L26",
-      "weight": 1.0
-    },
-    {
-      "source": "packages_web_src_types_google_maps_d",
-      "target": "packages_web_src_types_google_maps_d_addresscomponent",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L31",
+      "source_location": "L101",
       "weight": 1.0
     },
     {
@@ -13887,7 +15086,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L38",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -13898,7 +15097,150 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L42",
+      "source_location": "L113",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_placeprediction",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_placeautocompleteelementoptions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_placepredictionselectevent",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_fetchfieldsoptions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_place",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_placeautocompleteelement",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_autocomplete",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_autocompleteoptions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_componentrestrictions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_placeresult",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_lat",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_lng",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d",
+      "target": "packages_web_src_types_google_maps_d_addresscomponent",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -14932,7 +16274,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L3",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -14943,7 +16285,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L7",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -14954,7 +16296,84 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/types/google-maps.d.ts",
-      "source_location": "L8",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d_place",
+      "target": "packages_web_src_types_google_maps_d_place_fetchfields",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d_placeautocompleteelement",
+      "target": "packages_web_src_types_google_maps_d_placeautocompleteelement_constructor",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d_placeautocompleteelement",
+      "target": "packages_web_src_types_google_maps_d_placeautocompleteelement_focus",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d_placeautocompleteelement",
+      "target": "packages_web_src_types_google_maps_d_placeautocompleteelement_blur",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d_placeautocompleteelement",
+      "target": "packages_web_src_types_google_maps_d_placeautocompleteelement_addeventlistener",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d_placeautocompleteelement",
+      "target": "packages_web_src_types_google_maps_d_placeautocompleteelement_removeeventlistener",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_types_google_maps_d_placeprediction",
+      "target": "packages_web_src_types_google_maps_d_placeprediction_toplace",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/types/google-maps.d.ts",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -15341,5 +16760,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "37829a94f75b6b77348291a50302501837500f5b"
+  "built_at_commit": "d7eb24b2f49b02c7f1f78904b8bcd50f72341659"
 }
