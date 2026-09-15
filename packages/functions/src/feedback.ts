@@ -90,7 +90,7 @@ export const submit: APIGatewayProxyHandlerV2 = async (event) => {
     };
   }
 
-  const githubToken = process.env.GITHUB_TOKEN;
+  const githubToken = process.env.GITHUB_TOKEN?.trim().replace(/['"]/g, '');
   const repo = process.env.GITHUB_REPO || "kumprj/flight-ai";
   const stage = process.env.SST_STAGE || "production";
 
@@ -113,6 +113,7 @@ export const submit: APIGatewayProxyHandlerV2 = async (event) => {
         headers: {
           Authorization: `Bearer ${githubToken}`,
           Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
           "User-Agent": "flight-ai-feedback-bot",
           "Content-Type": "application/json",
         },

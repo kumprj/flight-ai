@@ -167,6 +167,8 @@ export default $config({
               TWILIO_TOKEN: process.env.TWILIO_TOKEN!,
               TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER!,
               GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY!,
+              GITHUB_TOKEN: process.env.GITHUB_TOKEN || "",
+              GITHUB_REPO: process.env.GITHUB_REPO || "kumprj/flight-ai",
               SENDER_EMAIL: process.env.SENDER_EMAIL || "test@example.com",
             },
           }
@@ -256,10 +258,6 @@ export default $config({
 
     api.route("POST /feedback", {
       handler: "packages/functions/src/feedback.submit",
-      environment: {
-        GITHUB_TOKEN: process.env.GITHUB_TOKEN || "",
-        GITHUB_REPO: process.env.GITHUB_REPO || "kumprj/flight-ai",
-      },
     });
 
 
