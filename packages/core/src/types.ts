@@ -233,3 +233,30 @@ export interface MultiModalTravelTime {
   stationInfo?: TransitStationInfo;
 }
 
+export type FeedbackType = 'bug' | 'feature' | 'route' | 'general';
+
+export interface FeedbackDiagnostics {
+  platform?: string;
+  userAgent?: string;
+  viewport?: string;
+  currentTrip?: {
+    flightNumber?: string;
+    originAirport?: string;
+    destinationAirport?: string;
+    date?: string;
+  };
+}
+
+export interface FeedbackSubmission {
+  pk: string;
+  sk: string;
+  type: FeedbackType;
+  title: string;
+  description: string;
+  email: string;
+  diagnostics?: FeedbackDiagnostics;
+  createdAt: number;
+  githubIssueNumber?: number;
+  githubIssueUrl?: string;
+}
+

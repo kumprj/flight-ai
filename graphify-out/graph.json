@@ -69,6 +69,19 @@
       "source_location": "L93"
     },
     {
+      "id": "packages_core_src_types_feedbacksubmission",
+      "label": "FeedbackSubmission",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "feedbacksubmission",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L250"
+    },
+    {
       "id": "packages_core_src_types_londontransitstationinfo",
       "label": "LondonTransitStationInfo",
       "_callable": true,
@@ -277,17 +290,134 @@
       "source_location": "L173"
     },
     {
-      "id": "packages_core_src_airports_airportinfo",
-      "label": "AirportInfo",
+      "id": "packages_web_src_calendarimport_existingtriplike",
+      "label": "ExistingTripLike",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
       "file_type": "code",
-      "norm_label": "airportinfo",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L1"
+      "norm_label": "existingtriplike",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "packages_web_src_calendarimport_props",
+      "label": "Props",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "props",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_calendarflight",
+      "label": "CalendarFlight",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "calendarflight",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_googleoauthresponse",
+      "label": "GoogleOAuthResponse",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "googleoauthresponse",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_googletokenclient",
+      "label": "GoogleTokenClient",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "googletokenclient",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_googletokenclientconfig",
+      "label": "GoogleTokenClientConfig",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "googletokenclientconfig",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L23"
+    },
+    {
+      "id": "packages_core_src_feedback_formatgithubissueparams",
+      "label": "FormatGitHubIssueParams",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "formatgithubissueparams",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "packages_core_src_feedback_formattedgithubissue",
+      "label": "FormattedGitHubIssue",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "formattedgithubissue",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "packages_core_src_types_feedbackdiagnostics",
+      "label": "FeedbackDiagnostics",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "feedbackdiagnostics",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L238"
+    },
+    {
+      "id": "packages_core_src_types_feedbacktype",
+      "label": "FeedbackType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "feedbacktype",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L236"
     },
     {
       "id": "packages_core_src_types_schedulerpayload",
@@ -404,7 +534,7 @@
       "file_type": "code",
       "norm_label": "flightdata",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "packages_web_src_app_flightsegment",
@@ -417,7 +547,7 @@
       "file_type": "code",
       "norm_label": "flightsegment",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "packages_web_src_app_multisegmentresult",
@@ -430,7 +560,7 @@
       "file_type": "code",
       "norm_label": "multisegmentresult",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L44"
+      "source_location": "L45"
     },
     {
       "id": "packages_web_src_app_step",
@@ -443,7 +573,7 @@
       "file_type": "code",
       "norm_label": "step",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L50"
+      "source_location": "L51"
     },
     {
       "id": "packages_web_src_app_trip",
@@ -456,33 +586,7 @@
       "file_type": "code",
       "norm_label": "trip",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L29"
-    },
-    {
-      "id": "packages_web_src_calendarimport_existingtriplike",
-      "label": "ExistingTripLike",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "existingtriplike",
-      "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L8"
-    },
-    {
-      "id": "packages_web_src_calendarimport_props",
-      "label": "Props",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "props",
-      "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L14"
+      "source_location": "L30"
     },
     {
       "id": "packages_web_src_datepicker_props",
@@ -496,6 +600,45 @@
       "norm_label": "props",
       "source_file": "packages/web/src/DatePicker.tsx",
       "source_location": "L33"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_currenttripcontext",
+      "label": "CurrentTripContext",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "currenttripcontext",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_feedbackmodalprops",
+      "label": "FeedbackModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbackmodalprops",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_feedbacktype",
+      "label": "FeedbackType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbacktype",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L6"
     },
     {
       "id": "packages_web_src_onboarding_onboardingprops",
@@ -615,58 +758,6 @@
       "source_location": "L7"
     },
     {
-      "id": "packages_web_src_utils_googlecalendar_calendarflight",
-      "label": "CalendarFlight",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "calendarflight",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_googleoauthresponse",
-      "label": "GoogleOAuthResponse",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "googleoauthresponse",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_googletokenclient",
-      "label": "GoogleTokenClient",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "googletokenclient",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L19"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_googletokenclientconfig",
-      "label": "GoogleTokenClientConfig",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "googletokenclientconfig",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L23"
-    },
-    {
       "id": "packages_core_src_flights_flightresult",
       "label": "FlightResult",
       "_callable": true,
@@ -678,6 +769,19 @@
       "norm_label": "flightresult",
       "source_file": "packages/core/src/flights.ts",
       "source_location": "L9"
+    },
+    {
+      "id": "packages_core_src_airports_airportinfo",
+      "label": "AirportInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "airports.ts",
+      "file_type": "code",
+      "norm_label": "airportinfo",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L1"
     },
     {
       "id": "sst_env_d_resource",
@@ -1005,6 +1109,18 @@
       "source_location": "L165"
     },
     {
+      "id": "packages_core_src_twilio_getclient",
+      "label": "getClient()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "getclient()",
+      "source_file": "packages/core/src/twilio.ts",
+      "source_location": "L4"
+    },
+    {
       "id": "packages_core_src_wmata_formatwmataalertssummary",
       "label": "formatWmataAlertsSummary()",
       "_callable": true,
@@ -1065,28 +1181,172 @@
       "source_location": "L134"
     },
     {
-      "id": "packages_core_src_airports_getairportaddress",
-      "label": "getAirportAddress()",
+      "id": "packages_web_src_calendarimport_calendarimport",
+      "label": "CalendarImport()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
       "file_type": "code",
-      "norm_label": "getairportaddress()",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L278"
+      "norm_label": "calendarimport()",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L21"
     },
     {
-      "id": "packages_core_src_airports_getairportlabel",
-      "label": "getAirportLabel()",
+      "id": "packages_web_src_utils_googlecalendar_cachetoken",
+      "label": "cacheToken()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
       "file_type": "code",
-      "norm_label": "getairportlabel()",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L283"
+      "norm_label": "cachetoken()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L49"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_fetchcalendarevents",
+      "label": "fetchCalendarEvents()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "fetchcalendarevents()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L103"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_getaccesstoken",
+      "label": "getAccessToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "getaccesstoken()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L76"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_getcachedtoken",
+      "label": "getCachedToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "getcachedtoken()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_getgoogleaccounts",
+      "label": "getGoogleAccounts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "getgoogleaccounts()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_googletokenclient_requestaccesstoken",
+      "label": ".requestAccessToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": ".requestaccesstoken()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_parseflightsfromevents",
+      "label": "parseFlightsFromEvents()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "parseflightsfromevents()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L152"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_parseroute",
+      "label": "parseRoute()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "parseroute()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L125"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_scancalendarforflights",
+      "label": "scanCalendarForFlights()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "scancalendarforflights()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L201"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar_waitforgis",
+      "label": "waitForGIS()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "waitforgis()",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L57"
+    },
+    {
+      "id": "packages_core_src_feedback_formatgithubissue",
+      "label": "formatGitHubIssue()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "formatgithubissue()",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "packages_functions_src_feedback_getauthdetails",
+      "label": "getAuthDetails()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "getauthdetails()",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "packages_functions_src_feedback_submit",
+      "label": "submit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "submit()",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L26"
     },
     {
       "id": "packages_core_src_airports_getairporttimezone",
@@ -1267,18 +1527,6 @@
       "norm_label": "resolvetransitalertsummary()",
       "source_file": "packages/core/src/maps.ts",
       "source_location": "L301"
-    },
-    {
-      "id": "packages_core_src_twilio_getclient",
-      "label": "getClient()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "getclient()",
-      "source_file": "packages/core/src/twilio.ts",
-      "source_location": "L4"
     },
     {
       "id": "packages_functions_src_cron_handler",
@@ -1530,7 +1778,7 @@
       "file_type": "code",
       "norm_label": "app()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L80"
+      "source_location": "L81"
     },
     {
       "id": "packages_web_src_app_formatdateonly",
@@ -1542,7 +1790,7 @@
       "file_type": "code",
       "norm_label": "formatdateonly()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L66"
+      "source_location": "L67"
     },
     {
       "id": "packages_web_src_app_gettripdateonly",
@@ -1554,7 +1802,7 @@
       "file_type": "code",
       "norm_label": "gettripdateonly()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L74"
+      "source_location": "L75"
     },
     {
       "id": "packages_web_src_app_parselocaldate",
@@ -1566,19 +1814,7 @@
       "file_type": "code",
       "norm_label": "parselocaldate()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L52"
-    },
-    {
-      "id": "packages_web_src_calendarimport_calendarimport",
-      "label": "CalendarImport()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "calendarimport()",
-      "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L21"
+      "source_location": "L53"
     },
     {
       "id": "packages_web_src_datepicker_customdatepicker",
@@ -1591,6 +1827,18 @@
       "norm_label": "customdatepicker()",
       "source_file": "packages/web/src/DatePicker.tsx",
       "source_location": "L40"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_feedbackmodal",
+      "label": "FeedbackModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbackmodal()",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L29"
     },
     {
       "id": "packages_web_src_onboarding_onboarding",
@@ -1614,7 +1862,7 @@
       "file_type": "code",
       "norm_label": "profile()",
       "source_file": "packages/web/src/Profile.tsx",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
       "id": "packages_web_src_toast_toast",
@@ -1651,126 +1899,6 @@
       "norm_label": "trips()",
       "source_file": "packages/web/src/Trips.tsx",
       "source_location": "L147"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_cachetoken",
-      "label": "cacheToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "cachetoken()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L49"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_fetchcalendarevents",
-      "label": "fetchCalendarEvents()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "fetchcalendarevents()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L103"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_getaccesstoken",
-      "label": "getAccessToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "getaccesstoken()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L76"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_getcachedtoken",
-      "label": "getCachedToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "getcachedtoken()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L37"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_getgoogleaccounts",
-      "label": "getGoogleAccounts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "getgoogleaccounts()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L29"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_googletokenclient_requestaccesstoken",
-      "label": ".requestAccessToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": ".requestaccesstoken()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L20"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_parseflightsfromevents",
-      "label": "parseFlightsFromEvents()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "parseflightsfromevents()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L152"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_parseroute",
-      "label": "parseRoute()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "parseroute()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L125"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_scancalendarforflights",
-      "label": "scanCalendarForFlights()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "scancalendarforflights()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L201"
-    },
-    {
-      "id": "packages_web_src_utils_googlecalendar_waitforgis",
-      "label": "waitForGIS()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "waitforgis()",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L57"
     },
     {
       "id": "packages_core_src_flights_aeroheaders",
@@ -1831,6 +1959,30 @@
       "norm_label": "search()",
       "source_file": "packages/functions/src/flight.ts",
       "source_location": "L4"
+    },
+    {
+      "id": "packages_core_src_airports_getairportaddress",
+      "label": "getAirportAddress()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "airports.ts",
+      "file_type": "code",
+      "norm_label": "getairportaddress()",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L278"
+    },
+    {
+      "id": "packages_core_src_airports_getairportlabel",
+      "label": "getAirportLabel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "airports.ts",
+      "file_type": "code",
+      "norm_label": "getairportlabel()",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L283"
     },
     {
       "id": "packages_functions_src_profile_confirmverification",
@@ -2116,6 +2268,17 @@
       "source_location": "L7"
     },
     {
+      "id": "packages_core_src_index",
+      "label": "index.ts",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "index.ts",
+      "source_file": "packages/core/src/index.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "packages_core_src_maps",
       "label": "maps.ts",
       "_origin": "ast",
@@ -2202,6 +2365,39 @@
       "norm_label": "london_stations",
       "source_file": "packages/core/src/tfl.ts",
       "source_location": "L6"
+    },
+    {
+      "id": "packages_core_src_timezones",
+      "label": "timezones.ts",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "timezones.ts",
+      "source_file": "packages/core/src/timezones.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_twilio",
+      "label": "twilio.ts",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "twilio.ts",
+      "source_file": "packages/core/src/twilio.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_twilio_messenger",
+      "label": "Messenger",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "messenger",
+      "source_file": "packages/core/src/twilio.ts",
+      "source_location": "L8"
     },
     {
       "id": "packages_core_src_types",
@@ -2467,6 +2663,28 @@
       "norm_label": "use the glossary's vocabulary",
       "source_file": "docs/agents/domain.md",
       "source_location": "L23"
+    },
+    {
+      "id": "packages_web_src_calendarimport",
+      "label": "CalendarImport.tsx",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "calendarimport.tsx",
+      "source_file": "packages/web/src/CalendarImport.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_web_src_utils_googlecalendar",
+      "label": "googleCalendar.ts",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "googleCalendar.ts",
+      "file_type": "code",
+      "norm_label": "googlecalendar.ts",
+      "source_file": "packages/web/src/utils/googleCalendar.ts",
+      "source_location": "L1"
     },
     {
       "id": "packages_functions_package",
@@ -3425,180 +3643,59 @@
       "source_location": "L16"
     },
     {
-      "id": "packages_web_package_devdependencies",
-      "label": "devDependencies",
+      "id": "packages_core_src_feedback",
+      "label": "core/src/feedback.ts",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "devdependencies",
-      "source_file": "packages/web/package.json",
-      "source_location": "L23"
-    },
-    {
-      "id": "packages_web_package_devdependencies_eslint",
-      "label": "eslint",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "eslint",
-      "source_file": "packages/web/package.json",
-      "source_location": "L29"
-    },
-    {
-      "id": "packages_web_package_devdependencies_eslint_js",
-      "label": "@eslint/js",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@eslint/js",
-      "source_file": "packages/web/package.json",
-      "source_location": "L24"
-    },
-    {
-      "id": "packages_web_package_devdependencies_eslint_plugin_react_hooks",
-      "label": "eslint-plugin-react-hooks",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "eslint-plugin-react-hooks",
-      "source_file": "packages/web/package.json",
-      "source_location": "L30"
-    },
-    {
-      "id": "packages_web_package_devdependencies_eslint_plugin_react_refresh",
-      "label": "eslint-plugin-react-refresh",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "eslint-plugin-react-refresh",
-      "source_file": "packages/web/package.json",
-      "source_location": "L31"
-    },
-    {
-      "id": "packages_web_package_devdependencies_globals",
-      "label": "globals",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "globals",
-      "source_file": "packages/web/package.json",
-      "source_location": "L32"
-    },
-    {
-      "id": "packages_web_package_devdependencies_tailwindcss",
-      "label": "tailwindcss",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "tailwindcss",
-      "source_file": "packages/web/package.json",
-      "source_location": "L33"
-    },
-    {
-      "id": "packages_web_package_devdependencies_types_node",
-      "label": "@types/node",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@types/node",
-      "source_file": "packages/web/package.json",
-      "source_location": "L25"
-    },
-    {
-      "id": "packages_web_package_devdependencies_types_react",
-      "label": "@types/react",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@types/react",
-      "source_file": "packages/web/package.json",
-      "source_location": "L26"
-    },
-    {
-      "id": "packages_web_package_devdependencies_types_react_dom",
-      "label": "@types/react-dom",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@types/react-dom",
-      "source_file": "packages/web/package.json",
-      "source_location": "L27"
-    },
-    {
-      "id": "packages_web_package_devdependencies_typescript",
-      "label": "typescript",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "typescript",
-      "source_file": "packages/web/package.json",
-      "source_location": "L34"
-    },
-    {
-      "id": "packages_web_package_devdependencies_typescript_eslint",
-      "label": "typescript-eslint",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "typescript-eslint",
-      "source_file": "packages/web/package.json",
-      "source_location": "L35"
-    },
-    {
-      "id": "packages_web_package_devdependencies_vite",
-      "label": "vite",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "vite",
-      "source_file": "packages/web/package.json",
-      "source_location": "L36"
-    },
-    {
-      "id": "packages_web_package_devdependencies_vitejs_plugin_react",
-      "label": "@vitejs/plugin-react",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@vitejs/plugin-react",
-      "source_file": "packages/web/package.json",
-      "source_location": "L28"
-    },
-    {
-      "id": "packages_core_src_airports",
-      "label": "airports.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "airports.ts",
-      "source_file": "packages/core/src/airports.ts",
+      "norm_label": "core/src/feedback.ts",
+      "source_file": "packages/core/src/feedback.ts",
       "source_location": "L1"
     },
     {
-      "id": "packages_core_src_airports_airports",
-      "label": "AIRPORTS",
+      "id": "packages_core_src_feedback_type_labels",
+      "label": "TYPE_LABELS",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "airports",
-      "source_file": "packages/core/src/airports.ts",
-      "source_location": "L7"
+      "norm_label": "type_labels",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L26"
+    },
+    {
+      "id": "packages_core_src_feedback_type_prefixes",
+      "label": "TYPE_PREFIXES",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "type_prefixes",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "packages_core_test_feedback_test",
+      "label": "feedback.test.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "feedback.test.ts",
+      "source_file": "packages/core/test/feedback.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_functions_src_feedback",
+      "label": "functions/src/feedback.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "functions/src/feedback.ts",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L1"
     },
     {
       "id": "packages_core_src_dateutils",
@@ -3612,17 +3709,6 @@
       "source_location": "L1"
     },
     {
-      "id": "packages_core_src_index",
-      "label": "index.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "index.ts",
-      "source_file": "packages/core/src/index.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "packages_core_src_maps_googlemaps",
       "label": "GoogleMaps",
       "_origin": "ast",
@@ -3632,50 +3718,6 @@
       "norm_label": "googlemaps",
       "source_file": "packages/core/src/maps.ts",
       "source_location": "L87"
-    },
-    {
-      "id": "packages_core_src_timezones",
-      "label": "timezones.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "timezones.ts",
-      "source_file": "packages/core/src/timezones.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_twilio",
-      "label": "twilio.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "twilio.ts",
-      "source_file": "packages/core/src/twilio.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_twilio_messenger",
-      "label": "Messenger",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "messenger",
-      "source_file": "packages/core/src/twilio.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "packages_core_test_airports_test",
-      "label": "airports.test.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "airports.test.ts",
-      "source_file": "packages/core/test/airports.test.ts",
-      "source_location": "L1"
     },
     {
       "id": "packages_core_test_dateutils_test",
@@ -3876,6 +3918,116 @@
       "norm_label": "triage labels",
       "source_file": "docs/agents/triage-labels.md",
       "source_location": "L1"
+    },
+    {
+      "id": "packages_web_package_dependencies",
+      "label": "dependencies",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "dependencies",
+      "source_file": "packages/web/package.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "packages_web_package_dependencies_aws_amplify",
+      "label": "aws-amplify",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "aws-amplify",
+      "source_file": "packages/web/package.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "packages_web_package_dependencies_aws_amplify_ui_react",
+      "label": "@aws-amplify/ui-react",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@aws-amplify/ui-react",
+      "source_file": "packages/web/package.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "packages_web_package_dependencies_axios",
+      "label": "axios",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "axios",
+      "source_file": "packages/web/package.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "packages_web_package_dependencies_date_fns_tz",
+      "label": "date-fns-tz",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "date-fns-tz",
+      "source_file": "packages/web/package.json",
+      "source_location": "L18"
+    },
+    {
+      "id": "packages_web_package_dependencies_react",
+      "label": "react",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "react",
+      "source_file": "packages/web/package.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "packages_web_package_dependencies_react_dom",
+      "label": "react-dom",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "react-dom",
+      "source_file": "packages/web/package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "packages_web_package_dependencies_react_router_dom",
+      "label": "react-router-dom",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "react-router-dom",
+      "source_file": "packages/web/package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "packages_web_package_dependencies_tailwindcss_vite",
+      "label": "@tailwindcss/vite",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@tailwindcss/vite",
+      "source_file": "packages/web/package.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "packages_web_package_dependencies_tanstack_react_query",
+      "label": "@tanstack/react-query",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@tanstack/react-query",
+      "source_file": "packages/web/package.json",
+      "source_location": "L15"
     },
     {
       "id": "resolve_simple",
@@ -4142,17 +4294,6 @@
       "source_location": "L1"
     },
     {
-      "id": "packages_web_src_calendarimport",
-      "label": "CalendarImport.tsx",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "calendarimport.tsx",
-      "source_file": "packages/web/src/CalendarImport.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "packages_web_src_config",
       "label": "config.ts",
       "_origin": "ast",
@@ -4184,6 +4325,28 @@
       "norm_label": "datepicker.tsx",
       "source_file": "packages/web/src/DatePicker.tsx",
       "source_location": "L1"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal",
+      "label": "FeedbackModal.tsx",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbackmodal.tsx",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_type_options",
+      "label": "TYPE_OPTIONS",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "type_options",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L22"
     },
     {
       "id": "packages_web_src_main",
@@ -4241,15 +4404,15 @@
       "source_location": "L1"
     },
     {
-      "id": "packages_web_src_utils_googlecalendar",
-      "label": "googleCalendar.ts",
+      "id": "ref_aws_amplify",
+      "label": "aws-amplify",
       "_origin": "ast",
       "community": 3,
       "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "googlecalendar.ts",
-      "source_file": "packages/web/src/utils/googleCalendar.ts",
-      "source_location": "L1"
+      "file_type": "concept",
+      "norm_label": "aws-amplify",
+      "source_file": "packages/web/package.json",
+      "source_location": "L16"
     },
     {
       "id": "ref_react",
@@ -4326,6 +4489,39 @@
       "file_type": "code",
       "norm_label": "flight.ts",
       "source_file": "packages/functions/src/flight.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_airports",
+      "label": "airports.ts",
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "airports.ts",
+      "file_type": "code",
+      "norm_label": "airports.ts",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_airports_airports",
+      "label": "AIRPORTS",
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "airports.ts",
+      "file_type": "code",
+      "norm_label": "airports",
+      "source_file": "packages/core/src/airports.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "packages_core_test_airports_test",
+      "label": "airports.test.ts",
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "airports.ts",
+      "file_type": "code",
+      "norm_label": "airports.test.ts",
+      "source_file": "packages/core/test/airports.test.ts",
       "source_location": "L1"
     },
     {
@@ -4846,114 +5042,158 @@
       "source_location": "L1"
     },
     {
-      "id": "packages_web_package_dependencies",
-      "label": "dependencies",
+      "id": "packages_web_package_devdependencies",
+      "label": "devDependencies",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "dependencies",
+      "norm_label": "devdependencies",
       "source_file": "packages/web/package.json",
-      "source_location": "L12"
+      "source_location": "L23"
     },
     {
-      "id": "packages_web_package_dependencies_aws_amplify",
-      "label": "aws-amplify",
+      "id": "packages_web_package_devdependencies_eslint",
+      "label": "eslint",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "aws-amplify",
+      "norm_label": "eslint",
       "source_file": "packages/web/package.json",
-      "source_location": "L16"
+      "source_location": "L29"
     },
     {
-      "id": "packages_web_package_dependencies_aws_amplify_ui_react",
-      "label": "@aws-amplify/ui-react",
+      "id": "packages_web_package_devdependencies_eslint_js",
+      "label": "@eslint/js",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "@aws-amplify/ui-react",
+      "norm_label": "@eslint/js",
       "source_file": "packages/web/package.json",
-      "source_location": "L13"
+      "source_location": "L24"
     },
     {
-      "id": "packages_web_package_dependencies_axios",
-      "label": "axios",
+      "id": "packages_web_package_devdependencies_eslint_plugin_react_hooks",
+      "label": "eslint-plugin-react-hooks",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "axios",
+      "norm_label": "eslint-plugin-react-hooks",
       "source_file": "packages/web/package.json",
-      "source_location": "L17"
+      "source_location": "L30"
     },
     {
-      "id": "packages_web_package_dependencies_date_fns_tz",
-      "label": "date-fns-tz",
+      "id": "packages_web_package_devdependencies_eslint_plugin_react_refresh",
+      "label": "eslint-plugin-react-refresh",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "date-fns-tz",
+      "norm_label": "eslint-plugin-react-refresh",
       "source_file": "packages/web/package.json",
-      "source_location": "L18"
+      "source_location": "L31"
     },
     {
-      "id": "packages_web_package_dependencies_react",
-      "label": "react",
+      "id": "packages_web_package_devdependencies_globals",
+      "label": "globals",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "react",
+      "norm_label": "globals",
       "source_file": "packages/web/package.json",
-      "source_location": "L19"
+      "source_location": "L32"
     },
     {
-      "id": "packages_web_package_dependencies_react_dom",
-      "label": "react-dom",
+      "id": "packages_web_package_devdependencies_tailwindcss",
+      "label": "tailwindcss",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "react-dom",
+      "norm_label": "tailwindcss",
       "source_file": "packages/web/package.json",
-      "source_location": "L20"
+      "source_location": "L33"
     },
     {
-      "id": "packages_web_package_dependencies_react_router_dom",
-      "label": "react-router-dom",
+      "id": "packages_web_package_devdependencies_types_node",
+      "label": "@types/node",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "react-router-dom",
+      "norm_label": "@types/node",
       "source_file": "packages/web/package.json",
-      "source_location": "L21"
+      "source_location": "L25"
     },
     {
-      "id": "packages_web_package_dependencies_tailwindcss_vite",
-      "label": "@tailwindcss/vite",
+      "id": "packages_web_package_devdependencies_types_react",
+      "label": "@types/react",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "@tailwindcss/vite",
+      "norm_label": "@types/react",
       "source_file": "packages/web/package.json",
-      "source_location": "L14"
+      "source_location": "L26"
     },
     {
-      "id": "packages_web_package_dependencies_tanstack_react_query",
-      "label": "@tanstack/react-query",
+      "id": "packages_web_package_devdependencies_types_react_dom",
+      "label": "@types/react-dom",
       "_origin": "ast",
       "community": 5,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "@tanstack/react-query",
+      "norm_label": "@types/react-dom",
       "source_file": "packages/web/package.json",
-      "source_location": "L15"
+      "source_location": "L27"
+    },
+    {
+      "id": "packages_web_package_devdependencies_typescript",
+      "label": "typescript",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "typescript",
+      "source_file": "packages/web/package.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "packages_web_package_devdependencies_typescript_eslint",
+      "label": "typescript-eslint",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "typescript-eslint",
+      "source_file": "packages/web/package.json",
+      "source_location": "L35"
+    },
+    {
+      "id": "packages_web_package_devdependencies_vite",
+      "label": "vite",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "vite",
+      "source_file": "packages/web/package.json",
+      "source_location": "L36"
+    },
+    {
+      "id": "packages_web_package_devdependencies_vitejs_plugin_react",
+      "label": "@vitejs/plugin-react",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "@vitejs/plugin-react",
+      "source_file": "packages/web/package.json",
+      "source_location": "L28"
     },
     {
       "id": "packages_web_package_name",
@@ -5108,17 +5348,6 @@
       "norm_label": "typescript",
       "source_file": "packages/web/package.json",
       "source_location": "L34"
-    },
-    {
-      "id": "ref_aws_amplify",
-      "label": "aws-amplify",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "web/package.json",
-      "file_type": "concept",
-      "norm_label": "aws-amplify",
-      "source_file": "packages/web/package.json",
-      "source_location": "L16"
     },
     {
       "id": "ref_aws_amplify_ui_react",
@@ -6523,6 +6752,30 @@
       "weight": 1.0
     },
     {
+      "source": "packages_functions_src_feedback_submit",
+      "target": "packages_functions_src_feedback_getauthdetails",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback_submit",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
       "source": "packages_functions_src_notify_handler",
       "target": "packages_core_src_dateutils_parseflighttimetoutc",
       "relation": "calls",
@@ -6891,7 +7144,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L1002",
+      "source_location": "L1016",
       "weight": 1.0
     },
     {
@@ -6903,7 +7156,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L1003",
+      "source_location": "L1017",
       "weight": 1.0
     },
     {
@@ -6915,7 +7168,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L107",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -6927,7 +7180,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L109",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -6939,7 +7192,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L109",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -6951,7 +7204,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L132",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
@@ -6963,7 +7216,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L184",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -7196,6 +7449,18 @@
     },
     {
       "source": "packages_core_src_index",
+      "target": "packages_core_src_feedback",
+      "relation": "re_exports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "export",
+      "source_file": "packages/core/src/index.ts",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_index",
       "target": "packages_core_src_maps",
       "relation": "re_exports",
       "_origin": "ast",
@@ -7312,6 +7577,30 @@
       "context": "export",
       "source_file": "packages/web/src/utils/flightTimes.ts",
       "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback_formatgithubissueparams",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback_formatgithubissueparams",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -7660,6 +7949,30 @@
       "context": "import",
       "source_file": "packages/core/src/dateUtils.ts",
       "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -8239,6 +8552,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_test_feedback_test",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/feedback.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_test_maps_test",
       "target": "packages_core_src_maps_googlemaps",
       "relation": "imports",
@@ -8584,6 +8909,54 @@
       "context": "import",
       "source_file": "packages/functions/src/cron.ts",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_dynamodb_database",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -9116,7 +9489,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_onboarding_onboarding",
+      "target": "packages_web_src_feedbackmodal_feedbackmodal",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9128,7 +9501,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_utils_googlecalendar_calendarflight",
+      "target": "packages_web_src_onboarding_onboarding",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9136,6 +9509,18 @@
       "context": "import",
       "source_file": "packages/web/src/App.tsx",
       "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_utils_googlecalendar_calendarflight",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -9292,6 +9677,18 @@
       "context": "import",
       "source_file": "packages/web/src/CalendarImport.tsx",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_config_config",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -9535,6 +9932,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_types",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_src_maps",
       "target": "packages_core_src_airports",
       "relation": "imports_from",
@@ -9763,6 +10172,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_test_feedback_test",
+      "target": "packages_core_src_feedback",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/feedback.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_test_maps_test",
       "target": "packages_core_src_maps",
       "relation": "imports_from",
@@ -9868,6 +10289,18 @@
       "context": "import",
       "source_file": "packages/functions/src/cron.ts",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_index",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -10112,7 +10545,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_onboarding",
+      "target": "packages_web_src_feedbackmodal",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10124,7 +10557,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_utils_googlecalendar",
+      "target": "packages_web_src_onboarding",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10132,6 +10565,18 @@
       "context": "import",
       "source_file": "packages/web/src/App.tsx",
       "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_utils_googlecalendar",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L14",
       "type_only": true,
       "weight": 1.0
     },
@@ -10265,6 +10710,30 @@
       "context": "import",
       "source_file": "packages/web/src/DatePicker.tsx",
       "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "ref_react",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_config",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -11860,6 +12329,61 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_formattedgithubissue",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_type_prefixes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_type_labels",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_formatgithubissueparams",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_src_flights",
       "target": "packages_core_src_flights_flights",
       "relation": "contains",
@@ -12367,6 +12891,28 @@
     },
     {
       "source": "packages_core_src_types",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L236",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_types",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L238",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_types",
       "target": "packages_core_src_types_profile",
       "relation": "contains",
       "_origin": "ast",
@@ -12374,6 +12920,17 @@
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
       "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_types",
+      "target": "packages_core_src_types_feedbacksubmission",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L250",
       "weight": 1.0
     },
     {
@@ -12891,6 +13448,28 @@
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/cron.ts",
       "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_functions_src_feedback_submit",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_functions_src_feedback_getauthdetails",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -13693,7 +14272,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -13704,7 +14283,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -13715,7 +14294,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -13726,7 +14305,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L44",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -13737,7 +14316,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -13748,7 +14327,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -13759,7 +14338,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L66",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -13770,7 +14349,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -13781,7 +14360,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L80",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -13862,6 +14441,61 @@
       "weight": 1.0
     },
     {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_feedbackmodalprops",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_type_options",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_feedbackmodal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_feedbacktype",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_currenttripcontext",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
       "source": "packages_web_src_onboarding",
       "target": "packages_web_src_onboarding_onboarding",
       "relation": "contains",
@@ -13902,7 +14536,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Profile.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -15565,5 +16199,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6337f0047633a2561fe2b73c7338f8bd4c580471"
+  "built_at_commit": "2a17864cd5e39b91f5841b61cc38c82fade1775f"
 }

@@ -9,6 +9,7 @@ import CustomDatePicker from './DatePicker';
 import {formatFlightDate, formatFlightTimeOnly, filterNewFlights, normalizeFlightNumber} from './utils/flightTimes';
 import Profile from './Profile';
 import CalendarImport from './CalendarImport';
+import FeedbackModal from './FeedbackModal';
 import Onboarding from './Onboarding';
 import type { CalendarFlight } from './utils/googleCalendar';
 
@@ -97,6 +98,7 @@ function App() {
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [showCalendarImport, setShowCalendarImport] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = loading
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null); // null = loading
 
@@ -708,7 +710,7 @@ function App() {
                   className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-6 pb-28 sm:pb-32 flex flex-col items-center font-sans">
 
                 <header
-                    className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} flex items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800 transition-all duration-200`}>
+                    className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} flex items-center justify-between mb-8 pb-4 border-b border-gray-100 dark:border-gray-800 transition-all duration-200`}>
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-green-700 to-green-600 flex items-center justify-center text-white shadow-sm shadow-green-700/25">
                       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -719,13 +721,25 @@ function App() {
                       Make My Flight
                     </h1>
                   </div>
+
+                  <button
+                      type="button"
+                      onClick={() => setShowFeedbackModal(true)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white bg-gray-100/70 dark:bg-gray-800/70 hover:bg-gray-200/80 dark:hover:bg-gray-700/80 rounded-full transition-all cursor-pointer active:scale-95"
+                      title="Send feedback or report an issue"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span>Feedback</span>
+                  </button>
                 </header>
 
                 <main className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} transition-all duration-200`}>
                   {view === 'list' ? (
                       <Trips onBack={() => setView('add')} onEdit={handleEdit}/>
                   ) : view === 'profile' ? (
-                      <Profile onBack={() => setView('list')}/>
+                      <Profile onBack={() => setView('list')} onOpenFeedback={() => setShowFeedbackModal(true)}/>
                   ) : (
                       <>
                         {step === 'input' && (
@@ -1180,6 +1194,14 @@ function App() {
                 onImport={handleCalendarImport}
                 onClose={() => setShowCalendarImport(false)}
                 homeAddress={homeAddress}
+            />
+        )}
+
+        {showFeedbackModal && (
+            <FeedbackModal
+                isOpen={showFeedbackModal}
+                onClose={() => setShowFeedbackModal(false)}
+                onSuccess={(msg) => showToast(msg, 'success')}
             />
         )}
       </div>
