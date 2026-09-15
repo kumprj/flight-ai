@@ -365,11 +365,11 @@ export default function Profile({ onBack }: ProfileProps) {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">🚆 Public Transportation</span>
                         <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 rounded">
-                          Chicago CTA & NYC MTA
+                          Chicago CTA, NYC MTA & Boston MBTA
                         </span>
                       </div>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        Get comparative alerts showing both Drive and Transit travel times (Blue/Orange Line to ORD/MDW via Ventra, Subway/AirTrain to JFK/LGA/EWR via OMNY) plus live service delays.
+                        Get comparative alerts showing both Drive and Transit travel times (Blue/Orange Line to ORD/MDW via Ventra, Subway/AirTrain to JFK/LGA/EWR via OMNY, Silver/Blue Line to BOS via CharlieCard) plus live service delays.
                       </p>
                     </div>
                   </label>
