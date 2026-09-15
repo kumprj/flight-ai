@@ -166,6 +166,7 @@ describe('Flights API interaction', () => {
     test('retries on 429 rate limit error', async () => {
       const flightNum = `RATE${Date.now()}`;
       const getSpy = vi.spyOn(axios, 'get')
+        .mockClear()
         .mockRejectedValueOnce({ response: { status: 429 } }) // first fails
         .mockResolvedValueOnce({ data: mockFlightResponse }); // second succeeds
 
@@ -207,6 +208,7 @@ describe('Flights API interaction', () => {
       const pmData = { departures: [{ ...mockFlightResponse[0], number: 'UA 456', departure: { ...mockFlightResponse[0].departure, airport: { iata: depIata } } }] };
 
       const getSpy = vi.spyOn(axios, 'get')
+        .mockClear()
         .mockResolvedValueOnce({ data: amData })
         .mockResolvedValueOnce({ data: pmData });
 

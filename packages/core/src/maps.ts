@@ -4,6 +4,7 @@ import { TravelTimeInfo, MultiModalTravelTime, TransitStep } from "./types";
 import { isChicagoAirport, getCtaAlerts, getCtaStationInfo, formatCtaAlertsSummary } from "./cta";
 import { isNycAirport, getMtaAlerts, getNycStationInfo, formatMtaAlertsSummary } from "./mta";
 import { isLondonAirport, getTflAlerts, getLondonStationInfo, formatTflAlertsSummary } from "./tfl";
+import { isBartAirport, getBartAlerts, getBartStationInfo, formatBartAlertsSummary } from "./bart";
 
 const ROUTES_API_URL = "https://routes.googleapis.com/directions/v2:computeRoutes";
 
@@ -185,12 +186,19 @@ export const GoogleMaps = {
       ? getTflAlerts(destination).catch(() => [])
       : Promise.resolve(undefined);
 
-    const [drive, transit, ctaAlerts, mtaAlerts, tflAlerts] = await Promise.all([
+    // 6. If San Francisco airport (SFO/OAK), fetch live BART alerts
+    const isBart = isBartAirport(destination);
+    const bartAlertsPromise = isBart && includeTransit
+      ? getBartAlerts(destination).catch(() => [])
+      : Promise.resolve(undefined);
+
+    const [drive, transit, ctaAlerts, mtaAlerts, tflAlerts, bartAlerts] = await Promise.all([
       drivePromise,
       transitPromise,
       ctaAlertsPromise,
       mtaAlertsPromise,
       tflAlertsPromise,
+      bartAlertsPromise,
     ]);
 
     const stationInfo = isCta
@@ -199,6 +207,8 @@ export const GoogleMaps = {
       ? getNycStationInfo(destination) || undefined
       : isLondon
       ? getLondonStationInfo(destination) || undefined
+      : isBart
+      ? getBartStationInfo(destination) || undefined
       : undefined;
 
     return {
@@ -207,6 +217,7 @@ export const GoogleMaps = {
       ctaAlerts,
       mtaAlerts,
       tflAlerts,
+      bartAlerts,
       stationInfo,
     };
   },
@@ -237,6 +248,11 @@ export const resolveTransitAlertSummary = (travelEstimate: MultiModalTravelTime)
       travelEstimate.tflAlerts,
       travelEstimate.stationInfo?.line || "TfL Transit"
     );
+  } else if (travelEstimate.bartAlerts && travelEstimate.bartAlerts.length > 0) {
+    transitAlertsSummary = formatBartAlertsSummary(
+      travelEstimate.bartAlerts,
+      travelEstimate.stationInfo?.line || "BART"
+    );
   }
 
   const transitAgency =
@@ -247,6 +263,8 @@ export const resolveTransitAlertSummary = (travelEstimate: MultiModalTravelTime)
       ? "MTA"
       : travelEstimate.tflAlerts
       ? "TfL"
+      : travelEstimate.bartAlerts
+      ? "BART"
       : "Public Transit");
 
   const transitLineName =

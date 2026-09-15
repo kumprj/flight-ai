@@ -122,6 +122,26 @@ export interface NycTransitStationInfo {
   fareDescription: string;
 }
 
+export interface BartAlert {
+  id: string;
+  station: string;
+  type: string;
+  description: string;
+  sms_text: string;
+  posted: string;
+  expires: string;
+}
+
+export interface BartStationInfo {
+  agency: "BART";
+  airportCode: "SFO" | "OAK";
+  name: string;
+  line: string;
+  lineColor: string;
+  stationLocation: string;
+  fareDescription: string;
+}
+
 export interface TflAlert {
   id: string;
   headline: string;
@@ -143,7 +163,7 @@ export interface LondonTransitStationInfo {
   fareDescription: string;
 }
 
-export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | LondonTransitStationInfo;
+export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | BartStationInfo | LondonTransitStationInfo;
 
 export interface MultiModalTravelTime {
   drive: TravelTimeInfo;
@@ -151,6 +171,7 @@ export interface MultiModalTravelTime {
   ctaAlerts?: CtaAlert[];
   mtaAlerts?: MtaAlert[];
   tflAlerts?: TflAlert[];
+  bartAlerts?: BartAlert[];
   stationInfo?: TransitStationInfo;
 }
 
