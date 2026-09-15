@@ -19,7 +19,10 @@ import {
 import twilio from "twilio";
 
 const ses = new SESClient({});
-const twilioClient = twilio(process.env.TWILIO_SID!, process.env.TWILIO_TOKEN!);
+
+const getTwilioClient = () => {
+  return twilio(process.env.TWILIO_SID!, process.env.TWILIO_TOKEN!);
+};
 
 /**
  * Decode the Bearer token manually and return a stable userId from the email claim.
@@ -328,6 +331,7 @@ ${profile?.transitEnabled && (!travelEstimate.transit || !transitLeaveFormatted)
     // Send SMS if phone is verified
     if (profile?.phoneNumber && profile?.phoneVerified) {
       console.log("Sending test SMS to:", profile.phoneNumber);
+      const twilioClient = getTwilioClient();
       await twilioClient.messages.create({
         body: message,
         from: process.env.TWILIO_FROM_NUMBER!,
