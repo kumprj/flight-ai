@@ -14,6 +14,7 @@ import {
   calculateLeaveTime,
   formatLeaveTime,
   resolveTransitAlertSummary,
+  formatStopSegment,
 } from "@flight-ai/core";
 import twilio from "twilio";
 
@@ -135,31 +136,10 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
 };
 
 export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
-  // Manual JWT decoding like profile endpoints
-  const authHeader = event.headers?.Authorization || event.headers?.authorization;
-  if (!authHeader) {
-    console.log("No authorization header found");
-    return { statusCode: 401, body: "Unauthorized: Missing Authorization header" };
+  const userId = getUserIdFromToken(event);
+  if (!userId) {
+    return { statusCode: 401, body: "Unauthorized" };
   }
-
-  const token = authHeader.replace('Bearer ', '');
-
-  // Decode JWT manually (simple base64 decode for now)
-  const parts = token.split('.');
-  if (parts.length !== 3) {
-    console.log("Invalid token format");
-    return { statusCode: 401, body: "Unauthorized: Invalid token format" };
-  }
-
-  const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
-  const email = payload.email;
-
-  if (!email) {
-    console.log("No email in token payload");
-    return { statusCode: 401, body: "Unauthorized: Missing email in token" };
-  }
-
-  const userId = email.replace(/[@.]/g, "_");
 
   const body = JSON.parse(event.body || "{}");
   const tripId = body.tripId;
@@ -214,16 +194,7 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
       if (travelEstimate.transit.transitSteps && travelEstimate.transit.transitSteps.length > 0) {
         const stepLines = travelEstimate.transit.transitSteps
           .filter((s) => s.transitLine)
-          .map((s) => {
-            const stopSeg = s.departureStop && s.arrivalStop
-              ? ` - ${s.departureStop} to ${s.arrivalStop}`
-              : s.departureStop
-              ? ` - from ${s.departureStop}`
-              : s.arrivalStop
-              ? ` - to ${s.arrivalStop}`
-              : '';
-            return `   • ${s.transitLine}${stopSeg}`;
-          })
+          .map((s) => `   • ${s.transitLine}${formatStopSegment(s)}`)
           .join('\n');
         if (stepLines) {
           message += `Transit steps:\n${stepLines}\n`;
@@ -244,8 +215,8 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
     }
 
     // Send email
-    const recipientEmail = profile?.email || "rkump24@gmail.com";
-    const senderEmail = "rkump24@gmail.com";
+    const recipientEmail = profile?.email || process.env.SENDER_EMAIL!;
+    const senderEmail = process.env.SENDER_EMAIL!;
 
     const testEmailHtml = `
 <!DOCTYPE html>
@@ -299,14 +270,7 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
         ${travelEstimate.transit.transitSteps && travelEstimate.transit.transitSteps.length > 0 ? `
         <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #bfdbfe; font-size: 13px; color: #1e3a8a;">
           ${travelEstimate.transit.transitSteps.filter((s) => s.transitLine).map((s) => {
-            const stopSeg = s.departureStop && s.arrivalStop
-              ? ` - ${s.departureStop} to ${s.arrivalStop}`
-              : s.departureStop
-              ? ` - from ${s.departureStop}`
-              : s.arrivalStop
-              ? ` - to ${s.arrivalStop}`
-              : '';
-            return `<div style="margin-top: 4px;">• <strong>${s.transitLine}</strong>${stopSeg}</div>`;
+            return `<div style="margin-top: 4px;">• <strong>${s.transitLine}</strong>${formatStopSegment(s)}</div>`;
           }).join('')}
         </div>` : ''}
         ${travelEstimate.stationInfo?.fareDescription ? `
@@ -379,33 +343,10 @@ ${profile?.transitEnabled && (!travelEstimate.transit || !transitLeaveFormatted)
 };
 
 export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
-  // Manual JWT decoding like profile endpoints
-  const authHeader = event.headers?.Authorization || event.headers?.authorization;
-  if (!authHeader) {
-    console.log("No authorization header found");
-    return { statusCode: 401, body: "Unauthorized: Missing Authorization header" };
+  const userId = getUserIdFromToken(event);
+  if (!userId) {
+    return { statusCode: 401, body: "Unauthorized" };
   }
-
-  const token = authHeader.replace('Bearer ', '');
-
-  // Decode JWT manually (simple base64 decode for now)
-  const parts = token.split('.');
-  if (parts.length !== 3) {
-    console.log("Invalid token format");
-    return { statusCode: 401, body: "Unauthorized: Invalid token format" };
-  }
-
-  const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
-  console.log("Decoded token payload:", JSON.stringify(payload, null, 2));
-
-  const email = payload.email;
-
-  if (!email) {
-    console.log("No email in token payload");
-    return { statusCode: 401, body: "Unauthorized: Missing email in token" };
-  }
-
-  const userId = email.replace(/[@.]/g, "_");
 
   const body = JSON.parse(event.body || "{}");
   const { homeAddress, airportCode } = body;
@@ -438,6 +379,7 @@ export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
         ctaAlerts: travelEstimate.ctaAlerts,
         mtaAlerts: travelEstimate.mtaAlerts,
         tflAlerts: travelEstimate.tflAlerts,
+        bartAlerts: travelEstimate.bartAlerts,
         stationInfo: travelEstimate.stationInfo,
       })
     };
@@ -448,28 +390,10 @@ export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
 };
 
 export const remove: APIGatewayProxyHandlerV2 = async (event) => {
-  // Manual JWT decoding like profile endpoints
-  const authHeader = event.headers?.Authorization || event.headers?.authorization;
-  if (!authHeader) {
-    return { statusCode: 401, body: "Unauthorized: Missing Authorization header" };
+  const userId = getUserIdFromToken(event);
+  if (!userId) {
+    return { statusCode: 401, body: "Unauthorized" };
   }
-
-  const token = authHeader.replace('Bearer ', '');
-
-  // Decode JWT manually (simple base64 decode for now)
-  const parts = token.split('.');
-  if (parts.length !== 3) {
-    return { statusCode: 401, body: "Unauthorized: Invalid token format" };
-  }
-
-  const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
-  const email = payload.email;
-
-  if (!email) {
-    return { statusCode: 401, body: "Unauthorized: Missing email in token" };
-  }
-
-  const userId = email.replace(/[@.]/g, "_");
 
   const body = JSON.parse(event.body || "{}");
   const tripId = body.tripId;

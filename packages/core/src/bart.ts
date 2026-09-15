@@ -128,9 +128,7 @@ export const getBartAlerts = async (airportCode?: string): Promise<BartAlert[]> 
         station: "BART",
         type: "INFO",
         description: descEn || headerEn,
-        sms_text: displayText,
-        posted: "",
-        expires: "",
+        smsText: displayText,
       });
     }
 
@@ -153,11 +151,11 @@ export const formatBartAlertsSummary = (
   }
 
   const first = alerts[0];
-  const isMajor = first.description?.toLowerCase().includes("delay") || first.sms_text?.toLowerCase().includes("delay");
+  const isMajor = first.description?.toLowerCase().includes("delay") || first.smsText?.toLowerCase().includes("delay");
   const icon = isMajor ? "⚠️" : "ℹ️";
 
-  // If sms_text is generic boilerplate, use description
-  let msg = first.sms_text || first.description;
+  // If smsText is generic boilerplate, use description
+  let msg = first.smsText || first.description;
   if (msg.toLowerCase() === "bart.gov alert" && first.description) {
     msg = first.description;
   }
