@@ -15,6 +15,7 @@ import type { CalendarFlight } from './utils/googleCalendar';
 interface FlightData {
   flightNumber: string;
   departureTime: string;
+  arrivalTime?: string;
   origin: string;
   destination: string;
   airline: string;
@@ -24,6 +25,8 @@ interface Trip {
   sk: string;
   flightNumber: string;
   date: string;
+  arrivalTime?: string;
+  revisedArrivalTime?: string;
   originAirport: string;
   destinationAirport: string;
   homeAddress: string;
@@ -78,6 +81,7 @@ function App() {
             await axios.post(`${Config.API_URL}/trips`, {
               flightNumber: results[0].flightNumber,
               date: results[0].departureTime,
+              arrivalTime: results[0].arrivalTime,
               originAirport: results[0].origin,
               destinationAirport: results[0].destination,
               homeAddress: calFlight.address || address,
@@ -295,6 +299,7 @@ function App() {
         await axios.put(`${Config.API_URL}/trips`, {
           flightNumber: selectedFlight?.flightNumber,
           date: selectedFlight?.departureTime,
+          arrivalTime: selectedFlight?.arrivalTime || editingTrip.arrivalTime,
           originAirport: selectedFlight?.origin,
           destinationAirport: selectedFlight?.destination,
           homeAddress: homeAddress,
@@ -308,6 +313,7 @@ function App() {
         await axios.post(`${Config.API_URL}/trips`, {
           flightNumber: selectedFlight?.flightNumber,
           date: selectedFlight?.departureTime,
+          arrivalTime: selectedFlight?.arrivalTime,
           originAirport: selectedFlight?.origin,
           destinationAirport: selectedFlight?.destination,
           homeAddress: homeAddress,
@@ -419,7 +425,7 @@ function App() {
                   className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-6 flex flex-col items-center font-sans">
 
                 <header
-                    className="w-full max-w-md flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800">
+                    className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800 transition-all duration-200`}>
                   <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent">
                     Make My Flight
                   </h1>
@@ -445,7 +451,7 @@ function App() {
                       Profile
                     </button>
                     <button
-                        onClick={signOut}
+                        onClick={() => signOut()}
                         className="text-gray-400 hover:text-red-500 pb-1 transition-colors cursor-pointer"
                     >
                       Sign Out
@@ -454,7 +460,7 @@ function App() {
 
                 </header>
 
-                <main className="w-full max-w-md">
+                <main className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} transition-all duration-200`}>
                   {view === 'list' ? (
                       <Trips onBack={() => setView('add')} onEdit={handleEdit}/>
                   ) : view === 'profile' ? (
