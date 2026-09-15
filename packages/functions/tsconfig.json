@@ -7,7 +7,6 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": false,
-    "baseUrl": ".",
     "paths": {
       "@flight-ai/core": ["../core/src/index.ts"],
       "@flight-ai/core/*": ["../core/src/*"]

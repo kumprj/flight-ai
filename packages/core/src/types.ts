@@ -122,13 +122,35 @@ export interface NycTransitStationInfo {
   fareDescription: string;
 }
 
-export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo;
+export interface TflAlert {
+  id: string;
+  headline: string;
+  shortDescription: string;
+  routeId: string;
+  agency?: string;
+  isMajor?: boolean;
+  url?: string;
+}
+
+export interface LondonTransitStationInfo {
+  agency: "TfL";
+  airportCode: "LHR" | "LGW" | "STN" | "LTN" | "LCY";
+  name: string;
+  line: string;
+  lineColor: string;
+  primaryLines: string[];
+  stationLocation: string;
+  fareDescription: string;
+}
+
+export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | LondonTransitStationInfo;
 
 export interface MultiModalTravelTime {
   drive: TravelTimeInfo;
   transit?: TravelTimeInfo;
   ctaAlerts?: CtaAlert[];
   mtaAlerts?: MtaAlert[];
+  tflAlerts?: TflAlert[];
   stationInfo?: TransitStationInfo;
 }
 

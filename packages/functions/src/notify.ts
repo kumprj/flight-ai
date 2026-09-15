@@ -11,8 +11,7 @@ import {
   formatLeaveTime,
   formatFlightTimeOnly,
   resolveTimezone,
-  formatCtaAlertsSummary,
-  formatMtaAlertsSummary
+  resolveTransitAlertSummary,
 } from "@flight-ai/core";
 import twilio from "twilio";
 
@@ -149,28 +148,14 @@ export const handler: Handler = async (event) => {
     const leaveTimeFormatted = driveLeaveFormatted;
 
     let transitLeaveFormatted: string | undefined;
-    let transitAlertsSummary: string | undefined;
 
     if (travelEstimate.transit) {
       const transitMinutes = Math.ceil(travelEstimate.transit.durationSeconds / 60);
       const transitLeaveUTC = calculateLeaveTime(flightUTC, transitMinutes, arrivalPreference);
       transitLeaveFormatted = formatLeaveTime(transitLeaveUTC, timezone);
-
-      if (travelEstimate.ctaAlerts && travelEstimate.ctaAlerts.length > 0) {
-        transitAlertsSummary = formatCtaAlertsSummary(
-          travelEstimate.ctaAlerts,
-          travelEstimate.stationInfo?.line || "CTA Transit"
-        );
-      } else if (travelEstimate.mtaAlerts && travelEstimate.mtaAlerts.length > 0) {
-        transitAlertsSummary = formatMtaAlertsSummary(
-          travelEstimate.mtaAlerts,
-          travelEstimate.stationInfo?.line || "MTA Transit"
-        );
-      }
     }
 
-    const transitAgency = travelEstimate.stationInfo?.agency || (travelEstimate.ctaAlerts ? "CTA" : travelEstimate.mtaAlerts ? "MTA" : "Public Transit");
-    const transitLineName = travelEstimate.stationInfo?.line || (travelEstimate.transit?.transitLine ? `${travelEstimate.transit.transitLine} (${transitAgency})` : `${transitAgency} Public Transit`);
+    const { transitAgency, transitLineName, transitAlertsSummary } = resolveTransitAlertSummary(travelEstimate);
 
     const schedDepartureFormatted = formatFlightTimeOnly(trip.Item.date, trip.Item.originAirport);
     const effectiveDepartureFormatted = formatFlightTimeOnly(effectiveDateStr, trip.Item.originAirport);
@@ -240,6 +225,9 @@ export const handler: Handler = async (event) => {
       }
       if (transitAlertsSummary) {
         transitText += `\n${transitAlertsSummary}`;
+      }
+      if (travelEstimate.stationInfo?.name) {
+        transitText += `\nStation: ${travelEstimate.stationInfo.name}`;
       }
       if (travelEstimate.stationInfo?.fareDescription) {
         transitText += `\nFare: ${travelEstimate.stationInfo.fareDescription}`;
@@ -381,8 +369,12 @@ export const handler: Handler = async (event) => {
             return `<div style="margin-top: 4px;">• <strong>${s.transitLine}</strong>${stopSeg}</div>`;
           }).join('')}
         </div>` : ''}
+        ${travelEstimate.stationInfo?.name ? `
+        <p style="color: #4b5563; font-size: 12px; margin: 8px 0 0 0;">
+          📍 Station: <strong>${travelEstimate.stationInfo.name}</strong>${travelEstimate.stationInfo.stationLocation ? ` (${travelEstimate.stationInfo.stationLocation})` : ''}
+        </p>` : ''}
         ${travelEstimate.stationInfo?.fareDescription ? `
-        <p style="color: #6b7280; font-size: 12px; margin: 8px 0 0 0;">
+        <p style="color: #6b7280; font-size: 12px; margin: 4px 0 0 0;">
           💳 Fare: ${travelEstimate.stationInfo.fareDescription}
         </p>` : ''}
       </div>

@@ -30,21 +30,21 @@
     "semantic_hash": "fe7a59ba3b8624385be993206cbae69d"
   },
   "packages/core/src/flights.ts": {
-    "mtime": 1789438680.2862504,
-    "seen": 1789438797.719378,
+    "mtime": 1789439140.7908337,
+    "seen": 1789439204.579236,
     "ast_hash": "881f2a5fd147b44d036325dd5ebdcfc0",
     "semantic_hash": ""
   },
   "packages/core/src/index.ts": {
-    "mtime": 1789432476.3436372,
-    "seen": 1789435640.0384262,
-    "ast_hash": "4af1534076e3014824fdb798e42fece7",
+    "mtime": 1789439096.4698691,
+    "seen": 1789439204.579239,
+    "ast_hash": "9c330a090fd203332f9e48822e8c9d89",
     "semantic_hash": ""
   },
   "packages/core/src/maps.ts": {
-    "mtime": 1789437814.6462343,
-    "seen": 1789438086.090424,
-    "ast_hash": "24a96fc2e731d347b539888cf12701f0",
+    "mtime": 1789439624.7139316,
+    "seen": 1789439833.2325912,
+    "ast_hash": "9946295664461ad69257d3ebbb8d0a0e",
     "semantic_hash": ""
   },
   "packages/core/src/timezones.ts": {
@@ -60,9 +60,9 @@
     "semantic_hash": "a638d4945166e83d2c64b2fe5531c784"
   },
   "packages/core/src/types.ts": {
-    "mtime": 1789437814.6470141,
-    "seen": 1789438086.090662,
-    "ast_hash": "97c66ee523334d6b830591499b0dc039",
+    "mtime": 1789439602.2574165,
+    "seen": 1789439833.2326012,
+    "ast_hash": "570644681d61f366570e07ea86118f94",
     "semantic_hash": ""
   },
   "packages/core/sst-env.d.ts": {
@@ -90,15 +90,15 @@
     "semantic_hash": ""
   },
   "packages/functions/src/flight.ts": {
-    "mtime": 1789438246.9116182,
-    "seen": 1789438425.8001778,
+    "mtime": 1789439140.7916207,
+    "seen": 1789439204.579284,
     "ast_hash": "0297a0040479e2fb2c8feb1214958447",
     "semantic_hash": ""
   },
   "packages/functions/src/notify.ts": {
-    "mtime": 1789437814.6493602,
-    "seen": 1789438086.090688,
-    "ast_hash": "fa612563b066e4735c372339801aeb4f",
+    "mtime": 1789439650.8972547,
+    "seen": 1789439833.232621,
+    "ast_hash": "ffbb94caec9c90ae5d9f7dc28fe07e71",
     "semantic_hash": ""
   },
   "packages/functions/src/profile.ts": {
@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "packages/functions/src/trip.ts": {
-    "mtime": 1789437814.6505504,
-    "seen": 1789438086.0906932,
-    "ast_hash": "27b750a8ef0809be1f5074d23ed0577e",
+    "mtime": 1789439700.191892,
+    "seen": 1789439833.232624,
+    "ast_hash": "fa381db78dea05001ecd414ccbf6ff0f",
     "semantic_hash": ""
   },
   "packages/functions/sst-env.d.ts": {
@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "packages/functions/tsconfig.json": {
-    "mtime": 1789432476.3501763,
-    "seen": 1789435640.038445,
-    "ast_hash": "03fba61bc8340ec76038631d07df343b",
+    "mtime": 1789439797.2046182,
+    "seen": 1789439833.232627,
+    "ast_hash": "1e74cbbc3e190264e625c7717c5d60fc",
     "semantic_hash": ""
   },
   "packages/web/eslint.config.js": {
@@ -144,8 +144,8 @@
     "semantic_hash": "98a38794f8f05fe467e686ff680cbc26"
   },
   "packages/web/src/App.tsx": {
-    "mtime": 1789438757.0311,
-    "seen": 1789438797.719421,
+    "mtime": 1789439140.7969685,
+    "seen": 1789439204.579307,
     "ast_hash": "756701924b5de47c528ea8b65cc8342f",
     "semantic_hash": ""
   },
@@ -174,15 +174,15 @@
     "semantic_hash": ""
   },
   "packages/web/src/Toast.tsx": {
-    "mtime": 1789438774.1838415,
-    "seen": 1789438797.71943,
+    "mtime": 1789439140.7975898,
+    "seen": 1789439204.57932,
     "ast_hash": "80d92be6b0e7be4a2064eca358504d39",
     "semantic_hash": ""
   },
   "packages/web/src/Trips.tsx": {
-    "mtime": 1789438396.2518487,
-    "seen": 1789438425.80021,
-    "ast_hash": "82511e48eb8cc9dcb093d5e58bf65844",
+    "mtime": 1789439189.6008008,
+    "seen": 1789439204.579322,
+    "ast_hash": "29b5b31911e08dfb023820e5dfdb92b5",
     "semantic_hash": ""
   },
   "packages/web/src/authTheme.ts": {
@@ -459,6 +459,18 @@
     "mtime": 1789432476.3403692,
     "seen": 1789435640.0384881,
     "ast_hash": "47c297b5e601fede64534bcd97bfecc6",
+    "semantic_hash": ""
+  },
+  "packages/core/src/tfl.ts": {
+    "mtime": 1789439597.1422138,
+    "seen": 1789439833.232596,
+    "ast_hash": "c6dda16a036488c87e71b065f9f66fab",
+    "semantic_hash": ""
+  },
+  "packages/core/test/tfl.test.ts": {
+    "mtime": 1789439715.5722556,
+    "seen": 1789439833.2326121,
+    "ast_hash": "7199a3fcf9247f5dc4978b33a6e00367",
     "semantic_hash": ""
   }
 }
