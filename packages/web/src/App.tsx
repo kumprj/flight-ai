@@ -20,6 +20,7 @@ interface FlightSegment {
 interface FlightData {
   flightNumber: string;
   departureTime: string;
+  arrivalTime?: string;
   origin: string;
   destination: string;
   airline: string;
@@ -29,6 +30,8 @@ interface Trip {
   sk: string;
   flightNumber: string;
   date: string;
+  arrivalTime?: string;
+  revisedArrivalTime?: string;
   originAirport: string;
   destinationAirport: string;
   homeAddress: string;
@@ -46,8 +49,6 @@ function App() {
   const [selectedFlight, setSelectedFlight] = useState<FlightData | null>(null);
   const [homeAddress, setHomeAddress] = useState('');
   const [searchMode, setSearchMode] = useState<'flight' | 'route'>('flight');
-  const [depAirport, setDepAirport] = useState('');
-  const [arrAirport, setArrAirport] = useState('');
   const [flightSegments, setFlightSegments] = useState<FlightSegment[]>([{ origin: '', destination: '' }]);
 
   const [view, setView] = useState<'add' | 'list' | 'profile'>('list');
@@ -84,6 +85,7 @@ function App() {
             await axios.post(`${Config.API_URL}/trips`, {
               flightNumber: results[0].flightNumber,
               date: results[0].departureTime,
+              arrivalTime: results[0].arrivalTime,
               originAirport: results[0].origin,
               destinationAirport: results[0].destination,
               homeAddress: calFlight.address || address,
@@ -210,12 +212,8 @@ function App() {
     const form = new FormData(e.target as HTMLFormElement);
     const flightNumRaw = form.get('flightNumber') as string;
     const address = form.get('homeAddress') as string;
-    const depRaw = form.get('depAirport') as string;
-    const arrRaw = form.get('arrAirport') as string;
 
     const flightNum = flightNumRaw ? flightNumRaw.toUpperCase().replace(/\s/g, '') : '';
-    const dep = depRaw ? depRaw.toUpperCase() : '';
-    const arr = arrRaw ? arrRaw.toUpperCase() : '';
 
     setHomeAddress(address);
 
@@ -258,8 +256,8 @@ function App() {
           params.date = selectedDate.toISOString().split('T')[0];
           params.segments = flightSegments;
         } else {
-          params.depIata = dep;
-          params.arrIata = arr;
+          params.depIata = firstSegment.origin;
+          params.arrIata = firstSegment.destination;
           params.date = selectedDate.toISOString().split('T')[0];
         }
         console.log('Route search params:', params);
@@ -280,11 +278,12 @@ function App() {
       } else {
         if (searchMode === 'flight') {
           showToast(`Flight ${flightNum} not found. Airlines typically publish schedules 6-11 months in advance.`, "error");
-        } else {
+          const routeOrigin = flightSegments[0]?.origin || '';
+          const routeDestination = flightSegments[flightSegments.length - 1]?.destination || '';
           const monthsOut = selectedDate ? Math.floor((selectedDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30)) : 0;
           const message = monthsOut > 11 
-            ? `No flights found from ${dep} to ${arr} on ${selectedDate?.toLocaleDateString()}. This date is ${monthsOut} months away - airlines typically publish schedules only 6-11 months in advance. Try using Google Calendar Import for future flights.`
-            : `No flights found from ${dep} to ${arr} on ${selectedDate?.toLocaleDateString()}.`;
+            ? `No flights found from ${routeOrigin} to ${routeDestination} on ${selectedDate?.toLocaleDateString()}. This date is ${monthsOut} months away - airlines typically publish schedules only 6-11 months in advance. Try using Google Calendar Import for future flights.`
+            : `No flights found from ${routeOrigin} to ${routeDestination} on ${selectedDate?.toLocaleDateString()}.`;
           showToast(message, "error");
         }
       }
@@ -313,6 +312,7 @@ function App() {
         await axios.put(`${Config.API_URL}/trips`, {
           flightNumber: selectedFlight?.flightNumber,
           date: selectedFlight?.departureTime,
+          arrivalTime: selectedFlight?.arrivalTime || editingTrip.arrivalTime,
           originAirport: selectedFlight?.origin,
           destinationAirport: selectedFlight?.destination,
           homeAddress: homeAddress,
@@ -332,6 +332,7 @@ function App() {
               return axios.post(`${Config.API_URL}/trips`, {
                 flightNumber: selectedFlight.flightNumber,
                 date: selectedFlight.departureTime,
+                arrivalTime: selectedFlight.arrivalTime,
                 originAirport: segment.origin,
                 destinationAirport: segment.destination,
                 homeAddress: homeAddress,
@@ -349,6 +350,7 @@ function App() {
           await axios.post(`${Config.API_URL}/trips`, {
             flightNumber: selectedFlight?.flightNumber,
             date: selectedFlight?.departureTime,
+            arrivalTime: selectedFlight?.arrivalTime,
             originAirport: selectedFlight?.origin,
             destinationAirport: selectedFlight?.destination,
             homeAddress: homeAddress,
@@ -366,8 +368,6 @@ function App() {
       setSelectedDate(null); // Reset date
       setEditingTrip(null);
       setSearchMode('flight');
-      setDepAirport('');
-      setArrAirport('');
       setFlightSegments([{ origin: '', destination: '' }]);
       setView('list');
     } catch (err) {
@@ -383,8 +383,6 @@ function App() {
     setSearchResults([]);
     setEditingTrip(null);
     setSearchMode('flight');
-    setDepAirport('');
-    setArrAirport('');
     setFlightSegments([{ origin: '', destination: '' }]);
   };
 
@@ -480,7 +478,7 @@ function App() {
                   className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-6 flex flex-col items-center font-sans">
 
                 <header
-                    className="w-full max-w-md flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800">
+                    className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800 transition-all duration-200`}>
                   <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-green-700 to-green-800 bg-clip-text text-transparent">
                     Make My Flight
                   </h1>
@@ -506,7 +504,7 @@ function App() {
                       Profile
                     </button>
                     <button
-                        onClick={signOut}
+                        onClick={() => signOut()}
                         className="text-gray-400 hover:text-red-500 pb-1 transition-colors cursor-pointer"
                     >
                       Sign Out
@@ -515,7 +513,7 @@ function App() {
 
                 </header>
 
-                <main className="w-full max-w-md">
+                <main className={`w-full ${view === 'list' ? 'max-w-6xl' : 'max-w-md'} transition-all duration-200`}>
                   {view === 'list' ? (
                       <Trips onBack={() => setView('add')} onEdit={handleEdit}/>
                   ) : view === 'profile' ? (

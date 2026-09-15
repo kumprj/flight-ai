@@ -2,6 +2,8 @@ export interface Trip {
   userId: string;
   flightNumber: string;
   date: string; // ISO 8601 naive scheduled departure time (e.g. 2026-05-20T14:30:00)
+  arrivalTime?: string; // ISO 8601 naive arrival time (e.g. 2026-05-20T17:45:00)
+  revisedArrivalTime?: string;
   originAirport: string;
   destinationAirport: string;
   homeAddress: string;
@@ -56,8 +58,11 @@ export interface TransitStep {
   distanceMeters?: number;
   durationSeconds?: number;
   transitLine?: string;
+  lineShortName?: string;
   transitAgency?: string;
   stopName?: string;
+  departureStop?: string;
+  arrivalStop?: string;
   vehicleType?: string;
   numStops?: number;
 }

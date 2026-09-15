@@ -10,20 +10,24 @@ export interface CalendarFlight {
   route?: { from: string; to: string };
 }
 
-declare global {
-  interface Window {
-    google?: {
-      accounts: {
-        oauth2: {
-          initTokenClient(config: {
-            client_id: string;
-            scope: string;
-            callback: (response: { access_token?: string; expires_in?: number; error?: string }) => void;
-          }): { requestAccessToken(): void };
-        };
-      };
-    };
-  }
+interface GoogleOAuthResponse {
+  access_token?: string;
+  expires_in?: number;
+  error?: string;
+}
+
+interface GoogleTokenClient {
+  requestAccessToken(): void;
+}
+
+interface GoogleTokenClientConfig {
+  client_id: string;
+  scope: string;
+  callback: (response: GoogleOAuthResponse) => void;
+}
+
+function getGoogleAccounts(): { oauth2: { initTokenClient(config: GoogleTokenClientConfig): GoogleTokenClient } } | undefined {
+  return (window as any).google?.accounts;
 }
 
 const TOKEN_KEY = 'gcal_access_token';
@@ -48,18 +52,17 @@ function cacheToken(token: string, expiresIn: number) {
 }
 
 const FLIGHT_REGEX = /\b([A-Z]{2})\s?(\d{2,4})\b/g;
-const AIRPORT_REGEX = /\b([A-Z]{3})\b/g;
 const CALENDAR_SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
 
 function waitForGIS(): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (window.google?.accounts?.oauth2) {
+    if (getGoogleAccounts()?.oauth2) {
       resolve();
       return;
     }
     let attempts = 0;
     const interval = setInterval(() => {
-      if (window.google?.accounts?.oauth2) {
+      if (getGoogleAccounts()?.oauth2) {
         clearInterval(interval);
         resolve();
       } else if (++attempts > 40) {
@@ -76,10 +79,15 @@ function getAccessToken(): Promise<string> {
 
   return new Promise(async (resolve, reject) => {
     await waitForGIS();
-    const client = window.google!.accounts.oauth2.initTokenClient({
+    const accounts = getGoogleAccounts();
+    if (!accounts?.oauth2) {
+      reject(new Error('Google Identity Services not initialized'));
+      return;
+    }
+    const client = accounts.oauth2.initTokenClient({
       client_id: Config.GOOGLE_CLIENT_ID,
       scope: CALENDAR_SCOPE,
-      callback: (response) => {
+      callback: (response: GoogleOAuthResponse) => {
         if (response.error || !response.access_token) {
           reject(new Error(response.error || 'Failed to get access token'));
         } else {
