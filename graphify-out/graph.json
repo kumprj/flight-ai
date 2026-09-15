@@ -69,6 +69,19 @@
       "source_location": "L98"
     },
     {
+      "id": "packages_core_src_types_feedbacksubmission",
+      "label": "FeedbackSubmission",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "maps.ts",
+      "file_type": "code",
+      "norm_label": "feedbacksubmission",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L255"
+    },
+    {
       "id": "packages_core_src_types_londontransitstationinfo",
       "label": "LondonTransitStationInfo",
       "_callable": true,
@@ -277,6 +290,58 @@
       "source_location": "L178"
     },
     {
+      "id": "packages_core_src_feedback_formatgithubissueparams",
+      "label": "FormatGitHubIssueParams",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "formatgithubissueparams",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "packages_core_src_feedback_formattedgithubissue",
+      "label": "FormattedGitHubIssue",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "formattedgithubissue",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "packages_core_src_types_feedbackdiagnostics",
+      "label": "FeedbackDiagnostics",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "feedbackdiagnostics",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L243"
+    },
+    {
+      "id": "packages_core_src_types_feedbacktype",
+      "label": "FeedbackType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "feedbacktype",
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L241"
+    },
+    {
       "id": "packages_core_src_airports_airportinfo",
       "label": "AirportInfo",
       "_callable": true,
@@ -404,7 +469,7 @@
       "file_type": "code",
       "norm_label": "flightdata",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "packages_web_src_app_flightsegment",
@@ -417,7 +482,7 @@
       "file_type": "code",
       "norm_label": "flightsegment",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "packages_web_src_app_multisegmentresult",
@@ -430,7 +495,7 @@
       "file_type": "code",
       "norm_label": "multisegmentresult",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L44"
+      "source_location": "L45"
     },
     {
       "id": "packages_web_src_app_step",
@@ -443,7 +508,7 @@
       "file_type": "code",
       "norm_label": "step",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L50"
+      "source_location": "L51"
     },
     {
       "id": "packages_web_src_app_trip",
@@ -456,7 +521,7 @@
       "file_type": "code",
       "norm_label": "trip",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L29"
+      "source_location": "L30"
     },
     {
       "id": "packages_web_src_calendarimport_existingtriplike",
@@ -496,6 +561,45 @@
       "norm_label": "props",
       "source_file": "packages/web/src/DatePicker.tsx",
       "source_location": "L33"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_currenttripcontext",
+      "label": "CurrentTripContext",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "currenttripcontext",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_feedbackmodalprops",
+      "label": "FeedbackModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbackmodalprops",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_feedbacktype",
+      "label": "FeedbackType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbacktype",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L6"
     },
     {
       "id": "packages_web_src_onboarding_onboardingprops",
@@ -691,78 +795,6 @@
       "norm_label": "resource",
       "source_file": "sst-env.d.ts",
       "source_location": "L8"
-    },
-    {
-      "id": "packages_functions_src_profile_confirmverification",
-      "label": "confirmVerification()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "profile.ts",
-      "file_type": "code",
-      "norm_label": "confirmverification()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L189"
-    },
-    {
-      "id": "packages_functions_src_profile_decodejwt",
-      "label": "decodeJWT()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "profile.ts",
-      "file_type": "code",
-      "norm_label": "decodejwt()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "packages_functions_src_profile_get",
-      "label": "get()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "profile.ts",
-      "file_type": "code",
-      "norm_label": "get()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L58"
-    },
-    {
-      "id": "packages_functions_src_profile_getuseridfromevent",
-      "label": "getUserIdFromEvent()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "profile.ts",
-      "file_type": "code",
-      "norm_label": "getuseridfromevent()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L33"
-    },
-    {
-      "id": "packages_functions_src_profile_sendverification",
-      "label": "sendVerification()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "profile.ts",
-      "file_type": "code",
-      "norm_label": "sendverification()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L129"
-    },
-    {
-      "id": "packages_functions_src_profile_update",
-      "label": "update()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "profile.ts",
-      "file_type": "code",
-      "norm_label": "update()",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L88"
     },
     {
       "id": "packages_core_src_bart_alertmatchesairport",
@@ -1137,6 +1169,42 @@
       "source_location": "L134"
     },
     {
+      "id": "packages_core_src_feedback_formatgithubissue",
+      "label": "formatGitHubIssue()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "formatgithubissue()",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "packages_functions_src_feedback_getauthdetails",
+      "label": "getAuthDetails()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "getauthdetails()",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "packages_functions_src_feedback_submit",
+      "label": "submit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "core/src/feedback.ts",
+      "file_type": "code",
+      "norm_label": "submit()",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L33"
+    },
+    {
       "id": "packages_core_src_airports_getairportaddress",
       "label": "getAirportAddress()",
       "_callable": true,
@@ -1353,6 +1421,18 @@
       "source_location": "L301"
     },
     {
+      "id": "packages_core_src_twilio_getclient",
+      "label": "getClient()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "getclient()",
+      "source_file": "packages/core/src/twilio.ts",
+      "source_location": "L4"
+    },
+    {
       "id": "packages_functions_src_cron_handler",
       "label": "handler()",
       "_callable": true,
@@ -1459,6 +1539,42 @@
       "norm_label": "update()",
       "source_file": "packages/functions/src/trip.ts",
       "source_location": "L99"
+    },
+    {
+      "id": "packages_web_src_app_app",
+      "label": "App()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "app()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L81"
+    },
+    {
+      "id": "packages_web_src_app_formatdateonly",
+      "label": "formatDateOnly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "formatdateonly()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L67"
+    },
+    {
+      "id": "packages_web_src_app_gettripdateonly",
+      "label": "getTripDateOnly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "gettripdateonly()",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L75"
     },
     {
       "id": "packages_web_src_types_google_maps_d_autocomplete_addlistener",
@@ -1593,42 +1709,6 @@
       "source_location": "L15"
     },
     {
-      "id": "packages_web_src_app_app",
-      "label": "App()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "app()",
-      "source_file": "packages/web/src/App.tsx",
-      "source_location": "L80"
-    },
-    {
-      "id": "packages_web_src_app_formatdateonly",
-      "label": "formatDateOnly()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "formatdateonly()",
-      "source_file": "packages/web/src/App.tsx",
-      "source_location": "L66"
-    },
-    {
-      "id": "packages_web_src_app_gettripdateonly",
-      "label": "getTripDateOnly()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "gettripdateonly()",
-      "source_file": "packages/web/src/App.tsx",
-      "source_location": "L74"
-    },
-    {
       "id": "packages_web_src_app_parselocaldate",
       "label": "parseLocalDate()",
       "_callable": true,
@@ -1638,7 +1718,7 @@
       "file_type": "code",
       "norm_label": "parselocaldate()",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L52"
+      "source_location": "L53"
     },
     {
       "id": "packages_web_src_calendarimport_calendarimport",
@@ -1665,6 +1745,18 @@
       "source_location": "L40"
     },
     {
+      "id": "packages_web_src_feedbackmodal_feedbackmodal",
+      "label": "FeedbackModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbackmodal()",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L29"
+    },
+    {
       "id": "packages_web_src_onboarding_onboarding",
       "label": "Onboarding()",
       "_callable": true,
@@ -1686,7 +1778,7 @@
       "file_type": "code",
       "norm_label": "profile()",
       "source_file": "packages/web/src/Profile.tsx",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
       "id": "packages_web_src_toast_toast",
@@ -1905,6 +1997,78 @@
       "source_location": "L4"
     },
     {
+      "id": "packages_functions_src_profile_confirmverification",
+      "label": "confirmVerification()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "confirmverification()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L189"
+    },
+    {
+      "id": "packages_functions_src_profile_decodejwt",
+      "label": "decodeJWT()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "decodejwt()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "packages_functions_src_profile_get",
+      "label": "get()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "get()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L58"
+    },
+    {
+      "id": "packages_functions_src_profile_getuseridfromevent",
+      "label": "getUserIdFromEvent()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "getuseridfromevent()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "packages_functions_src_profile_sendverification",
+      "label": "sendVerification()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "sendverification()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L129"
+    },
+    {
+      "id": "packages_functions_src_profile_update",
+      "label": "update()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "update()",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L88"
+    },
+    {
       "id": "sst_config_app",
       "label": "app()",
       "_callable": true,
@@ -1941,18 +2105,6 @@
       "source_location": "L3"
     },
     {
-      "id": "packages_core_src_twilio_getclient",
-      "label": "getClient()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "twilio.ts",
-      "file_type": "code",
-      "norm_label": "getclient()",
-      "source_file": "packages/core/src/twilio.ts",
-      "source_location": "L4"
-    },
-    {
       "id": "pnpm_workspace",
       "label": "pnpm Monorepo Workspace Configuration",
       "_origin": "ast",
@@ -1983,37 +2135,72 @@
       "source_url": null
     },
     {
-      "id": "packages_functions_src_profile",
-      "label": "profile.ts",
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig",
+      "label": "query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
       "_origin": "ast",
       "community": 0,
-      "community_name": "profile.ts",
-      "file_type": "code",
-      "norm_label": "profile.ts",
-      "source_file": "packages/functions/src/profile.ts",
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "frontmatter": {
+        "type": "query",
+        "date": "2026-09-14T20:26:38.731599+00:00",
+        "question": "Why does getAirportTimezone() connect Make My Flight Core Backend &amp; Data to AWS Serverless SDK Dependencies?",
+        "contributor": "graphify",
+        "outcome": "useful",
+        "source_nodes": "[&quot;packages_core_src_airports_getairporttimezone&quot;, &quot;packages_functions_src_cron&quot;, &quot;packages_functions_src_notify&quot;]"
+      },
+      "node_kind": "page",
+      "norm_label": "query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
       "source_location": "L1"
     },
     {
-      "id": "packages_functions_src_profile_dynamodb",
-      "label": "dynamodb",
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_answer",
+      "label": "Answer",
       "_origin": "ast",
       "community": 0,
-      "community_name": "profile.ts",
-      "file_type": "code",
-      "norm_label": "dynamodb",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L7"
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "answer",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L12"
     },
     {
-      "id": "packages_functions_src_profile_twilioclient",
-      "label": "twilioClient",
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_outcome",
+      "label": "Outcome",
       "_origin": "ast",
       "community": 0,
-      "community_name": "profile.ts",
-      "file_type": "code",
-      "norm_label": "twilioclient",
-      "source_file": "packages/functions/src/profile.ts",
-      "source_location": "L9"
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "outcome",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "label": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "q: why does getairporttimezone() connect make my flight core backend & data to aws serverless sdk dependencies?",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_source_nodes",
+      "label": "Source Nodes",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "source nodes",
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L20"
     },
     {
       "id": "packages_core_src_bart",
@@ -2446,6 +2633,160 @@
       "source_location": "L23"
     },
     {
+      "id": "packages_web_package_devdependencies",
+      "label": "devDependencies",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "devdependencies",
+      "source_file": "packages/web/package.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "packages_web_package_devdependencies_eslint",
+      "label": "eslint",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "eslint",
+      "source_file": "packages/web/package.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "packages_web_package_devdependencies_eslint_js",
+      "label": "@eslint/js",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@eslint/js",
+      "source_file": "packages/web/package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "packages_web_package_devdependencies_eslint_plugin_react_hooks",
+      "label": "eslint-plugin-react-hooks",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "eslint-plugin-react-hooks",
+      "source_file": "packages/web/package.json",
+      "source_location": "L30"
+    },
+    {
+      "id": "packages_web_package_devdependencies_eslint_plugin_react_refresh",
+      "label": "eslint-plugin-react-refresh",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "eslint-plugin-react-refresh",
+      "source_file": "packages/web/package.json",
+      "source_location": "L31"
+    },
+    {
+      "id": "packages_web_package_devdependencies_globals",
+      "label": "globals",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "globals",
+      "source_file": "packages/web/package.json",
+      "source_location": "L32"
+    },
+    {
+      "id": "packages_web_package_devdependencies_tailwindcss",
+      "label": "tailwindcss",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "tailwindcss",
+      "source_file": "packages/web/package.json",
+      "source_location": "L33"
+    },
+    {
+      "id": "packages_web_package_devdependencies_types_node",
+      "label": "@types/node",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@types/node",
+      "source_file": "packages/web/package.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "packages_web_package_devdependencies_types_react",
+      "label": "@types/react",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@types/react",
+      "source_file": "packages/web/package.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "packages_web_package_devdependencies_types_react_dom",
+      "label": "@types/react-dom",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@types/react-dom",
+      "source_file": "packages/web/package.json",
+      "source_location": "L27"
+    },
+    {
+      "id": "packages_web_package_devdependencies_typescript",
+      "label": "typescript",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "typescript",
+      "source_file": "packages/web/package.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "packages_web_package_devdependencies_typescript_eslint",
+      "label": "typescript-eslint",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "typescript-eslint",
+      "source_file": "packages/web/package.json",
+      "source_location": "L35"
+    },
+    {
+      "id": "packages_web_package_devdependencies_vite",
+      "label": "vite",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "vite",
+      "source_file": "packages/web/package.json",
+      "source_location": "L36"
+    },
+    {
+      "id": "packages_web_package_devdependencies_vitejs_plugin_react",
+      "label": "@vitejs/plugin-react",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "devDependencies",
+      "file_type": "code",
+      "norm_label": "@vitejs/plugin-react",
+      "source_file": "packages/web/package.json",
+      "source_location": "L28"
+    },
+    {
       "id": "packages_functions_package",
       "label": "functions/package.json",
       "_origin": "ast",
@@ -2653,17 +2994,6 @@
       "norm_label": "@types/node",
       "source_file": "packages/functions/package.json",
       "source_location": "L16"
-    },
-    {
-      "id": "ref_aws_sdk_client_lambda",
-      "label": "@aws-sdk/client-lambda",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "functions/package.json",
-      "file_type": "concept",
-      "norm_label": "@aws-sdk/client-lambda",
-      "source_file": "packages/functions/package.json",
-      "source_location": "L10"
     },
     {
       "id": "ref_flight_ai_core",
@@ -3413,158 +3743,81 @@
       "source_location": "L16"
     },
     {
-      "id": "packages_web_package_devdependencies",
-      "label": "devDependencies",
+      "id": "packages_core_src_dynamodb_database",
+      "label": "Database",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "devdependencies",
-      "source_file": "packages/web/package.json",
-      "source_location": "L23"
+      "norm_label": "database",
+      "source_file": "packages/core/src/dynamodb.ts",
+      "source_location": "L9"
     },
     {
-      "id": "packages_web_package_devdependencies_eslint",
-      "label": "eslint",
+      "id": "packages_core_src_feedback",
+      "label": "core/src/feedback.ts",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "eslint",
-      "source_file": "packages/web/package.json",
-      "source_location": "L29"
+      "norm_label": "core/src/feedback.ts",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1"
     },
     {
-      "id": "packages_web_package_devdependencies_eslint_js",
-      "label": "@eslint/js",
+      "id": "packages_core_src_feedback_type_labels",
+      "label": "TYPE_LABELS",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "@eslint/js",
-      "source_file": "packages/web/package.json",
-      "source_location": "L24"
-    },
-    {
-      "id": "packages_web_package_devdependencies_eslint_plugin_react_hooks",
-      "label": "eslint-plugin-react-hooks",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "eslint-plugin-react-hooks",
-      "source_file": "packages/web/package.json",
-      "source_location": "L30"
-    },
-    {
-      "id": "packages_web_package_devdependencies_eslint_plugin_react_refresh",
-      "label": "eslint-plugin-react-refresh",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "eslint-plugin-react-refresh",
-      "source_file": "packages/web/package.json",
-      "source_location": "L31"
-    },
-    {
-      "id": "packages_web_package_devdependencies_globals",
-      "label": "globals",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "globals",
-      "source_file": "packages/web/package.json",
-      "source_location": "L32"
-    },
-    {
-      "id": "packages_web_package_devdependencies_tailwindcss",
-      "label": "tailwindcss",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "tailwindcss",
-      "source_file": "packages/web/package.json",
-      "source_location": "L33"
-    },
-    {
-      "id": "packages_web_package_devdependencies_types_node",
-      "label": "@types/node",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@types/node",
-      "source_file": "packages/web/package.json",
-      "source_location": "L25"
-    },
-    {
-      "id": "packages_web_package_devdependencies_types_react",
-      "label": "@types/react",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@types/react",
-      "source_file": "packages/web/package.json",
+      "norm_label": "type_labels",
+      "source_file": "packages/core/src/feedback.ts",
       "source_location": "L26"
     },
     {
-      "id": "packages_web_package_devdependencies_types_react_dom",
-      "label": "@types/react-dom",
+      "id": "packages_core_src_feedback_type_prefixes",
+      "label": "TYPE_PREFIXES",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "@types/react-dom",
-      "source_file": "packages/web/package.json",
-      "source_location": "L27"
+      "norm_label": "type_prefixes",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L19"
     },
     {
-      "id": "packages_web_package_devdependencies_typescript",
-      "label": "typescript",
+      "id": "packages_core_test_feedback_test",
+      "label": "feedback.test.ts",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "typescript",
-      "source_file": "packages/web/package.json",
-      "source_location": "L34"
+      "norm_label": "feedback.test.ts",
+      "source_file": "packages/core/test/feedback.test.ts",
+      "source_location": "L1"
     },
     {
-      "id": "packages_web_package_devdependencies_typescript_eslint",
-      "label": "typescript-eslint",
+      "id": "packages_functions_src_feedback",
+      "label": "functions/src/feedback.ts",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "typescript-eslint",
-      "source_file": "packages/web/package.json",
-      "source_location": "L35"
+      "norm_label": "functions/src/feedback.ts",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L1"
     },
     {
-      "id": "packages_web_package_devdependencies_vite",
-      "label": "vite",
+      "id": "packages_functions_src_feedback_corsheaders",
+      "label": "corsHeaders",
       "_origin": "ast",
       "community": 19,
-      "community_name": "devDependencies",
+      "community_name": "core/src/feedback.ts",
       "file_type": "code",
-      "norm_label": "vite",
-      "source_file": "packages/web/package.json",
-      "source_location": "L36"
-    },
-    {
-      "id": "packages_web_package_devdependencies_vitejs_plugin_react",
-      "label": "@vitejs/plugin-react",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "devDependencies",
-      "file_type": "code",
-      "norm_label": "@vitejs/plugin-react",
-      "source_file": "packages/web/package.json",
-      "source_location": "L28"
+      "norm_label": "corsheaders",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L26"
     },
     {
       "id": "packages_core_src_airports",
@@ -3600,50 +3853,6 @@
       "source_location": "L1"
     },
     {
-      "id": "packages_core_src_dynamodb",
-      "label": "dynamodb.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "dynamodb.ts",
-      "source_file": "packages/core/src/dynamodb.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "packages_core_src_dynamodb_client",
-      "label": "client",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "client",
-      "source_file": "packages/core/src/dynamodb.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "packages_core_src_dynamodb_database",
-      "label": "Database",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "database",
-      "source_file": "packages/core/src/dynamodb.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "packages_core_src_dynamodb_docclient",
-      "label": "docClient",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "code",
-      "norm_label": "docclient",
-      "source_file": "packages/core/src/dynamodb.ts",
-      "source_location": "L7"
-    },
-    {
       "id": "packages_core_src_index",
       "label": "index.ts",
       "_origin": "ast",
@@ -3675,6 +3884,28 @@
       "norm_label": "timezones.ts",
       "source_file": "packages/core/src/timezones.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_twilio",
+      "label": "twilio.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "twilio.ts",
+      "source_file": "packages/core/src/twilio.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_twilio_messenger",
+      "label": "Messenger",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trip.ts",
+      "file_type": "code",
+      "norm_label": "messenger",
+      "source_file": "packages/core/src/twilio.ts",
+      "source_location": "L8"
     },
     {
       "id": "packages_core_test_airports_test",
@@ -3853,14 +4084,14 @@
       "source_location": "L1"
     },
     {
-      "id": "ref_aws_sdk_client_dynamodb",
-      "label": "@aws-sdk/client-dynamodb",
+      "id": "ref_aws_sdk_client_lambda",
+      "label": "@aws-sdk/client-lambda",
       "_origin": "ast",
       "community": 2,
       "community_name": "trip.ts",
       "file_type": "concept",
-      "norm_label": "@aws-sdk/client-dynamodb",
-      "source_file": "packages/core/package.json",
+      "norm_label": "@aws-sdk/client-lambda",
+      "source_file": "packages/functions/package.json",
       "source_location": "L10"
     },
     {
@@ -3873,17 +4104,6 @@
       "norm_label": "@aws-sdk/client-ses",
       "source_file": "package.json",
       "source_location": "L27"
-    },
-    {
-      "id": "ref_aws_sdk_lib_dynamodb",
-      "label": "@aws-sdk/lib-dynamodb",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trip.ts",
-      "file_type": "concept",
-      "norm_label": "@aws-sdk/lib-dynamodb",
-      "source_file": "packages/core/package.json",
-      "source_location": "L12"
     },
     {
       "id": "packages_web_src_types_google_maps_d",
@@ -4262,6 +4482,28 @@
       "source_location": "L1"
     },
     {
+      "id": "packages_web_src_feedbackmodal",
+      "label": "FeedbackModal.tsx",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "feedbackmodal.tsx",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_web_src_feedbackmodal_type_options",
+      "label": "TYPE_OPTIONS",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "type_options",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L22"
+    },
+    {
       "id": "packages_web_src_main",
       "label": "main.tsx",
       "_origin": "ast",
@@ -4326,17 +4568,6 @@
       "norm_label": "googlecalendar.ts",
       "source_file": "packages/web/src/utils/googleCalendar.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "ref_aws_amplify",
-      "label": "aws-amplify",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "App.tsx",
-      "file_type": "concept",
-      "norm_label": "aws-amplify",
-      "source_file": "packages/web/package.json",
-      "source_location": "L16"
     },
     {
       "id": "ref_react",
@@ -4647,6 +4878,72 @@
       "source_location": "L3"
     },
     {
+      "id": "packages_core_src_dynamodb",
+      "label": "dynamodb.ts",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "dynamodb.ts",
+      "source_file": "packages/core/src/dynamodb.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_core_src_dynamodb_client",
+      "label": "client",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "client",
+      "source_file": "packages/core/src/dynamodb.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "packages_core_src_dynamodb_docclient",
+      "label": "docClient",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "docclient",
+      "source_file": "packages/core/src/dynamodb.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "packages_functions_src_profile",
+      "label": "profile.ts",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "profile.ts",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "packages_functions_src_profile_dynamodb",
+      "label": "dynamodb",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "dynamodb",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "packages_functions_src_profile_twilioclient",
+      "label": "twilioClient",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "code",
+      "norm_label": "twilioclient",
+      "source_file": "packages/functions/src/profile.ts",
+      "source_location": "L9"
+    },
+    {
       "id": "packages_core_package_json_ref_axios",
       "label": "axios",
       "_origin": "ast",
@@ -4691,6 +4988,17 @@
       "source_location": "L17"
     },
     {
+      "id": "ref_aws_sdk_client_dynamodb",
+      "label": "@aws-sdk/client-dynamodb",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "concept",
+      "norm_label": "@aws-sdk/client-dynamodb",
+      "source_file": "packages/core/package.json",
+      "source_location": "L10"
+    },
+    {
       "id": "ref_aws_sdk_client_scheduler",
       "label": "@aws-sdk/client-scheduler",
       "_origin": "ast",
@@ -4700,6 +5008,17 @@
       "norm_label": "@aws-sdk/client-scheduler",
       "source_file": "packages/core/package.json",
       "source_location": "L11"
+    },
+    {
+      "id": "ref_aws_sdk_lib_dynamodb",
+      "label": "@aws-sdk/lib-dynamodb",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "core/package.json",
+      "file_type": "concept",
+      "norm_label": "@aws-sdk/lib-dynamodb",
+      "source_file": "packages/core/package.json",
+      "source_location": "L12"
     },
     {
       "id": "packages_web_tsconfig",
@@ -5052,6 +5371,17 @@
       "norm_label": "typescript",
       "source_file": "packages/web/package.json",
       "source_location": "L34"
+    },
+    {
+      "id": "ref_aws_amplify",
+      "label": "aws-amplify",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "web/package.json",
+      "file_type": "concept",
+      "norm_label": "aws-amplify",
+      "source_file": "packages/web/package.json",
+      "source_location": "L16"
     },
     {
       "id": "ref_aws_amplify_ui_react",
@@ -5601,26 +5931,72 @@
       "source_location": "L4"
     },
     {
-      "id": "packages_core_src_twilio",
-      "label": "twilio.ts",
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai",
+      "label": "query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
       "_origin": "ast",
       "community": 6,
-      "community_name": "twilio.ts",
-      "file_type": "code",
-      "norm_label": "twilio.ts",
-      "source_file": "packages/core/src/twilio.ts",
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "frontmatter": {
+        "type": "query",
+        "date": "2026-09-14T20:30:43.914836+00:00",
+        "question": "How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+        "contributor": "graphify",
+        "outcome": "useful",
+        "source_nodes": "[&quot;packages_core_src_maps_googlemaps&quot;, &quot;packages_core_src_maps_gettraveltime&quot;, &quot;packages_functions_src_notify&quot;, &quot;packages_functions_src_trip&quot;]"
+      },
+      "node_kind": "page",
+      "norm_label": "query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
       "source_location": "L1"
     },
     {
-      "id": "packages_core_src_twilio_messenger",
-      "label": "Messenger",
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_answer",
+      "label": "Answer",
       "_origin": "ast",
       "community": 6,
-      "community_name": "twilio.ts",
-      "file_type": "code",
-      "norm_label": "messenger",
-      "source_file": "packages/core/src/twilio.ts",
-      "source_location": "L8"
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "answer",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_outcome",
+      "label": "Outcome",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "outcome",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "label": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "q: how does traffic prediction work from departure airport to google maps routes api in make my flight?",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_source_nodes",
+      "label": "Source Nodes",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "source nodes",
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L20"
     },
     {
       "id": "packages_core_sst_env_d",
@@ -6422,6 +6798,30 @@
       "weight": 1.0
     },
     {
+      "source": "packages_functions_src_feedback_submit",
+      "target": "packages_functions_src_feedback_getauthdetails",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback_submit",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
       "source": "packages_functions_src_notify_handler",
       "target": "packages_core_src_dateutils_parseflighttimetoutc",
       "relation": "calls",
@@ -6790,7 +7190,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L1030",
+      "source_location": "L1016",
       "weight": 1.0
     },
     {
@@ -6802,7 +7202,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L1031",
+      "source_location": "L1017",
       "weight": 1.0
     },
     {
@@ -6814,7 +7214,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L107",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -6826,7 +7226,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L109",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -6838,7 +7238,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L109",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -6850,7 +7250,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L132",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
@@ -6862,7 +7262,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L184",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -7095,6 +7495,18 @@
     },
     {
       "source": "packages_core_src_index",
+      "target": "packages_core_src_feedback",
+      "relation": "re_exports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "export",
+      "source_file": "packages/core/src/index.ts",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_index",
       "target": "packages_core_src_maps",
       "relation": "re_exports",
       "_origin": "ast",
@@ -7211,6 +7623,30 @@
       "context": "export",
       "source_file": "packages/web/src/utils/flightTimes.ts",
       "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback_formatgithubissueparams",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback_formatgithubissueparams",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -7559,6 +7995,30 @@
       "context": "import",
       "source_file": "packages/core/src/dateUtils.ts",
       "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -8150,6 +8610,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_test_feedback_test",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/feedback.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_test_maps_test",
       "target": "packages_core_src_maps_googlemaps",
       "relation": "imports",
@@ -8519,6 +8991,54 @@
       "context": "import",
       "source_file": "packages/functions/src/cron.ts",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_dynamodb_database",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -9051,7 +9571,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_onboarding_onboarding",
+      "target": "packages_web_src_feedbackmodal_feedbackmodal",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9063,7 +9583,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_utils_googlecalendar_calendarflight",
+      "target": "packages_web_src_onboarding_onboarding",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9071,6 +9591,18 @@
       "context": "import",
       "source_file": "packages/web/src/App.tsx",
       "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_utils_googlecalendar_calendarflight",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -9227,6 +9759,18 @@
       "context": "import",
       "source_file": "packages/web/src/CalendarImport.tsx",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_config_config",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -9470,6 +10014,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_types",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_src_maps",
       "target": "packages_core_src_airports",
       "relation": "imports_from",
@@ -9698,6 +10254,18 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_test_feedback_test",
+      "target": "packages_core_src_feedback",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/core/test/feedback.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_test_maps_test",
       "target": "packages_core_src_maps",
       "relation": "imports_from",
@@ -9803,6 +10371,18 @@
       "context": "import",
       "source_file": "packages/functions/src/cron.ts",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_core_src_index",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -10047,7 +10627,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_onboarding",
+      "target": "packages_web_src_feedbackmodal",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10059,7 +10639,7 @@
     },
     {
       "source": "packages_web_src_app",
-      "target": "packages_web_src_utils_googlecalendar",
+      "target": "packages_web_src_onboarding",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10067,6 +10647,18 @@
       "context": "import",
       "source_file": "packages/web/src/App.tsx",
       "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_app",
+      "target": "packages_web_src_utils_googlecalendar",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/App.tsx",
+      "source_location": "L14",
       "type_only": true,
       "weight": 1.0
     },
@@ -10200,6 +10792,30 @@
       "context": "import",
       "source_file": "packages/web/src/DatePicker.tsx",
       "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "ref_react",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_config",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -10879,6 +11495,94 @@
       "confidence_score": 1.0,
       "source_file": "GEMINI.md",
       "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_answer",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_outcome",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_q_why_does_getairporttimezone_connect_make_my_flight_core_backend_data_to_aws_serverless_sdk_dependencies",
+      "target": "graphify_out_memory_query_20260914_202638_3f7f2778_why_does_getairporttimezone_connect_make_my_flig_source_nodes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_202638_3f7f2778_why_does_getairporttimezone___connect_make_my_flig.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_answer",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_outcome",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_q_how_does_traffic_prediction_work_from_departure_airport_to_google_maps_routes_api_in_make_my_flight",
+      "target": "graphify_out_memory_query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai_source_nodes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "graphify-out/memory/query_20260914_203043_5cee28e5_how_does_traffic_prediction_work_from_departure_ai.md",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -11718,6 +12422,61 @@
       "weight": 1.0
     },
     {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_formattedgithubissue",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_type_prefixes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_type_labels",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_formatgithubissueparams",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_feedback",
+      "target": "packages_core_src_feedback_formatgithubissue",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/feedback.ts",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
       "source": "packages_core_src_flights",
       "target": "packages_core_src_flights_flights",
       "relation": "contains",
@@ -12221,6 +12980,39 @@
       "confidence_score": 1.0,
       "source_file": "packages/core/src/types.ts",
       "source_location": "L233",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_types",
+      "target": "packages_core_src_types_feedbacktype",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L241",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_types",
+      "target": "packages_core_src_types_feedbackdiagnostics",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L243",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_core_src_types",
+      "target": "packages_core_src_types_feedbacksubmission",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/core/src/types.ts",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -12749,6 +13541,39 @@
       "confidence_score": 1.0,
       "source_file": "packages/functions/src/cron.ts",
       "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_functions_src_feedback_corsheaders",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_functions_src_feedback_submit",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_functions_src_feedback",
+      "target": "packages_functions_src_feedback_getauthdetails",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/functions/src/feedback.ts",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -13562,7 +14387,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -13573,7 +14398,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -13584,7 +14409,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -13595,7 +14420,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L44",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -13606,7 +14431,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -13617,7 +14442,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -13628,7 +14453,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L66",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -13639,7 +14464,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -13650,7 +14475,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/App.tsx",
-      "source_location": "L80",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -13731,6 +14556,61 @@
       "weight": 1.0
     },
     {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_feedbackmodalprops",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_type_options",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_feedbackmodal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_feedbacktype",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "packages_web_src_feedbackmodal",
+      "target": "packages_web_src_feedbackmodal_currenttripcontext",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/web/src/FeedbackModal.tsx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
       "source": "packages_web_src_onboarding",
       "target": "packages_web_src_onboarding_onboarding",
       "relation": "contains",
@@ -13771,7 +14651,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "packages/web/src/Profile.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -15434,5 +16314,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6337f0047633a2561fe2b73c7338f8bd4c580471"
+  "built_at_commit": "817b42b58c1508e91fd5486531c20d7fe118f9e3"
 }

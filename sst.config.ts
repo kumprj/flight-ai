@@ -252,6 +252,14 @@ export default $config({
       handler: "packages/functions/src/profile.confirmVerification",
     });
 
+    api.route("POST /feedback", {
+      handler: "packages/functions/src/feedback.submit",
+      environment: {
+        GITHUB_TOKEN: process.env.GITHUB_TOKEN || "",
+        GITHUB_REPO: process.env.GITHUB_REPO || "kumprj/flight-ai",
+      },
+    });
+
 
     return {
       ApiEndpoint: api.url,

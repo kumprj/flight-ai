@@ -12,3 +12,4 @@ export * from "./tfl";
 export * from "./bart";
 export * from "./wmata";
 export * from "./mbta";
+export * from "./feedback";

@@ -13,6 +13,7 @@
 
 body {
   transition: background-color 0.3s, color 0.3s;
+  -webkit-tap-highlight-color: transparent;
 }
 @keyframes slideIn {
   from { transform: translateY(-100%); opacity: 0; }
