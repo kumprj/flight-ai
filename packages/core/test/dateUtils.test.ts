@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   parseFlightTimeToUTC,
   calculateHoursUntilFlight,
@@ -7,9 +7,17 @@ import {
   formatFlightTimeOnly,
   formatFlightTime,
   formatLeaveTime,
+  resolveTimezone,
 } from "../src/dateUtils";
 
 describe("dateUtils", () => {
+  describe("resolveTimezone", () => {
+    it("returns America/Chicago when input is missing or empty", () => {
+      expect(resolveTimezone()).toBe("America/Chicago");
+      expect(resolveTimezone("")).toBe("America/Chicago");
+    });
+  });
+
   describe("parseFlightTimeToUTC", () => {
     it("correctly converts Chicago summer departure (CDT UTC-5) to UTC", () => {
       // 14:30 CDT on May 20 -> 19:30 UTC
@@ -39,9 +47,22 @@ describe("dateUtils", () => {
       expect(utc.toISOString()).toBe("2026-05-20T19:30:00.000Z");
     });
 
+    it("strips suffix + offset strings correctly", () => {
+      const utc = parseFlightTimeToUTC("2026-05-20T14:30:00+04:00", "ORD");
+      expect(utc.toISOString()).toBe("2026-05-20T19:30:00.000Z");
+    });
+
     it("falls back to America/Chicago if unknown airport code provided", () => {
       const utc = parseFlightTimeToUTC("2026-05-20T14:30:00", "UNKNOWN_AIRPORT");
       expect(utc.toISOString()).toBe("2026-05-20T19:30:00.000Z");
+    });
+
+    it("throws an error if naiveIsoString is empty or missing", () => {
+      expect(() => parseFlightTimeToUTC("", "ORD")).toThrow("naiveIsoString is required");
+    });
+
+    it("throws an error if parsed date is NaN", () => {
+      expect(() => parseFlightTimeToUTC("INVALID-DATE", "ORD")).toThrow("Invalid date string");
     });
   });
 
@@ -74,6 +95,15 @@ describe("dateUtils", () => {
       expect(formatFlightDate("2026-05-20T14:30:00", "LAX")).toBe("May 20, 2026");
       expect(formatFlightTimeOnly("2026-05-20T14:30:00", "LAX")).toBe("2:30 PM");
       expect(formatFlightTime("2026-05-20T14:30:00", "LAX", "h:mm a")).toBe("2:30 PM");
+    });
+
+    it("catches error in formatFlightTime and returns original string", () => {
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      // Passes an invalid string to parseFlightTimeToUTC, causing an error to be thrown and caught.
+      const result = formatFlightTime("INVALID_ISO", "ORD");
+      expect(result).toBe("INVALID_ISO");
+      expect(consoleSpy).toHaveBeenCalled();
+      consoleSpy.mockRestore();
     });
   });
 });
