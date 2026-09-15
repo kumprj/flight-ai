@@ -12,6 +12,7 @@ import {
   getTripDateOnly,
   isTripAlreadyTracked,
   filterNewFlights,
+  shouldAlertDriveTimeChange,
 } from "../src/dateUtils";
 
 describe("dateUtils", () => {
@@ -257,5 +258,51 @@ describe("dateUtils", () => {
       expect(filterNewFlights(null as any, existingTrips)).toEqual([]);
     });
   });
+
+  describe("shouldAlertDriveTimeChange", () => {
+    it("returns false when lastNotifiedDriveMinutes is undefined or null", () => {
+      expect(shouldAlertDriveTimeChange(45, undefined)).toBe(false);
+      expect(shouldAlertDriveTimeChange(45, null as any)).toBe(false);
+    });
+
+    it("returns false when difference is less than or equal to 15 minutes", () => {
+      // Exactly 15 minutes
+      expect(shouldAlertDriveTimeChange(45, 30)).toBe(false);
+      expect(shouldAlertDriveTimeChange(30, 45)).toBe(false);
+
+      // Within 15 minutes
+      expect(shouldAlertDriveTimeChange(35, 30)).toBe(false);
+      expect(shouldAlertDriveTimeChange(25, 30)).toBe(false);
+      expect(shouldAlertDriveTimeChange(30, 30)).toBe(false);
+      expect(shouldAlertDriveTimeChange(44, 30)).toBe(false);
+      expect(shouldAlertDriveTimeChange(16, 30)).toBe(false);
+    });
+
+    it("returns true when drive time increases by strictly greater than 15 minutes", () => {
+      // 16 minutes increase
+      expect(shouldAlertDriveTimeChange(46, 30)).toBe(true);
+      // 30 minutes increase
+      expect(shouldAlertDriveTimeChange(60, 30)).toBe(true);
+      // Double the time
+      expect(shouldAlertDriveTimeChange(90, 40)).toBe(true);
+    });
+
+    it("returns true when drive time decreases by strictly greater than 15 minutes", () => {
+      // 16 minutes decrease
+      expect(shouldAlertDriveTimeChange(14, 30)).toBe(true);
+      // 25 minutes decrease
+      expect(shouldAlertDriveTimeChange(20, 45)).toBe(true);
+    });
+
+    it("respects custom threshold parameter if provided", () => {
+      // Custom threshold 10m
+      expect(shouldAlertDriveTimeChange(41, 30, 10)).toBe(true);
+      expect(shouldAlertDriveTimeChange(40, 30, 10)).toBe(false);
+      // Custom threshold 20m
+      expect(shouldAlertDriveTimeChange(46, 30, 20)).toBe(false);
+      expect(shouldAlertDriveTimeChange(51, 30, 20)).toBe(true);
+    });
+  });
 });
+
 

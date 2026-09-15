@@ -150,6 +150,22 @@ export const handler: Handler = async (event) => {
     const driveLeaveFormatted = formatLeaveTime(leaveTimeUTC, timezone);
     const leaveTimeFormatted = driveLeaveFormatted;
 
+    // Update lastDriveTimeMinutes on trip in DynamoDB so state is always persisted
+    try {
+      await dynamodb.update({
+        TableName: Resource.Table.name,
+        Key: { pk: `USER#${payload.userId}`, sk: payload.tripId },
+        UpdateExpression: "SET lastDriveTimeMinutes = :ldtm, updatedAt = :updatedAt",
+        ExpressionAttributeValues: {
+          ":ldtm": travelTimeMinutes,
+          ":updatedAt": Date.now(),
+        },
+      });
+      console.log(`Saved lastDriveTimeMinutes (${travelTimeMinutes}m) for ${payload.tripId}`);
+    } catch (dbErr) {
+      console.warn(`Failed to update lastDriveTimeMinutes in DynamoDB for ${payload.tripId}:`, dbErr);
+    }
+
     let transitLeaveFormatted: string | undefined;
 
     if (travelEstimate.transit) {
@@ -168,8 +184,18 @@ export const handler: Handler = async (event) => {
     let subject: string;
 
     const isUpdate = Boolean(payload.isUpdate);
+    const isDriveTimeUpdate = Boolean(payload.isDriveTimeUpdate);
+    const previousDriveMinutes = payload.previousDriveMinutes;
 
-    if (isUpdate && !isDelayed) {
+    if (isDriveTimeUpdate) {
+      const diff = previousDriveMinutes !== undefined ? travelTimeMinutes - previousDriveMinutes : 0;
+      const sign = diff > 0 ? '+' : '';
+      subject = `🚗 UPDATE: Drive Time Changed to ${payload.airportCode} (${sign}${diff}m)`;
+      message = `🚗 Traffic Alert for Flight ${trip.Item.flightNumber}!\n\n` +
+        `Drive time from ${payload.homeAddress} to ${payload.airportCode} has changed${previousDriveMinutes !== undefined ? ` from ${previousDriveMinutes} mins` : ''} to ${travelEstimate.drive.durationText}.\n\n` +
+        `Updated leave time: ${leaveTimeFormatted} (to arrive ${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early).\n\n` +
+        `Safe travels!`;
+    } else if (isUpdate && !isDelayed) {
       // Back on schedule — delay removed
       subject = `✅ UPDATE: Flight ${trip.Item.flightNumber} Back on Schedule!`;
       message = `✈️ Good News for ${trip.Item.flightNumber}!\n\n` +
@@ -246,26 +272,32 @@ export const handler: Handler = async (event) => {
     console.log("Sending email from:", senderEmail, "to:", recipientEmail);
 
     // Compute email theme based on notification type
-    const emailTitle = isUpdate && !isDelayed ? 'Flight Back on Schedule'
+    const emailTitle = isDriveTimeUpdate ? 'Drive Time Update'
+      : isUpdate && !isDelayed ? 'Flight Back on Schedule'
       : isUpdate && isDelayed ? 'Updated Leave Time'
       : isDelayed ? 'Flight Delayed'
       : 'Flight Alert';
-    const emailIcon = isUpdate && !isDelayed ? '✅'
+    const emailIcon = isDriveTimeUpdate ? '🚗'
+      : isUpdate && !isDelayed ? '✅'
       : isUpdate && isDelayed ? '⏰'
       : isDelayed ? '⚠️'
       : '✈️';
-    const bannerGradient = isUpdate && !isDelayed ? 'linear-gradient(135deg, #15803d 0%, #166534 100%)'
+    const bannerGradient = isDriveTimeUpdate ? 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)'
+      : isUpdate && !isDelayed ? 'linear-gradient(135deg, #15803d 0%, #166534 100%)'
       : isUpdate && isDelayed ? 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'
       : isDelayed ? 'linear-gradient(135deg, #d97706 0%, #b45309 100%)'
       : 'linear-gradient(135deg, #15803d 0%, #166534 100%)';
-    const accentColor = isUpdate && !isDelayed ? '#15803d'
+    const accentColor = isDriveTimeUpdate ? '#ea580c'
+      : isUpdate && !isDelayed ? '#15803d'
       : isUpdate && isDelayed ? '#2563eb'
       : isDelayed ? '#d97706'
       : '#15803d';
-    const leaveBoxBg = isUpdate && isDelayed ? 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)'
+    const leaveBoxBg = isDriveTimeUpdate ? 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)'
+      : isUpdate && isDelayed ? 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)'
       : isDelayed ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)'
       : 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)';
-    const leaveTimeColor = isUpdate && isDelayed ? '#1d4ed8'
+    const leaveTimeColor = isDriveTimeUpdate ? '#c2410c'
+      : isUpdate && isDelayed ? '#1d4ed8'
       : isDelayed ? '#b45309'
       : '#15803d';
 
@@ -286,7 +318,17 @@ export const handler: Handler = async (event) => {
     </div>
     
     <div style="background: white; border-radius: 16px; padding: 32px; margin-top: 24px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
-      ${isUpdate && !isDelayed ? `
+      ${isDriveTimeUpdate ? `
+      <!-- Drive Time Update Banner -->
+      <div style="background-color: #ffedd5; border: 1px solid #fed7aa; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
+        <p style="color: #9a3412; font-size: 15px; font-weight: 700; margin: 0 0 6px 0;">
+          🚗 Drive Time Changed (${previousDriveMinutes !== undefined && travelTimeMinutes > previousDriveMinutes ? '+' : ''}${previousDriveMinutes !== undefined ? travelTimeMinutes - previousDriveMinutes : 0} mins)
+        </p>
+        <p style="color: #c2410c; font-size: 14px; margin: 0;">
+          ${previousDriveMinutes !== undefined ? `Previous drive time: <strong>${previousDriveMinutes} mins</strong> &nbsp;→&nbsp; ` : ''}New drive time: <strong>${travelEstimate.drive.durationText}</strong>
+        </p>
+      </div>` : ''}
+      ${isUpdate && !isDelayed && !isDriveTimeUpdate ? `
       <!-- Back on Schedule Banner -->
       <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
         <p style="color: #166534; font-size: 15px; font-weight: 700; margin: 0 0 6px 0;">
@@ -296,7 +338,7 @@ export const handler: Handler = async (event) => {
           Departure: <strong>${schedDepartureFormatted}</strong>
         </p>
       </div>` : ''}
-      ${isUpdate && isDelayed ? `
+      ${isUpdate && isDelayed && !isDriveTimeUpdate ? `
       <!-- Delay Update Banner -->
       <div style="background-color: #dbeafe; border: 1px solid #93c5fd; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
         <p style="color: #1e40af; font-size: 15px; font-weight: 700; margin: 0 0 6px 0;">
@@ -306,7 +348,7 @@ export const handler: Handler = async (event) => {
           Scheduled: <strong>${schedDepartureFormatted}</strong> &nbsp;→&nbsp; New Departure: <strong>${effectiveDepartureFormatted}</strong>
         </p>
       </div>` : ''}
-      ${!isUpdate && isDelayed ? `
+      ${!isUpdate && isDelayed && !isDriveTimeUpdate ? `
       <!-- Delay Notice Banner -->
       <div style="background-color: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
         <p style="color: #92400e; font-size: 15px; font-weight: 700; margin: 0 0 6px 0;">
@@ -331,7 +373,7 @@ export const handler: Handler = async (event) => {
           <span style="font-weight: 700; color: ${leaveTimeColor}; font-size: 16px;">🚗 Drive (Live Traffic)</span>
           <span style="font-weight: 700; color: ${leaveTimeColor}; font-size: 18px;">${travelEstimate.drive.durationText}</span>
         </div>
-        <p style="color: #4b5563; font-size: 14px; margin: 0 0 6px 0;">To arrive <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong> for your ${isUpdate ? 'updated ' : ''}${isDelayed ? 'delayed ' : ''}flight, leave by:</p>
+        <p style="color: #4b5563; font-size: 14px; margin: 0 0 6px 0;">To arrive <strong>${arrivalPreference} hour${arrivalPreference !== 1 ? 's' : ''} early</strong> for your ${isDriveTimeUpdate ? 'updated ' : ''}${isUpdate ? 'updated ' : ''}${isDelayed ? 'delayed ' : ''}flight, leave by:</p>
         <p style="color: ${leaveTimeColor}; font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.02em;">
           ${driveLeaveFormatted}
         </p>
