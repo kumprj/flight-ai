@@ -127,9 +127,7 @@ export interface BartAlert {
   station: string;
   type: string;
   description: string;
-  sms_text: string;
-  posted: string;
-  expires: string;
+  smsText: string;
 }
 
 export interface BartStationInfo {

@@ -12,6 +12,7 @@ import {
   formatFlightTimeOnly,
   resolveTimezone,
   resolveTransitAlertSummary,
+  formatStopSegment,
 } from "@flight-ai/core";
 import twilio from "twilio";
 
@@ -50,8 +51,8 @@ export const handler: Handler = async (event) => {
     console.log("User profile:", JSON.stringify(profile.Item, null, 2));
 
     const timezone = resolveTimezone(trip.Item.originAirport || trip.Item.timezone);
-    const recipientEmail = profile.Item?.email || "rkump24@gmail.com";
-    const senderEmail = "rkump24@gmail.com";
+    const recipientEmail = profile.Item?.email || process.env.SENDER_EMAIL!;
+    const senderEmail = process.env.SENDER_EMAIL!;
 
     // 2. Handle CANCELED Flight Alert
     const isCanceled = payload.isCanceled || trip.Item.status === 'Canceled';
@@ -100,18 +101,20 @@ export const handler: Handler = async (event) => {
       }
 
       if (profile.Item?.emailEnabled !== false) {
-      await ses.send(new SendEmailCommand({
-        Source: senderEmail,
-        Destination: {ToAddresses: [recipientEmail]},
-        Message: {
-          Subject: {Data: `❌ URGENT: Flight ${trip.Item.flightNumber} CANCELED!`},
-          Body: {
-            Text: {Data: cancelMessage},
-            Html: {Data: cancelEmailHtml},
+        await ses.send(new SendEmailCommand({
+          Source: senderEmail,
+          Destination: {ToAddresses: [recipientEmail]},
+          Message: {
+            Subject: {Data: `❌ URGENT: Flight ${trip.Item.flightNumber} CANCELED!`},
+            Body: {
+              Text: {Data: cancelMessage},
+              Html: {Data: cancelEmailHtml},
+            },
           },
-        },
-      }));
+        }));
+      }
 
+      // Always return after handling a cancellation, regardless of email preference
       return;
     }
 
@@ -208,16 +211,7 @@ export const handler: Handler = async (event) => {
       if (travelEstimate.transit.transitSteps && travelEstimate.transit.transitSteps.length > 0) {
         const stepLines = travelEstimate.transit.transitSteps
           .filter((s) => s.transitLine)
-          .map((s) => {
-            const stopSeg = s.departureStop && s.arrivalStop
-              ? ` - ${s.departureStop} to ${s.arrivalStop}`
-              : s.departureStop
-              ? ` - from ${s.departureStop}`
-              : s.arrivalStop
-              ? ` - to ${s.arrivalStop}`
-              : '';
-            return `• ${s.transitLine}${stopSeg}`;
-          })
+          .map((s) => `• ${s.transitLine}${formatStopSegment(s)}`)
           .join('\n');
         if (stepLines) {
           transitText += `\nTransit steps:\n${stepLines}`;
@@ -359,14 +353,7 @@ export const handler: Handler = async (event) => {
         ${travelEstimate.transit.transitSteps && travelEstimate.transit.transitSteps.length > 0 ? `
         <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #bfdbfe; font-size: 13px; color: #1e3a8a;">
           ${travelEstimate.transit.transitSteps.filter((s) => s.transitLine).map((s) => {
-            const stopSeg = s.departureStop && s.arrivalStop
-              ? ` - ${s.departureStop} to ${s.arrivalStop}`
-              : s.departureStop
-              ? ` - from ${s.departureStop}`
-              : s.arrivalStop
-              ? ` - to ${s.arrivalStop}`
-              : '';
-            return `<div style="margin-top: 4px;">• <strong>${s.transitLine}</strong>${stopSeg}</div>`;
+            return `<div style="margin-top: 4px;">• <strong>${s.transitLine}</strong>${formatStopSegment(s)}</div>`;
           }).join('')}
         </div>` : ''}
         ${travelEstimate.stationInfo?.name ? `
@@ -404,19 +391,20 @@ export const handler: Handler = async (event) => {
 </html>
     `;
 
-    await ses.send(new SendEmailCommand({
-      Source: senderEmail,
-      Destination: {ToAddresses: [recipientEmail]},
-      Message: {
-        Subject: {Data: subject},
-        Body: {
-          Text: {Data: message},
-          Html: {Data: emailHtml},
+    if (profile.Item?.emailEnabled !== false) {
+      await ses.send(new SendEmailCommand({
+        Source: senderEmail,
+        Destination: {ToAddresses: [recipientEmail]},
+        Message: {
+          Subject: {Data: subject},
+          Body: {
+            Text: {Data: message},
+            Html: {Data: emailHtml},
+          },
         },
-      },
-    }));
+      }));
 
-    console.log("Notification email sent successfully!");
+      console.log("Notification email sent successfully!");
     } else {
       console.log("Email notifications disabled, skipping email");
     }

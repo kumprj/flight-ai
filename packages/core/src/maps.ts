@@ -279,3 +279,14 @@ export const resolveTransitAlertSummary = (travelEstimate: MultiModalTravelTime)
     transitAlertsSummary,
   };
 };
+
+/**
+ * Formats the stop segment portion of a transit step label, e.g. " - 79th to O'Hare".
+ * Returns an empty string when neither departure nor arrival stop is known.
+ */
+export const formatStopSegment = (step: { departureStop?: string; arrivalStop?: string }): string => {
+  if (step.departureStop && step.arrivalStop) return ` - ${step.departureStop} to ${step.arrivalStop}`;
+  if (step.departureStop) return ` - from ${step.departureStop}`;
+  if (step.arrivalStop) return ` - to ${step.arrivalStop}`;
+  return '';
+};
