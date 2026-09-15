@@ -13,8 +13,7 @@ import {
   parseFlightTimeToUTC,
   calculateLeaveTime,
   formatLeaveTime,
-  formatCtaAlertsSummary,
-  formatMtaAlertsSummary
+  resolveTransitAlertSummary,
 } from "@flight-ai/core";
 import twilio from "twilio";
 
@@ -198,28 +197,14 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
     const driveLeaveFormatted = formatLeaveTime(driveLeaveUTC, trip.originAirport || trip.timezone);
 
     let transitLeaveFormatted: string | undefined;
-    let transitAlertsSummary: string | undefined;
 
     if (travelEstimate.transit) {
       const transitMinutes = Math.ceil(travelEstimate.transit.durationSeconds / 60);
       const transitLeaveUTC = calculateLeaveTime(flightUTC, transitMinutes, arrivalPreference);
       transitLeaveFormatted = formatLeaveTime(transitLeaveUTC, trip.originAirport || trip.timezone);
-
-      if (travelEstimate.ctaAlerts && travelEstimate.ctaAlerts.length > 0) {
-        transitAlertsSummary = formatCtaAlertsSummary(
-          travelEstimate.ctaAlerts,
-          travelEstimate.stationInfo?.line || "CTA Transit"
-        );
-      } else if (travelEstimate.mtaAlerts && travelEstimate.mtaAlerts.length > 0) {
-        transitAlertsSummary = formatMtaAlertsSummary(
-          travelEstimate.mtaAlerts,
-          travelEstimate.stationInfo?.line || "MTA Transit"
-        );
-      }
     }
 
-    const transitAgency = travelEstimate.stationInfo?.agency || (travelEstimate.ctaAlerts ? "CTA" : travelEstimate.mtaAlerts ? "MTA" : "Public Transit");
-    const transitLineName = travelEstimate.stationInfo?.line || (travelEstimate.transit?.transitLine ? `${travelEstimate.transit.transitLine} (${transitAgency})` : `${transitAgency} Public Transit`);
+    const { transitAgency, transitLineName, transitAlertsSummary } = resolveTransitAlertSummary(travelEstimate);
 
     let message: string;
     if (travelEstimate.transit && transitLeaveFormatted) {
@@ -243,6 +228,9 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
         if (stepLines) {
           message += `Transit steps:\n${stepLines}\n`;
         }
+      }
+      if (travelEstimate.stationInfo?.name) {
+        message += `📍 Station: ${travelEstimate.stationInfo.name}${travelEstimate.stationInfo.stationLocation ? ` (${travelEstimate.stationInfo.stationLocation})` : ''}\n`;
       }
       if (transitAlertsSummary) {
         message += `\n${transitAlertsSummary}\n`;
@@ -449,6 +437,7 @@ export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
         transit: travelEstimate.transit,
         ctaAlerts: travelEstimate.ctaAlerts,
         mtaAlerts: travelEstimate.mtaAlerts,
+        tflAlerts: travelEstimate.tflAlerts,
         stationInfo: travelEstimate.stationInfo,
       })
     };
