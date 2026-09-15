@@ -110,10 +110,14 @@ export const update: APIGatewayProxyHandlerV2 = async (event) => {
   const timezone = getAirportTimezone(body.originAirport);
 
   try {
+    if (body.oldTripId && body.oldTripId !== tripId) {
+      await Database.delete(userId, `TRIP#${body.oldTripId}`);
+    }
+    const { pk, sk, oldTripId, ...cleanBody } = body;
     await Database.put({
+      ...cleanBody,
       pk: `USER#${userId}`,
       sk: `TRIP#${tripId}`,
-      ...body,
       timezone,
       userId,
       createdAt: body.createdAt || Date.now(),
@@ -376,10 +380,7 @@ export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
         distanceMeters: travelEstimate.drive.distanceMeters,
         drive: travelEstimate.drive,
         transit: travelEstimate.transit,
-        ctaAlerts: travelEstimate.ctaAlerts,
-        mtaAlerts: travelEstimate.mtaAlerts,
-        tflAlerts: travelEstimate.tflAlerts,
-        bartAlerts: travelEstimate.bartAlerts,
+        alerts: travelEstimate.alerts,
         stationInfo: travelEstimate.stationInfo,
       })
     };

@@ -1,13 +1,13 @@
 {
   "package.json": {
-    "mtime": 1789440720.3074253,
-    "seen": 1789474126.0734248,
+    "mtime": 1789474368.813923,
+    "seen": 1789475423.2087371,
     "ast_hash": "81cb01cbef748b0efdf1393274662ffb",
     "semantic_hash": ""
   },
   "packages/core/package.json": {
-    "mtime": 1789441156.5591314,
-    "seen": 1789474126.073426,
+    "mtime": 1789474368.814139,
+    "seen": 1789475423.208738,
     "ast_hash": "9ddbe1c4e11075c61e79b70fd600d0c5",
     "semantic_hash": ""
   },
@@ -30,21 +30,21 @@
     "semantic_hash": "fe7a59ba3b8624385be993206cbae69d"
   },
   "packages/core/src/flights.ts": {
-    "mtime": 1789439140.7908337,
-    "seen": 1789474126.073431,
+    "mtime": 1789474368.8146896,
+    "seen": 1789475423.208746,
     "ast_hash": "881f2a5fd147b44d036325dd5ebdcfc0",
     "semantic_hash": ""
   },
   "packages/core/src/index.ts": {
-    "mtime": 1789441156.56055,
-    "seen": 1789474126.073432,
+    "mtime": 1789474777.2966135,
+    "seen": 1789475423.208747,
     "ast_hash": "04f1d89f65b47b7bd62609313d705ff9",
     "semantic_hash": ""
   },
   "packages/core/src/maps.ts": {
-    "mtime": 1789474117.5891013,
-    "seen": 1789474126.073432,
-    "ast_hash": "35f5a14652fc8390c62a394245131e4c",
+    "mtime": 1789475253.3258553,
+    "seen": 1789475423.208748,
+    "ast_hash": "8dfcae4b81f65c6425d07ad68244ddb1",
     "semantic_hash": ""
   },
   "packages/core/src/timezones.ts": {
@@ -60,8 +60,8 @@
     "semantic_hash": "a638d4945166e83d2c64b2fe5531c784"
   },
   "packages/core/src/types.ts": {
-    "mtime": 1789442578.2719011,
-    "seen": 1789474126.073436,
+    "mtime": 1789475064.303412,
+    "seen": 1789475423.2087529,
     "ast_hash": "5cf8659647e56a12f174e47ca8912481",
     "semantic_hash": ""
   },
@@ -90,14 +90,14 @@
     "semantic_hash": ""
   },
   "packages/functions/src/flight.ts": {
-    "mtime": 1789439140.7916207,
-    "seen": 1789474126.0734458,
+    "mtime": 1789474368.8317554,
+    "seen": 1789475423.2087638,
     "ast_hash": "0297a0040479e2fb2c8feb1214958447",
     "semantic_hash": ""
   },
   "packages/functions/src/notify.ts": {
-    "mtime": 1789442571.8782504,
-    "seen": 1789474126.0734458,
+    "mtime": 1789474368.832423,
+    "seen": 1789475423.208765,
     "ast_hash": "ffa4201fdf67bc8be50321064cb8321c",
     "semantic_hash": ""
   },
@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "packages/functions/src/trip.ts": {
-    "mtime": 1789474117.5919433,
-    "seen": 1789474126.073448,
-    "ast_hash": "5fd2cefa30ea8de96b846ebb2d9f85a5",
+    "mtime": 1789475285.4003162,
+    "seen": 1789475423.208767,
+    "ast_hash": "165804aa64637527426163edcd70ae41",
     "semantic_hash": ""
   },
   "packages/functions/sst-env.d.ts": {
@@ -120,8 +120,8 @@
     "semantic_hash": ""
   },
   "packages/functions/tsconfig.json": {
-    "mtime": 1789440101.211232,
-    "seen": 1789474126.073449,
+    "mtime": 1789474368.8348882,
+    "seen": 1789475423.208768,
     "ast_hash": "1e74cbbc3e190264e625c7717c5d60fc",
     "semantic_hash": ""
   },
@@ -144,8 +144,8 @@
     "semantic_hash": "98a38794f8f05fe467e686ff680cbc26"
   },
   "packages/web/src/App.tsx": {
-    "mtime": 1789442291.7117014,
-    "seen": 1789474126.073452,
+    "mtime": 1789475391.3065717,
+    "seen": 1789475423.2087722,
     "ast_hash": "756701924b5de47c528ea8b65cc8342f",
     "semantic_hash": ""
   },
@@ -174,15 +174,15 @@
     "semantic_hash": ""
   },
   "packages/web/src/Toast.tsx": {
-    "mtime": 1789439140.7975898,
-    "seen": 1789474126.073456,
+    "mtime": 1789474368.835385,
+    "seen": 1789475423.208777,
     "ast_hash": "80d92be6b0e7be4a2064eca358504d39",
     "semantic_hash": ""
   },
   "packages/web/src/Trips.tsx": {
-    "mtime": 1789474117.5925214,
-    "seen": 1789474126.073457,
-    "ast_hash": "29b5b31911e08dfb023820e5dfdb92b5",
+    "mtime": 1789475312.3618672,
+    "seen": 1789475423.208778,
+    "ast_hash": "d2ae2e2a722b6ab59bb98cefd01f3268",
     "semantic_hash": ""
   },
   "packages/web/src/authTheme.ts": {
@@ -366,14 +366,14 @@
     "semantic_hash": ""
   },
   "packages/core/test/dateUtils.test.ts": {
-    "mtime": 1789440720.310097,
-    "seen": 1789474126.07344,
+    "mtime": 1789474368.828313,
+    "seen": 1789475423.208758,
     "ast_hash": "291da27652655cd28be19c46449b8298",
     "semantic_hash": ""
   },
   "packages/core/src/cta.ts": {
-    "mtime": 1789442578.2709632,
-    "seen": 1789474126.073429,
+    "mtime": 1789475064.3017938,
+    "seen": 1789475423.208742,
     "ast_hash": "f9042e8537ac84d7c6ff5c93d6e0ad04",
     "semantic_hash": ""
   },
@@ -384,9 +384,9 @@
     "semantic_hash": ""
   },
   "packages/core/src/mta.ts": {
-    "mtime": 1789474117.5898614,
-    "seen": 1789474126.0734332,
-    "ast_hash": "59505e0b41294fc0451cc83ec18dffbf",
+    "mtime": 1789475172.0033169,
+    "seen": 1789475423.208749,
+    "ast_hash": "ba06a04e68fc44088d5d056206822bc2",
     "semantic_hash": ""
   },
   "packages/core/test/mta.test.ts": {
@@ -396,44 +396,44 @@
     "semantic_hash": ""
   },
   "fix_all.py": {
-    "mtime": 1789432476.3336835,
-    "seen": 1789474126.073417,
+    "mtime": 1789474368.7739716,
+    "seen": 1789475423.208728,
     "ast_hash": "d2a6f682db1ad6bef05c79e1917c80b6",
     "semantic_hash": ""
   },
   "fix_notify.py": {
-    "mtime": 1789432476.3340986,
-    "seen": 1789474126.073421,
+    "mtime": 1789474368.7986581,
+    "seen": 1789475423.208732,
     "ast_hash": "4e9652764899ceabde1f686966065214",
     "semantic_hash": ""
   },
   "fix_notify_fallback.py": {
-    "mtime": 1789432476.3344388,
-    "seen": 1789474126.0734231,
+    "mtime": 1789474368.8018494,
+    "seen": 1789475423.208734,
     "ast_hash": "67b51c70c62b1a4446d49b58f8878a5c",
     "semantic_hash": ""
   },
   "fix_trip.py": {
-    "mtime": 1789432476.3349946,
-    "seen": 1789474126.0734239,
+    "mtime": 1789474368.801959,
+    "seen": 1789475423.208736,
     "ast_hash": "fdb011cc3a604a0e4ac779dda59cf5ef",
     "semantic_hash": ""
   },
   "packages/core/test/delays.test.ts": {
-    "mtime": 1789441156.5637789,
-    "seen": 1789474126.073441,
+    "mtime": 1789474368.830701,
+    "seen": 1789475423.208759,
     "ast_hash": "97299e22f26f9c69e9dd49e5d66b8e1e",
     "semantic_hash": ""
   },
   "patch_notify.py": {
-    "mtime": 1789432476.3519309,
-    "seen": 1789474126.073465,
+    "mtime": 1789474368.835964,
+    "seen": 1789475423.208789,
     "ast_hash": "d6483c88c6923b0c9b73c4a592aaeb48",
     "semantic_hash": ""
   },
   "resolve_simple.js": {
-    "mtime": 1789432476.3522635,
-    "seen": 1789474126.073466,
+    "mtime": 1789474368.8360713,
+    "seen": 1789475423.20879,
     "ast_hash": "fe2fa275674ef5b39656bf88247416bd",
     "semantic_hash": ""
   },
@@ -444,32 +444,32 @@
     "semantic_hash": ""
   },
   "packages/core/src/tfl.ts": {
-    "mtime": 1789474117.5905213,
-    "seen": 1789474126.073434,
-    "ast_hash": "4783fd0427221e348c63bd3abba490e4",
+    "mtime": 1789475198.6356838,
+    "seen": 1789475423.20875,
+    "ast_hash": "2e363b45a4b057cb790ec0fd240b8914",
     "semantic_hash": ""
   },
   "packages/core/test/tfl.test.ts": {
-    "mtime": 1789440101.2043035,
-    "seen": 1789474126.0734432,
+    "mtime": 1789474368.8314826,
+    "seen": 1789475423.20876,
     "ast_hash": "7199a3fcf9247f5dc4978b33a6e00367",
     "semantic_hash": ""
   },
   "packages/core/src/bart.ts": {
-    "mtime": 1789474117.588448,
-    "seen": 1789474126.073428,
-    "ast_hash": "70c27a5de09aa8afaa44fc8f14d1c3a4",
+    "mtime": 1789475231.9160738,
+    "seen": 1789475423.2087412,
+    "ast_hash": "52a0a653b96baad1df6b57d5c71a49c0",
     "semantic_hash": ""
   },
   "packages/core/test/bart.test.ts": {
-    "mtime": 1789474117.5912144,
-    "seen": 1789474126.073439,
-    "ast_hash": "c498ac99ba5b0a2e38596219c050c842",
+    "mtime": 1789474911.3959131,
+    "seen": 1789475423.208756,
+    "ast_hash": "07fa3a1d992d35474cec9eee4ea9a814",
     "semantic_hash": ""
   },
   "packages/core/test/airports.test.ts": {
-    "mtime": 1789440720.3089306,
-    "seen": 1789474126.073438,
+    "mtime": 1789474368.8249831,
+    "seen": 1789475423.208755,
     "ast_hash": "3386c79ade00faa38b8229db94154101",
     "semantic_hash": ""
   },

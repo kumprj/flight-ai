@@ -166,3 +166,24 @@ export const formatBartAlertsSummary = (
 
   return `${icon} ${lineName}: ${msg}`;
 };
+
+/**
+ * Normalise native BART alerts to the shared TransitAlert shape.
+ */
+export const bartToTransitAlerts = (alerts: BartAlert[], agency = "BART"): TransitAlert[] =>
+  alerts.map((a) => {
+    const text = a.smsText && a.smsText.toLowerCase() !== "bart.gov alert"
+      ? a.smsText
+      : a.description;
+    const isMajor =
+      a.description?.toLowerCase().includes("delay") ||
+      a.smsText?.toLowerCase().includes("delay");
+    return {
+      id: a.id,
+      headline: text,
+      shortDescription: a.description,
+      isMajor: isMajor ?? false,
+      agency,
+    };
+  });
+

@@ -140,3 +140,18 @@ export const formatMtaAlertsSummary = (
   const first = alerts[0];
   return `ℹ️ ${lineName}: ${first.headline}`;
 };
+
+/**
+ * Normalise native MTA alerts to the shared TransitAlert shape.
+ */
+export const mtaToTransitAlerts = (alerts: MtaAlert[], agency = "MTA"): TransitAlert[] =>
+  alerts.map((a) => ({
+    id: a.id,
+    headline: a.headline,
+    shortDescription: a.shortDescription,
+    isMajor: a.isMajor ?? false,
+    agency,
+    routeId: a.routeId,
+    url: a.url,
+  }));
+
