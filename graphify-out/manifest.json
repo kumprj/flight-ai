@@ -258,9 +258,9 @@
     "semantic_hash": ""
   },
   "sst.config.ts": {
-    "mtime": 1789497046.0237117,
-    "seen": 1789497912.938964,
-    "ast_hash": "6e8c2b410290c2773ca80c8ffd2efd7a",
+    "mtime": 1789498581.88083,
+    "seen": 1789498677.414658,
+    "ast_hash": "8236921bdfb29e823b31f7d71e0cd425",
     "semantic_hash": ""
   },
   "stacks/MyStack.ts": {
@@ -300,9 +300,9 @@
     "semantic_hash": "6d73634a678cf1e1c71930adf80bd1f0"
   },
   "GEMINI.md": {
-    "mtime": 1789497764.7233016,
-    "seen": 1789497912.938976,
-    "ast_hash": "d88edad4be4136fc93de342fd6338805",
+    "mtime": 1789498626.0679908,
+    "seen": 1789498677.414668,
+    "ast_hash": "649928bb0a68995d927afe96d07e3030",
     "semantic_hash": ""
   },
   "README.md": {

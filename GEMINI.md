@@ -32,7 +32,7 @@ flight-ai/
 │   │       └── types.ts       # Shared TypeScript interfaces (Trip, SchedulerPayload, etc.)
 │   ├── functions/             # AWS Lambda backend handlers
 │   │   └── src/
-│   │       ├── cron.ts        # Hourly EventBridge cron scanning trips for notification windows
+│   │       ├── cron.ts        # EventBridge cron scanning trips every 30 minutes for notification windows
 │   │       ├── flight.ts      # API handler for flight searches
 │   │       ├── notify.ts      # Worker Lambda calculating travel times and sending SMS/email
 │   │       ├── profile.ts     # API handler for profile management & SMS verification
@@ -78,7 +78,7 @@ The primary DynamoDB table uses partition key `pk` (String) and sort key `sk` (S
    - `leaveTimeUTC = flightTimeUTC - ((travelTimeMinutes + arrivalPreference * 60) * 60 * 1000)`
    - Google Maps travel time is evaluated for departure at the estimated arrival buffer time.
 4. **Drive Time Change Monitoring**:
-   - Following the initial departure alert (`arrivalPreference + 2` hours prior), the hourly cron re-assesses drive time via Google Maps Routes API.
+   - Following the initial departure alert (`arrivalPreference + 2` hours prior), the cron job (running every 30 minutes) re-assesses drive time via Google Maps Routes API.
    - An updated leave time alert is dispatched if the driving duration shifts by strictly more than 15 minutes (`> 15m`) in either direction compared to `lastDriveTimeMinutes`.
 5. **Authentication**:
    - AWS Cognito User Pool with Google & Facebook federated identity providers.

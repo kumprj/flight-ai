@@ -130,9 +130,9 @@ export default $config({
       timeout: "5 minutes",
     });
 
-// EventBridge rule to trigger every hour
+// EventBridge rule to trigger every 30 minutes
     const eventRule = new aws.cloudwatch.EventRule("HourlyTripCheck", {
-      scheduleExpression: "rate(1 hour)",
+      scheduleExpression: "rate(30 minutes)",
     });
 
     new aws.cloudwatch.EventTarget("HourlyTripCheckTarget", {
