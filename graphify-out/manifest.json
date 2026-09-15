@@ -144,9 +144,9 @@
     "semantic_hash": "98a38794f8f05fe467e686ff680cbc26"
   },
   "packages/web/src/App.tsx": {
-    "mtime": 1789495234.029556,
-    "seen": 1789495349.4512472,
-    "ast_hash": "15d079baa113414a8687a39b4cf4f0e3",
+    "mtime": 1789496063.6628547,
+    "seen": 1789496159.4629571,
+    "ast_hash": "621de59441dde0726d4b807f2227a398",
     "semantic_hash": ""
   },
   "packages/web/src/CalendarImport.tsx": {
@@ -168,9 +168,9 @@
     "semantic_hash": "4dde5dd675c105586ed2925def185d1d"
   },
   "packages/web/src/Profile.tsx": {
-    "mtime": 1789495278.2646122,
-    "seen": 1789495349.451251,
-    "ast_hash": "acfc13c2300ba8fb4c8fea38f1c374f1",
+    "mtime": 1789495939.328207,
+    "seen": 1789496159.462962,
+    "ast_hash": "a6e58e481094f1c5e3c766bb373844fd",
     "semantic_hash": ""
   },
   "packages/web/src/Toast.tsx": {
@@ -318,10 +318,10 @@
     "semantic_hash": "cac141da861c855e069a9c32557458ac"
   },
   "packages/web/index.html": {
-    "mtime": 1782059920.204674,
-    "seen": 1789495349.4512918,
-    "ast_hash": "4f43550352655c612d040513740ca320",
-    "semantic_hash": "4f43550352655c612d040513740ca320"
+    "mtime": 1789495592.7570817,
+    "seen": 1789496159.462998,
+    "ast_hash": "4357c5e57474c9617ef5a09e0d351e86",
+    "semantic_hash": ""
   },
   "pnpm-workspace.yaml": {
     "mtime": 1768968069.3874345,
