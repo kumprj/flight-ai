@@ -180,9 +180,9 @@
     "semantic_hash": "05a5e041dad9e99479c6e1122dd57a43"
   },
   "packages/web/src/Trips.tsx": {
-    "mtime": 1789436774.264405,
-    "seen": 1789436801.9460092,
-    "ast_hash": "b4ee367a3becd7927f1e042e1ed0a3e1",
+    "mtime": 1789436942.87973,
+    "seen": 1789436971.5254889,
+    "ast_hash": "dc15fa7ca6dc1f6b336bf9b449947213",
     "semantic_hash": ""
   },
   "packages/web/src/authTheme.ts": {

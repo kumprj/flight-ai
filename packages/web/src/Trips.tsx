@@ -809,56 +809,27 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                       </div>
 
                       {/* Tile footer */}
-                      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700/60 text-xs">
+                      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700/60 flex items-center justify-between text-xs">
                         {tripTravelTime ? (
-                          <div className="space-y-1.5">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-medium truncate">
-                                <span>🚗 {tripTravelTime.durationText}</span>
-                                {tripTravelTime.transit && (
-                                  <>
-                                    <span className="text-gray-300 dark:text-gray-600 font-normal">•</span>
-                                    <span className="text-blue-600 dark:text-blue-400 font-medium">
-                                      🚆 {tripTravelTime.transit.durationText}
-                                    </span>
-                                  </>
-                                )}
-                              </div>
-                              <span className="text-green-700 dark:text-green-400 font-semibold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 shrink-0 ml-2">
-                                Details
-                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                                </svg>
+                          <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium truncate">
+                            <span>🚗 {tripTravelTime.durationText}</span>
+                            {tripTravelTime.transit && (
+                              <span className="text-blue-600 dark:text-blue-400 ml-1">
+                                • 🚆 {tripTravelTime.transit.durationText}
                               </span>
-                            </div>
-
-                            {tripTravelTime.transit && (() => {
-                              const transitSummary = getTransitRouteSummary(tripTravelTime);
-                              if (!transitSummary) return null;
-                              return (
-                                <div
-                                  className="flex items-center gap-1.5 text-[11px] text-blue-700 dark:text-blue-400 font-medium truncate"
-                                  title={transitSummary}
-                                >
-                                  <span className="shrink-0">🚆</span>
-                                  <span className="truncate">{transitSummary}</span>
-                                </div>
-                              );
-                            })()}
+                            )}
                           </div>
                         ) : old ? (
                           <span />
                         ) : (
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-400 dark:text-gray-500">Checking traffic...</span>
-                            <span className="text-green-700 dark:text-green-400 font-semibold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 shrink-0 ml-2">
-                              Details
-                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                              </svg>
-                            </span>
-                          </div>
+                          <span className="text-gray-400 dark:text-gray-500">Checking traffic...</span>
                         )}
+                        <span className="text-green-700 dark:text-green-400 font-semibold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 shrink-0 ml-2">
+                          Details
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </span>
                       </div>
                     </div>
                 );
@@ -1002,7 +973,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                                   {tripTravelTime.stationInfo?.agency || tripTravelTime.transit.transitAgency || "Transit"}: {tripTravelTime.transit.durationText}
                                 </span>
                               </div>
-                              {tripTravelTime.transit.transitSteps && tripTravelTime.transit.transitSteps.length > 0 && (
+                              {tripTravelTime.transit.transitSteps && tripTravelTime.transit.transitSteps.length > 0 ? (
                                 <div className="mt-2.5 space-y-1.5 text-xs text-gray-600 dark:text-gray-300 font-normal">
                                   {tripTravelTime.transit.transitSteps
                                     .filter(step => step.transitLine)
@@ -1049,7 +1020,11 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                                       );
                                     })}
                                 </div>
-                              )}
+                              ) : getTransitRouteSummary(tripTravelTime) ? (
+                                <div className="mt-2 text-xs text-gray-600 dark:text-gray-300 font-normal">
+                                  {getTransitRouteSummary(tripTravelTime)}
+                                </div>
+                              ) : null}
                             </div>
                           )}
                         </div>
