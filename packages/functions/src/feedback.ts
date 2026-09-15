@@ -23,12 +23,27 @@ const getAuthDetails = (event: any): { userId: string; email: string } | null =>
   }
 };
 
+const corsHeaders = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 export const submit: APIGatewayProxyHandlerV2 = async (event) => {
+  // Handle preflight OPTIONS request
+  if (event.requestContext?.http?.method === "OPTIONS") {
+    return {
+      statusCode: 204,
+      headers: corsHeaders,
+    };
+  }
+
   const auth = getAuthDetails(event);
   if (!auth) {
     return {
       statusCode: 401,
-      headers: { "Content-Type": "application/json" },
+      headers: corsHeaders,
       body: JSON.stringify({ error: "Unauthorized: Missing valid session token" }),
     };
   }
@@ -45,7 +60,7 @@ export const submit: APIGatewayProxyHandlerV2 = async (event) => {
   } catch {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: corsHeaders,
       body: JSON.stringify({ error: "Invalid JSON body" }),
     };
   }
@@ -59,7 +74,7 @@ export const submit: APIGatewayProxyHandlerV2 = async (event) => {
   if (!title || title.length < 3) {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: corsHeaders,
       body: JSON.stringify({ error: "Title must be at least 3 characters long" }),
     };
   }
@@ -67,7 +82,7 @@ export const submit: APIGatewayProxyHandlerV2 = async (event) => {
   if (!description || description.length < 5) {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: corsHeaders,
       body: JSON.stringify({ error: "Description must be at least 5 characters long" }),
     };
   }
@@ -145,7 +160,7 @@ export const submit: APIGatewayProxyHandlerV2 = async (event) => {
 
   return {
     statusCode: 200,
-    headers: { "Content-Type": "application/json" },
+    headers: corsHeaders,
     body: JSON.stringify({
       success: true,
       issueNumber: githubIssueNumber,
