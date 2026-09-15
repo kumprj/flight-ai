@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import axios from 'axios';
 import {Config} from './config';
 import {fetchAuthSession} from 'aws-amplify/auth';
@@ -155,6 +155,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
   const [visibleActiveCount, setVisibleActiveCount] = useState(9);
   const [visiblePastCount, setVisiblePastCount] = useState(3);
   const [expandedTrip, setExpandedTrip] = useState<Trip | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const showToast = (msg: string, type: ToastType = 'success') => setToast({ msg, type });
 
@@ -861,8 +862,30 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     return `${m}m`;
   };
 
-  const activeTrips = trips.filter((t) => !isOldTrip(t.revisedDate || t.date));
-  const pastTrips = trips.filter((t) => isOldTrip(t.revisedDate || t.date));
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const allActiveTrips = useMemo(() => trips.filter((t) => !isOldTrip(t.revisedDate || t.date)), [trips]);
+  const allPastTrips = useMemo(() => trips.filter((t) => isOldTrip(t.revisedDate || t.date)), [trips]);
+
+  const matchesSearch = (trip: Trip) => {
+    if (!normalizedQuery) return true;
+    const origin = (trip.originAirport || '').toLowerCase();
+    const dest = (trip.destinationAirport || '').toLowerCase();
+    const originCity = (getAirportCity(trip.originAirport) || '').toLowerCase();
+    const destCity = (getAirportCity(trip.destinationAirport) || '').toLowerCase();
+    const flightNum = (trip.flightNumber || '').toLowerCase();
+
+    return (
+      origin.includes(normalizedQuery) ||
+      dest.includes(normalizedQuery) ||
+      originCity.includes(normalizedQuery) ||
+      destCity.includes(normalizedQuery) ||
+      flightNum.includes(normalizedQuery)
+    );
+  };
+
+  const activeTrips = useMemo(() => allActiveTrips.filter(matchesSearch), [allActiveTrips, normalizedQuery]);
+  const pastTrips = useMemo(() => allPastTrips.filter(matchesSearch), [allPastTrips, normalizedQuery]);
   const upcomingCount = activeTrips.length;
   const pastCount = pastTrips.length;
 
@@ -1034,15 +1057,50 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {trips.length === 0
                 ? 'No flights scheduled'
-                : `${upcomingCount} upcoming ${upcomingCount === 1 ? 'flight' : 'flights'}${pastCount > 0 ? `, ${pastCount} past` : ''}`}
+                : normalizedQuery
+                ? `${upcomingCount} upcoming${pastCount > 0 ? `, ${pastCount} past` : ''} matching "${searchQuery}"`
+                : `${allActiveTrips.length} upcoming ${allActiveTrips.length === 1 ? 'flight' : 'flights'}${allPastTrips.length > 0 ? `, ${allPastTrips.length} past` : ''}`}
             </p>
           </div>
-          <button
-              onClick={onBack}
-              className="px-4 py-2 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 transition-colors shadow-sm self-start sm:self-auto cursor-pointer text-sm flex items-center gap-1.5"
-          >
-            <span>+</span> Add New
-          </button>
+          <div className="relative w-full sm:w-72">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setVisibleActiveCount(9);
+                setVisiblePastCount(3);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setSearchQuery('');
+                }
+              }}
+              placeholder="Search airport (e.g. ORD)..."
+              className="w-full pl-9 pr-8 py-2 text-sm bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all shadow-sm"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setVisibleActiveCount(9);
+                  setVisiblePastCount(3);
+                }}
+                className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
+                title="Clear search"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
         {loading ? (
@@ -1055,6 +1113,25 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                   className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg transition-colors cursor-pointer font-medium text-sm"
               >
                 Track your first flight
+              </button>
+            </div>
+        ) : activeTrips.length === 0 && pastTrips.length === 0 && normalizedQuery ? (
+            <div className="text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-3 text-gray-400">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <p className="text-gray-700 dark:text-gray-200 font-semibold mb-1">No trips found</p>
+              <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm max-w-sm mx-auto">
+                No flights to or from &ldquo;{searchQuery}&rdquo; were found.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors cursor-pointer font-medium text-sm"
+              >
+                Clear search
               </button>
             </div>
         ) : (
@@ -1078,7 +1155,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
               </>
             ) : (
               <div className="text-center sm:text-left py-6 text-gray-500 dark:text-gray-400 text-sm bg-gray-50 dark:bg-gray-800/40 rounded-xl p-4 border border-dashed border-gray-200 dark:border-gray-700">
-                No active flights scheduled.
+                {normalizedQuery ? `No active flights to or from "${searchQuery}".` : 'No active flights scheduled.'}
               </div>
             )}
 
@@ -1088,7 +1165,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
                 <div className="mb-5">
                   <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Past Trips</h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                    {pastTrips.length} previously taken {pastTrips.length === 1 ? 'flight' : 'flights'}
+                    {pastTrips.length} previously taken {pastTrips.length === 1 ? 'flight' : 'flights'}{normalizedQuery ? ` matching "${searchQuery}"` : ''}
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
