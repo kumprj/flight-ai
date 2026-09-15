@@ -1,15 +1,27 @@
 import { useState } from 'react';
+import axios from 'axios';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { Config } from './config';
 import { scanCalendarForFlights, type CalendarFlight } from './utils/googleCalendar';
+import { filterNewFlights } from './utils/flightTimes';
+
+interface ExistingTripLike {
+  flightNumber: string;
+  date: string;
+  revisedDate?: string;
+}
 
 interface Props {
   onImport: (flights: CalendarFlight[], address: string) => Promise<void>;
   onClose: () => void;
   homeAddress?: string;
+  existingTrips?: ExistingTripLike[];
 }
 
-export default function CalendarImport({ onImport, onClose, homeAddress = '' }: Props) {
+export default function CalendarImport({ onImport, onClose, homeAddress = '', existingTrips }: Props) {
   const [state, setState] = useState<'idle' | 'scanning' | 'results' | 'error'>('idle');
   const [flights, setFlights] = useState<CalendarFlight[]>([]);
+  const [alreadyTrackedCount, setAlreadyTrackedCount] = useState(0);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState('');
   const [addresses, setAddresses] = useState<Record<string, string>>({});
@@ -19,12 +31,33 @@ export default function CalendarImport({ onImport, onClose, homeAddress = '' }: 
   const setAddress = (key: string, val: string) =>
     setAddresses((prev) => ({ ...prev, [key]: val }));
 
+  const fetchExistingTrips = async (): Promise<ExistingTripLike[]> => {
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+      if (!token) return [];
+      const res = await axios.get(`${Config.API_URL}/trips`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return res.data || [];
+    } catch (e) {
+      console.warn('Failed to load existing trips for calendar deduplication:', e);
+      return [];
+    }
+  };
+
   const scan = async () => {
     setState('scanning');
     try {
-      const found = await scanCalendarForFlights();
-      setFlights(found);
-      setSelected(new Set(found.map((f) => `${f.flightNumber}::${f.date}`)));
+      const [found, trips] = await Promise.all([
+        scanCalendarForFlights(),
+        existingTrips !== undefined ? Promise.resolve(existingTrips) : fetchExistingTrips(),
+      ]);
+      const netNewFlights = filterNewFlights(found, trips);
+      const skipped = found.length - netNewFlights.length;
+      setAlreadyTrackedCount(skipped);
+      setFlights(netNewFlights);
+      setSelected(new Set(netNewFlights.map((f) => `${f.flightNumber}::${f.date}`)));
       setState('results');
     } catch (e: any) {
       setError(e.message ?? 'Failed to scan calendar');
@@ -121,15 +154,38 @@ export default function CalendarImport({ onImport, onClose, homeAddress = '' }: 
             <>
               {flights.length === 0 ? (
                 <div className="text-center py-6">
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">
-                    No flight numbers found in your calendar events for the next 12 months.
-                  </p>
+                  {alreadyTrackedCount > 0 ? (
+                    <>
+                      <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-bold">
+                        ✓
+                      </div>
+                      <p className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                        All Flights Already Tracked
+                      </p>
+                      <p className="text-gray-500 dark:text-gray-400 text-xs max-w-xs mx-auto">
+                        {alreadyTrackedCount === 1
+                          ? 'The 1 flight found in your calendar is already being tracked.'
+                          : `All ${alreadyTrackedCount} flights found in your calendar are already being tracked.`}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
+                      No flight numbers found in your calendar events for the next 12 months.
+                    </p>
+                  )}
                 </div>
               ) : (
                 <>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                    Found {flights.length} flight{flights.length !== 1 ? 's' : ''}. Select which to import:
-                  </p>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                      Found {flights.length} new flight{flights.length !== 1 ? 's' : ''} to track:
+                    </p>
+                    {alreadyTrackedCount > 0 && (
+                      <span className="text-[11px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
+                        {alreadyTrackedCount} already tracked
+                      </span>
+                    )}
+                  </div>
                   <div className="space-y-2 max-h-64 overflow-y-auto mb-4">
                     {flights.map((flight) => {
                       const key = `${flight.flightNumber}::${flight.date}`;

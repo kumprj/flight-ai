@@ -119,17 +119,41 @@ export const GoogleMaps = {
       ? "routes.duration,routes.distanceMeters,routes.legs.steps,routes.legs.steps.navigationInstruction,routes.legs.steps.transitDetails,routes.legs.steps.transitDetails.transitLine,routes.legs.steps.transitDetails.stopDetails"
       : "routes.duration,routes.distanceMeters,routes.staticDuration";
 
-    const response = await axios.post(
-      ROUTES_API_URL,
-      body,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": process.env.GOOGLE_MAPS_KEY!,
-          "X-Goog-FieldMask": fieldMask,
-        },
+    let response;
+    try {
+      response = await axios.post(
+        ROUTES_API_URL,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": process.env.GOOGLE_MAPS_KEY!,
+            "X-Goog-FieldMask": fieldMask,
+            "X-Goog-Maps-Solution-ID": "gmp_git_agentskills_v1",
+          },
+        }
+      );
+    } catch (err: any) {
+      if (isFutureDeparture) {
+        console.warn(`[GoogleMaps] Request failed with departureTime ${body.departureTime}, retrying with current time:`, err.message);
+        const fallbackBody = { ...body };
+        delete fallbackBody.departureTime;
+        response = await axios.post(
+          ROUTES_API_URL,
+          fallbackBody,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Goog-Api-Key": process.env.GOOGLE_MAPS_KEY!,
+              "X-Goog-FieldMask": fieldMask,
+              "X-Goog-Maps-Solution-ID": "gmp_git_agentskills_v1",
+            },
+          }
+        );
+      } else {
+        throw err;
       }
-    );
+    }
 
     const route = response.data.routes?.[0];
     if (!route) {
