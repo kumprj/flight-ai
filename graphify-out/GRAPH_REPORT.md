@@ -1,26 +1,28 @@
-# Graph Report - flight-ai-mbta  (2026-09-15)
+# Graph Report - flight-ai-alerts  (2026-09-15)
 
 ## Corpus Check
-- 79 files · ~42,917 words
+- 79 files · ~43,866 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 5, .css 2)
 
 ## Summary
-- 537 nodes · 795 edges · 42 communities (22 shown, 10 thin omitted)
+- 539 nodes · 801 edges · 44 communities (23 shown, 11 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 30 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `37829a94`
+- Built from commit: `6337f004`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
+- profile.ts
 - maps.ts
 - trip.ts
 - App.tsx
 - core/package.json
 - web/package.json
+- twilio.ts
 - Issue tracker: GitHub
 - package.json
 - Make My Flight (makemyflight)
@@ -54,9 +56,9 @@
 2. `compilerOptions` - 18 edges
 3. `parseFlightTimeToUTC()` - 13 edges
 4. `compilerOptions` - 13 edges
-5. `formatLeaveTime()` - 9 edges
-6. `TransitAlert` - 9 edges
-7. `compilerOptions` - 9 edges
+5. `compilerOptions` - 10 edges
+6. `formatLeaveTime()` - 9 edges
+7. `TransitAlert` - 9 edges
 8. `react` - 9 edges
 9. `App()` - 9 edges
 10. `Make My Flight` - 9 edges
@@ -76,23 +78,27 @@
 ## Import Cycles
 - None detected.
 
-## Communities (42 total, 10 thin omitted)
+## Communities (44 total, 11 thin omitted)
+
+### Community 0 - "profile.ts"
+Cohesion: 0.42
+Nodes (8): confirmVerification(), decodeJWT(), dynamodb, get(), getUserIdFromEvent(), sendVerification(), twilioClient, update()
 
 ### Community 1 - "maps.ts"
-Cohesion: 0.05
-Nodes (65): alertMatchesAirport(), BART_STATIONS, bartToTransitAlerts(), formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport(), OAK_KEYWORDS (+57 more)
+Cohesion: 0.06
+Nodes (64): alertMatchesAirport(), BART_STATIONS, bartToTransitAlerts(), formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport(), OAK_KEYWORDS (+56 more)
 
 ### Community 2 - "trip.ts"
-Cohesion: 0.11
-Nodes (36): AirportInfo, AIRPORTS, getAirportAddress(), getAirportLabel(), getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), filterNewFlights() (+28 more)
+Cohesion: 0.09
+Nodes (45): AirportInfo, AIRPORTS, getAirportAddress(), getAirportLabel(), getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), filterNewFlights() (+37 more)
 
 ### Community 3 - "App.tsx"
 Cohesion: 0.07
 Nodes (48): AddressAutocomplete(), AddressAutocompleteProps, loadGoogleMapsScript(), App(), FlightData, FlightSegment, formatDateOnly(), getTripDateOnly() (+40 more)
 
 ### Community 4 - "core/package.json"
-Cohesion: 0.06
-Nodes (36): dependencies, @aws-sdk/client-dynamodb, @aws-sdk/client-scheduler, @aws-sdk/lib-dynamodb, axios, date-fns, date-fns-tz, gtfs-realtime-bindings (+28 more)
+Cohesion: 0.10
+Nodes (20): dependencies, @aws-sdk/client-dynamodb, @aws-sdk/client-scheduler, @aws-sdk/lib-dynamodb, axios, date-fns, date-fns-tz, gtfs-realtime-bindings (+12 more)
 
 ### Community 5 - "web/package.json"
 Cohesion: 0.05
@@ -104,7 +110,7 @@ Nodes (6): Conventions, Issue tracker: GitHub, Pull requests as a triage surface
 
 ### Community 8 - "package.json"
 Cohesion: 0.06
-Nodes (34): dependencies, @aws-sdk/client-ses, date-fns, date-fns-tz, react-datepicker, @types/react-datepicker, devDependencies, dotenv (+26 more)
+Nodes (33): dependencies, @aws-sdk/client-ses, date-fns, date-fns-tz, react-datepicker, @types/react-datepicker, devDependencies, dotenv (+25 more)
 
 ### Community 9 - "Make My Flight (makemyflight)"
 Cohesion: 0.29
@@ -120,7 +126,7 @@ Nodes (5): Before exploring, read these, Domain Docs, File structure, Flag ADR c
 
 ### Community 13 - "functions/package.json"
 Cohesion: 0.09
-Nodes (21): dependencies, @aws-sdk/client-lambda, @flight-ai/core, twilio, devDependencies, sst, @types/aws-lambda, @types/node (+13 more)
+Nodes (22): dependencies, @aws-sdk/client-lambda, @flight-ai/core, twilio, devDependencies, sst, @types/aws-lambda, @types/node (+14 more)
 
 ### Community 14 - "compilerOptions"
 Cohesion: 0.09
@@ -151,8 +157,8 @@ Cohesion: 0.33
 Nodes (5): cron, dateUtils, fs, index, types
 
 ### Community 26 - "compilerOptions"
-Cohesion: 0.17
-Nodes (11): compilerOptions, allowSyntheticDefaultImports, esModuleInterop, module, moduleResolution, paths, skipLibCheck, strict (+3 more)
+Cohesion: 0.15
+Nodes (12): compilerOptions, allowSyntheticDefaultImports, esModuleInterop, module, moduleResolution, paths, skipLibCheck, strict (+4 more)
 
 ### Community 31 - "flights.ts"
 Cohesion: 0.27
@@ -167,9 +173,9 @@ Cohesion: 0.08
 Nodes (23): API Endpoints, APIs, Architecture, AWS Infrastructure, Backend, Deployment, Environment Variables, Features (+15 more)
 
 ## Knowledge Gaps
-- **280 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+275 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 313 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **281 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+276 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 314 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -178,13 +184,13 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.116) - this node is a cross-community bridge._
 - **Why does `formatFlightTimeOnly()` connect `trip.ts` to `App.tsx`?**
   _High betweenness centrality (0.082) - this node is a cross-community bridge._
-- **Why does `@aws-sdk/client-lambda` connect `core/package.json` to `functions/package.json`?**
+- **Why does `@aws-sdk/client-lambda` connect `functions/package.json` to `trip.ts`?**
   _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **What connects `name`, `private`, `workspaces` to the rest of the system?**
-  _280 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _281 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `maps.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.054203180785459264 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05527805527805528 - nodes in this community are weakly interconnected._
 - **Should `trip.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.10629251700680271 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09013914095583787 - nodes in this community are weakly interconnected._
 - **Should `App.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.06779661016949153 - nodes in this community are weakly interconnected._

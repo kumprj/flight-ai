@@ -172,3 +172,20 @@ export const filterNewFlights = <T extends { flightNumber: string; date: string 
   if (!Array.isArray(existingTrips) || existingTrips.length === 0) return candidateFlights;
   return candidateFlights.filter((flight) => !isTripAlreadyTracked(flight, existingTrips));
 };
+
+/**
+ * Determines whether a drive time change warrants a notification alert.
+ * Returns true if lastNotifiedDriveMinutes is defined and the absolute difference
+ * between currentDriveMinutes and lastNotifiedDriveMinutes is strictly greater than thresholdMinutes (default 15).
+ */
+export const shouldAlertDriveTimeChange = (
+  currentDriveMinutes: number,
+  lastNotifiedDriveMinutes?: number,
+  thresholdMinutes: number = 15
+): boolean => {
+  if (lastNotifiedDriveMinutes === undefined || lastNotifiedDriveMinutes === null) {
+    return false;
+  }
+  return Math.abs(currentDriveMinutes - lastNotifiedDriveMinutes) > thresholdMinutes;
+};
+

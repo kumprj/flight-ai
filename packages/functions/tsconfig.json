@@ -10,7 +10,8 @@
     "paths": {
       "@flight-ai/core": ["../core/src/index.ts"],
       "@flight-ai/core/*": ["../core/src/*"]
-    }
+    },
+    "types": ["node"]
   },
   "include": ["src/**/*", "../../sst-env.d.ts"]
 }

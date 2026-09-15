@@ -122,6 +122,7 @@ export default $config({
       environment: {
         WORKER_ARN: notifyWorker.arn,
         AERODATABOX_API_KEY: process.env.AERODATABOX_API_KEY!,
+        GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY!,
       },
       permissions: [
         {actions: ["lambda:InvokeFunction"], resources: [notifyWorker.arn]}

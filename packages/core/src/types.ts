@@ -18,6 +18,8 @@ export interface Trip {
   notifiedDeparture?: number; // Epoch when departure-window notification was sent
   // Delay-change re-notification tracking
   lastDelayNotifiedMinutes?: number; // The delayMinutes value when the last delay-change update was sent
+  // Drive-time change re-notification tracking
+  lastDriveTimeMinutes?: number; // The driveTimeMinutes value when the last departure or drive-time alert was sent
   createdAt?: number;
   updatedAt?: number;
 }
@@ -45,6 +47,9 @@ export interface SchedulerPayload {
   delayMinutes?: number;
   isCanceled?: boolean;
   isUpdate?: boolean; // True when this is a re-notification due to a delay change
+  isDriveTimeUpdate?: boolean; // True when this is a re-notification due to a drive time change (>15m)
+  previousDriveMinutes?: number;
+  currentDriveMinutes?: number;
 }
 
 export interface NotificationPreferences {
