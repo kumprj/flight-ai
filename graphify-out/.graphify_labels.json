@@ -1,6 +1,6 @@
 {
   "0": "googleCalendar.ts",
-  "1": "types.ts",
+  "1": "maps.ts",
   "2": "trip.ts",
   "3": "App.tsx",
   "4": "cron.ts",
@@ -11,7 +11,6 @@
   "9": "Make My Flight (makemyflight)",
   "10": "Agent skills",
   "11": "Domain Docs",
-  "12": "dependencies",
   "13": "functions/package.json",
   "14": "compilerOptions",
   "15": "React + TypeScript + Vite",

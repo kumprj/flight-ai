@@ -1,8 +1,10 @@
 import axios from "axios";
 import { getAirportAddress } from "./airports";
 import { TravelTimeInfo, MultiModalTravelTime, TransitStep } from "./types";
-import { isChicagoAirport, getCtaAlerts, getCtaStationInfo } from "./cta";
-import { isNycAirport, getMtaAlerts, getNycStationInfo } from "./mta";
+import { isChicagoAirport, getCtaAlerts, getCtaStationInfo, formatCtaAlertsSummary } from "./cta";
+import { isNycAirport, getMtaAlerts, getNycStationInfo, formatMtaAlertsSummary } from "./mta";
+import { isLondonAirport, getTflAlerts, getLondonStationInfo, formatTflAlertsSummary } from "./tfl";
+import { isBartAirport, getBartAlerts, getBartStationInfo, formatBartAlertsSummary } from "./bart";
 
 const ROUTES_API_URL = "https://routes.googleapis.com/directions/v2:computeRoutes";
 
@@ -178,17 +180,35 @@ export const GoogleMaps = {
       ? getMtaAlerts(destination).catch(() => [])
       : Promise.resolve(undefined);
 
-    const [drive, transit, ctaAlerts, mtaAlerts] = await Promise.all([
+    // 5. If London airport (LHR/LGW/STN/LTN/LCY), fetch live TfL alerts
+    const isLondon = isLondonAirport(destination);
+    const tflAlertsPromise = isLondon && includeTransit
+      ? getTflAlerts(destination).catch(() => [])
+      : Promise.resolve(undefined);
+
+    // 6. If San Francisco airport (SFO/OAK), fetch live BART alerts
+    const isBart = isBartAirport(destination);
+    const bartAlertsPromise = isBart && includeTransit
+      ? getBartAlerts().catch(() => [])
+      : Promise.resolve(undefined);
+
+    const [drive, transit, ctaAlerts, mtaAlerts, tflAlerts, bartAlerts] = await Promise.all([
       drivePromise,
       transitPromise,
       ctaAlertsPromise,
       mtaAlertsPromise,
+      tflAlertsPromise,
+      bartAlertsPromise,
     ]);
 
     const stationInfo = isCta
       ? getCtaStationInfo(destination) || undefined
       : isNyc
       ? getNycStationInfo(destination) || undefined
+      : isLondon
+      ? getLondonStationInfo(destination) || undefined
+      : isBart
+      ? getBartStationInfo(destination) || undefined
       : undefined;
 
     return {
@@ -196,7 +216,66 @@ export const GoogleMaps = {
       transit,
       ctaAlerts,
       mtaAlerts,
+      tflAlerts,
+      bartAlerts,
       stationInfo,
     };
   },
+};
+
+/**
+ * Resolves transit agency name, line display name, and formatted alert summary for a multimodal travel time estimate.
+ */
+export const resolveTransitAlertSummary = (travelEstimate: MultiModalTravelTime): {
+  transitAgency: string;
+  transitLineName: string;
+  transitAlertsSummary?: string;
+} => {
+  let transitAlertsSummary: string | undefined;
+
+  if (travelEstimate.ctaAlerts && travelEstimate.ctaAlerts.length > 0) {
+    transitAlertsSummary = formatCtaAlertsSummary(
+      travelEstimate.ctaAlerts,
+      travelEstimate.stationInfo?.line || "CTA Transit"
+    );
+  } else if (travelEstimate.mtaAlerts && travelEstimate.mtaAlerts.length > 0) {
+    transitAlertsSummary = formatMtaAlertsSummary(
+      travelEstimate.mtaAlerts,
+      travelEstimate.stationInfo?.line || "MTA Transit"
+    );
+  } else if (travelEstimate.tflAlerts && travelEstimate.tflAlerts.length > 0) {
+    transitAlertsSummary = formatTflAlertsSummary(
+      travelEstimate.tflAlerts,
+      travelEstimate.stationInfo?.line || "TfL Transit"
+    );
+  } else if (travelEstimate.bartAlerts && travelEstimate.bartAlerts.length > 0) {
+    transitAlertsSummary = formatBartAlertsSummary(
+      travelEstimate.bartAlerts,
+      travelEstimate.stationInfo?.line || "BART"
+    );
+  }
+
+  const transitAgency =
+    travelEstimate.stationInfo?.agency ||
+    (travelEstimate.ctaAlerts
+      ? "CTA"
+      : travelEstimate.mtaAlerts
+      ? "MTA"
+      : travelEstimate.tflAlerts
+      ? "TfL"
+      : travelEstimate.bartAlerts
+      ? "BART"
+      : "Public Transit");
+
+  const transitLineName =
+    travelEstimate.stationInfo?.line ||
+    (travelEstimate.transit?.transitLine
+      ? `${travelEstimate.transit.transitLine} (${transitAgency})`
+      : `${transitAgency} Public Transit`);
+
+  return {
+    transitAgency,
+    transitLineName,
+    transitAlertsSummary,
+  };
 };

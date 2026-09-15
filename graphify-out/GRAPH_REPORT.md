@@ -1,23 +1,23 @@
 # Graph Report - flight-ai-bart  (2026-09-14)
 
 ## Corpus Check
-- 71 files · ~36,207 words
+- 73 files · ~37,530 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: (none) 5, .css 2)
 
 ## Summary
-- 481 nodes · 650 edges · 45 communities (25 shown, 10 thin omitted)
+- 492 nodes · 679 edges · 44 communities (24 shown, 10 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0da89121`
+- Built from commit: `df4ebd46`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - googleCalendar.ts
-- types.ts
+- maps.ts
 - trip.ts
 - App.tsx
 - cron.ts
@@ -28,7 +28,6 @@
 - Make My Flight (makemyflight)
 - Agent skills
 - Domain Docs
-- dependencies
 - functions/package.json
 - compilerOptions
 - React + TypeScript + Vite
@@ -58,7 +57,7 @@
 3. `compilerOptions` - 13 edges
 4. `parseFlightTimeToUTC()` - 12 edges
 5. `formatLeaveTime()` - 9 edges
-6. `handler()` - 9 edges
+6. `resolveTransitAlertSummary()` - 9 edges
 7. `compilerOptions` - 9 edges
 8. `react` - 9 edges
 9. `Make My Flight` - 9 edges
@@ -67,43 +66,43 @@
 ## Surprising Connections (you probably didn't know these)
 - `Make My Flight Web Application Entrypoint HTML` --references--> `Vite Logo Asset`  [EXTRACTED]
   packages/web/index.html → packages/web/public/vite.svg
-- `handler()` --calls--> `formatBartAlertsSummary()`  [EXTRACTED]
-  packages/functions/src/notify.ts → packages/core/src/bart.ts
-- `App()` --calls--> `formatFlightDate()`  [EXTRACTED]
-  packages/web/src/App.tsx → packages/core/src/dateUtils.ts
-- `App()` --calls--> `formatFlightTimeOnly()`  [EXTRACTED]
-  packages/web/src/App.tsx → packages/core/src/dateUtils.ts
+- `handler()` --calls--> `resolveTransitAlertSummary()`  [EXTRACTED]
+  packages/functions/src/notify.ts → packages/core/src/maps.ts
+- `testNotify()` --calls--> `resolveTransitAlertSummary()`  [EXTRACTED]
+  packages/functions/src/trip.ts → packages/core/src/maps.ts
 - `resolveTimezone()` --calls--> `getAirportTimezone()`  [EXTRACTED]
   packages/core/src/dateUtils.ts → packages/core/src/airports.ts
+- `create()` --calls--> `getAirportTimezone()`  [EXTRACTED]
+  packages/functions/src/trip.ts → packages/core/src/airports.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (45 total, 10 thin omitted)
+## Communities (44 total, 10 thin omitted)
 
 ### Community 0 - "googleCalendar.ts"
 Cohesion: 0.20
 Nodes (15): CalendarImport(), Props, cacheToken(), CalendarFlight, fetchCalendarEvents(), getAccessToken(), getCachedToken(), getGoogleAccounts() (+7 more)
 
-### Community 1 - "types.ts"
-Cohesion: 0.08
-Nodes (30): AirportInfo, AIRPORTS, getAirportAddress(), BART_STATIONS, formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport() (+22 more)
+### Community 1 - "maps.ts"
+Cohesion: 0.07
+Nodes (41): AirportInfo, AIRPORTS, getAirportAddress(), BART_STATIONS, formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport() (+33 more)
 
 ### Community 2 - "trip.ts"
-Cohesion: 0.16
-Nodes (26): getAirportTimezone(), formatCtaAlertsSummary(), calculateHoursUntilFlight(), calculateLeaveTime(), formatFlightDate(), formatFlightTime(), formatFlightTimeOnly(), formatLeaveTime() (+18 more)
+Cohesion: 0.15
+Nodes (26): getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), formatFlightDate(), formatFlightTime(), formatFlightTimeOnly(), formatLeaveTime(), parseFlightTimeToUTC() (+18 more)
 
 ### Community 3 - "App.tsx"
 Cohesion: 0.11
-Nodes (28): AddressAutocomplete(), AddressAutocompleteProps, loadGoogleMapsScript(), App(), FlightData, FlightSegment, MultiSegmentResult, Step (+20 more)
+Nodes (28): AddressAutocomplete(), AddressAutocompleteProps, loadGoogleMapsScript(), FlightData, FlightSegment, MultiSegmentResult, Step, Trip (+20 more)
 
 ### Community 4 - "cron.ts"
 Cohesion: 0.16
 Nodes (16): client, Database, docClient, dynamodb, lambda, confirmVerification(), decodeJWT(), dynamodb (+8 more)
 
 ### Community 5 - "web/package.json"
-Cohesion: 0.07
-Nodes (30): axios, date-fns-tz, @types/node, typescript, name, private, scripts, build (+22 more)
+Cohesion: 0.05
+Nodes (39): dependencies, aws-amplify, @aws-amplify/ui-react, axios, date-fns-tz, react, react-dom, react-router-dom (+31 more)
 
 ### Community 6 - "core/package.json"
 Cohesion: 0.09
@@ -115,7 +114,7 @@ Nodes (6): Conventions, Issue tracker: GitHub, Pull requests as a triage surface
 
 ### Community 8 - "package.json"
 Cohesion: 0.06
-Nodes (32): dependencies, @aws-sdk/client-ses, date-fns, date-fns-tz, react-datepicker, @types/react-datepicker, devDependencies, dotenv (+24 more)
+Nodes (31): dependencies, @aws-sdk/client-ses, date-fns, date-fns-tz, react-datepicker, @types/react-datepicker, devDependencies, dotenv (+23 more)
 
 ### Community 9 - "Make My Flight (makemyflight)"
 Cohesion: 0.29
@@ -128,10 +127,6 @@ Nodes (5): Agent Guidelines - Make My Flight, Agent skills, Domain docs, Issue t
 ### Community 11 - "Domain Docs"
 Cohesion: 0.33
 Nodes (5): Before exploring, read these, Domain Docs, File structure, Flag ADR conflicts, Use the glossary's vocabulary
-
-### Community 12 - "dependencies"
-Cohesion: 0.20
-Nodes (10): dependencies, aws-amplify, @aws-amplify/ui-react, axios, date-fns-tz, react, react-dom, react-router-dom (+2 more)
 
 ### Community 13 - "functions/package.json"
 Cohesion: 0.10
@@ -182,8 +177,8 @@ Cohesion: 0.08
 Nodes (23): API Endpoints, APIs, Architecture, AWS Infrastructure, Backend, Deployment, Environment Variables, Features (+15 more)
 
 ## Knowledge Gaps
-- **268 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+263 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 304 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **270 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+265 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 306 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -192,14 +187,14 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `react` connect `App.tsx` to `googleCalendar.ts`, `web/package.json`?**
   _High betweenness centrality (0.117) - this node is a cross-community bridge._
 - **Why does `formatFlightTimeOnly()` connect `trip.ts` to `App.tsx`?**
-  _High betweenness centrality (0.089) - this node is a cross-community bridge._
-- **Why does `@aws-sdk/client-ses` connect `package.json` to `trip.ts`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
+  _High betweenness centrality (0.092) - this node is a cross-community bridge._
+- **Why does `vitest` connect `trip.ts` to `maps.ts`, `functions/package.json`?**
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
 - **What connects `name`, `private`, `workspaces` to the rest of the system?**
-  _268 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `types.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08139534883720931 - nodes in this community are weakly interconnected._
+  _270 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `maps.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.07205513784461152 - nodes in this community are weakly interconnected._
+- **Should `trip.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.14795008912655971 - nodes in this community are weakly interconnected._
 - **Should `App.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.10810810810810811 - nodes in this community are weakly interconnected._
-- **Should `web/package.json` be split into smaller, more focused modules?**
-  _Cohesion score 0.07007575757575757 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1066066066066066 - nodes in this community are weakly interconnected._

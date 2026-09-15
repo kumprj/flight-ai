@@ -54,6 +54,7 @@ interface TravelTimeData {
   };
   ctaAlerts?: any[];
   mtaAlerts?: any[];
+  tflAlerts?: any[];
   stationInfo?: { agency?: string; line?: string; fareDescription?: string };
 }
 
