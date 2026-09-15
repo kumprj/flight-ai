@@ -278,7 +278,7 @@ export default function Trips({onBack, onEdit}: { onBack: () => void; onEdit: (t
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
-      await axios.post(`${Config.API_URL}/trips/notify`, {
+      await axios.post(`${Config.API_URL}/trips/test-notify`, {
         tripId: trip.sk,
         type: 'both'
       }, {

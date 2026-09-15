@@ -7,6 +7,7 @@ The application computes optimal leave times based on the user's home address, c
 Users receive automated departure alerts via:
 - **Night before departure**: ~11–12 hours prior to scheduled departure.
 - **Pre-departure day-of**: Sent `arrivalPreference + 2` hours prior to scheduled departure with updated live traffic.
+- **Drive time change updates**: Re-assessed as flight departure nears; follow-up alert sent if drive time changes by >15 minutes from last notification.
 - **Multi-channel alerts**: SMS (via Twilio) and Email (via AWS SES), respecting the user's opt-out / toggle preferences.
 
 ---
@@ -31,7 +32,7 @@ flight-ai/
 │   │       └── types.ts       # Shared TypeScript interfaces (Trip, SchedulerPayload, etc.)
 │   ├── functions/             # AWS Lambda backend handlers
 │   │   └── src/
-│   │       ├── cron.ts        # Hourly EventBridge cron scanning trips for notification windows
+│   │       ├── cron.ts        # EventBridge cron scanning trips every 30 minutes for notification windows
 │   │       ├── flight.ts      # API handler for flight searches
 │   │       ├── notify.ts      # Worker Lambda calculating travel times and sending SMS/email
 │   │       ├── profile.ts     # API handler for profile management & SMS verification
@@ -61,7 +62,7 @@ The primary DynamoDB table uses partition key `pk` (String) and sort key `sk` (S
 | Record Type | `pk` | `sk` | Key Attributes |
 | :--- | :--- | :--- | :--- |
 | **Profile** | `USER#<userId>` | `PROFILE` | `email`, `homeAddress`, `phoneNumber`, `phoneVerified`, `arrivalPreference` (number, default: 2), `emailEnabled` (bool), `smsEnabled` (bool), `transitEnabled` (bool, default: false), `updatedAt` |
-| **Trip** | `USER#<userId>` | `TRIP#<date>#<flightNumber>` | `flightNumber`, `date` (naive ISO string, e.g. `2026-05-20T14:30:00`), `originAirport` (IATA), `destinationAirport` (IATA), `homeAddress`, `timezone`, `createdAt`, `updatedAt` |
+| **Trip** | `USER#<userId>` | `TRIP#<date>#<flightNumber>` | `flightNumber`, `date` (naive ISO string, e.g. `2026-05-20T14:30:00`), `originAirport` (IATA), `destinationAirport` (IATA), `homeAddress`, `timezone`, `notified12h`, `notifiedDeparture`, `lastDriveTimeMinutes`, `lastDelayNotifiedMinutes`, `createdAt`, `updatedAt` |
 | **Phone Verification** | `USER#<userId>` | `VERIFY#<phoneNumber>` | `code` (6-digit string), `expiresAt` (Unix timestamp, 5 min TTL), `createdAt` |
 
 ---
@@ -76,7 +77,10 @@ The primary DynamoDB table uses partition key `pk` (String) and sort key `sk` (S
 3. **Leave Time Calculation**:
    - `leaveTimeUTC = flightTimeUTC - ((travelTimeMinutes + arrivalPreference * 60) * 60 * 1000)`
    - Google Maps travel time is evaluated for departure at the estimated arrival buffer time.
-4. **Authentication**:
+4. **Drive Time Change Monitoring**:
+   - Following the initial departure alert (`arrivalPreference + 2` hours prior), the cron job (running every 30 minutes) re-assesses drive time via Google Maps Routes API.
+   - An updated leave time alert is dispatched if the driving duration shifts by strictly more than 15 minutes (`> 15m`) in either direction compared to `lastDriveTimeMinutes`.
+5. **Authentication**:
    - AWS Cognito User Pool with Google & Facebook federated identity providers.
    - API endpoints authenticate via Bearer token in the `Authorization` header, decoding the user email claim.
 

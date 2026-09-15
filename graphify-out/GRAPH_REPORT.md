@@ -1,17 +1,17 @@
 # Graph Report - flight-ai  (2026-09-15)
 
 ## Corpus Check
-- 85 files · ~45,846 words
+- 85 files · ~46,820 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 6 file(s) not represented in the graph (top: (none) 4, .css 2)
 
 ## Summary
-- 566 nodes · 838 edges · 47 communities (27 shown, 10 thin omitted)
+- 569 nodes · 845 edges · 45 communities (25 shown, 10 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 30 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2a17864c`
+- Built from commit: `817b42b5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -28,7 +28,7 @@
 - Make My Flight (makemyflight)
 - Agent skills
 - Domain Docs
-- googleCalendar.ts
+- devDependencies
 - functions/package.json
 - compilerOptions
 - React + TypeScript + Vite
@@ -39,11 +39,9 @@
 - google-maps.d.ts
 - triage-labels.md
 - pnpm Monorepo Workspace Configuration
-- dependencies
 - resolve_simple.js
 - compilerOptions
 - flights.ts
-- airports.ts
 - compilerOptions
 - web/tsconfig.json
 - sst-env.d.ts
@@ -59,29 +57,29 @@
 2. `compilerOptions` - 18 edges
 3. `parseFlightTimeToUTC()` - 13 edges
 4. `compilerOptions` - 13 edges
-5. `react` - 10 edges
-6. `formatLeaveTime()` - 9 edges
-7. `TransitAlert` - 9 edges
-8. `compilerOptions` - 9 edges
+5. `compilerOptions` - 10 edges
+6. `react` - 10 edges
+7. `formatLeaveTime()` - 9 edges
+8. `TransitAlert` - 9 edges
 9. `App()` - 9 edges
 10. `Config` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Make My Flight Web Application Entrypoint HTML` --references--> `Vite Logo Asset`  [EXTRACTED]
   packages/web/index.html → packages/web/public/vite.svg
-- `App()` --calls--> `formatFlightDate()`  [EXTRACTED]
-  packages/web/src/App.tsx → packages/core/src/dateUtils.ts
-- `App()` --calls--> `formatFlightTimeOnly()`  [EXTRACTED]
-  packages/web/src/App.tsx → packages/core/src/dateUtils.ts
-- `App()` --calls--> `normalizeFlightNumber()`  [EXTRACTED]
-  packages/web/src/App.tsx → packages/core/src/dateUtils.ts
-- `App()` --calls--> `filterNewFlights()`  [EXTRACTED]
-  packages/web/src/App.tsx → packages/core/src/dateUtils.ts
+- `CalendarImport()` --calls--> `filterNewFlights()`  [EXTRACTED]
+  packages/web/src/CalendarImport.tsx → packages/core/src/dateUtils.ts
+- `resolveTimezone()` --calls--> `getAirportTimezone()`  [EXTRACTED]
+  packages/core/src/dateUtils.ts → packages/core/src/airports.ts
+- `create()` --calls--> `getAirportTimezone()`  [EXTRACTED]
+  packages/functions/src/trip.ts → packages/core/src/airports.ts
+- `update()` --calls--> `getAirportTimezone()`  [EXTRACTED]
+  packages/functions/src/trip.ts → packages/core/src/airports.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (47 total, 10 thin omitted)
+## Communities (45 total, 10 thin omitted)
 
 ### Community 0 - "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?"
 Cohesion: 0.40
@@ -89,23 +87,23 @@ Nodes (4): Answer, Outcome, Q: Why does getAirportTimezone() connect Make My Fli
 
 ### Community 1 - "maps.ts"
 Cohesion: 0.05
-Nodes (66): alertMatchesAirport(), BART_STATIONS, bartToTransitAlerts(), formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport(), OAK_KEYWORDS (+58 more)
+Nodes (65): alertMatchesAirport(), BART_STATIONS, bartToTransitAlerts(), formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport(), OAK_KEYWORDS (+57 more)
 
 ### Community 2 - "trip.ts"
-Cohesion: 0.14
-Nodes (33): getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), filterNewFlights(), formatFlightDate(), formatFlightTime(), formatFlightTimeOnly(), formatLeaveTime() (+25 more)
+Cohesion: 0.09
+Nodes (45): AirportInfo, AIRPORTS, getAirportAddress(), getAirportLabel(), getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), filterNewFlights() (+37 more)
 
 ### Community 3 - "App.tsx"
-Cohesion: 0.08
-Nodes (37): AddressAutocomplete(), AddressAutocompleteProps, loadGoogleMapsScript(), App(), FlightData, FlightSegment, formatDateOnly(), getTripDateOnly() (+29 more)
+Cohesion: 0.06
+Nodes (49): AddressAutocomplete(), AddressAutocompleteProps, loadGoogleMapsScript(), FlightData, FlightSegment, MultiSegmentResult, parseLocalDate(), Step (+41 more)
 
 ### Community 4 - "core/package.json"
-Cohesion: 0.06
-Nodes (36): dependencies, @aws-sdk/client-dynamodb, @aws-sdk/client-scheduler, @aws-sdk/lib-dynamodb, axios, date-fns, date-fns-tz, gtfs-realtime-bindings (+28 more)
+Cohesion: 0.07
+Nodes (32): dependencies, @aws-sdk/client-dynamodb, @aws-sdk/client-scheduler, @aws-sdk/lib-dynamodb, axios, date-fns, date-fns-tz, gtfs-realtime-bindings (+24 more)
 
 ### Community 5 - "web/package.json"
 Cohesion: 0.05
-Nodes (43): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, tailwindcss, @types/node (+35 more)
+Nodes (40): dependencies, aws-amplify, @aws-amplify/ui-react, axios, date-fns-tz, react, react-dom, react-router-dom (+32 more)
 
 ### Community 6 - "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?"
 Cohesion: 0.40
@@ -131,9 +129,9 @@ Nodes (5): Agent Guidelines - Make My Flight, Agent skills, Domain docs, Issue t
 Cohesion: 0.33
 Nodes (5): Before exploring, read these, Domain Docs, File structure, Flag ADR conflicts, Use the glossary's vocabulary
 
-### Community 12 - "googleCalendar.ts"
-Cohesion: 0.19
-Nodes (16): CalendarImport(), ExistingTripLike, Props, cacheToken(), CalendarFlight, fetchCalendarEvents(), getAccessToken(), getCachedToken() (+8 more)
+### Community 12 - "devDependencies"
+Cohesion: 0.14
+Nodes (14): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, tailwindcss, @types/node (+6 more)
 
 ### Community 13 - "functions/package.json"
 Cohesion: 0.09
@@ -156,32 +154,24 @@ Cohesion: 0.12
 Nodes (15): compilerOptions, declaration, declarationMap, esModuleInterop, forceConsistentCasingInFileNames, lib, module, moduleResolution (+7 more)
 
 ### Community 19 - "core/src/feedback.ts"
-Cohesion: 0.27
-Nodes (9): formatGitHubIssue(), FormatGitHubIssueParams, FormattedGitHubIssue, TYPE_LABELS, TYPE_PREFIXES, FeedbackDiagnostics, FeedbackType, getAuthDetails() (+1 more)
+Cohesion: 0.22
+Nodes (11): Database, formatGitHubIssue(), FormatGitHubIssueParams, FormattedGitHubIssue, TYPE_LABELS, TYPE_PREFIXES, FeedbackDiagnostics, FeedbackType (+3 more)
 
 ### Community 20 - "google-maps.d.ts"
 Cohesion: 0.14
 Nodes (8): AddressComponent, Autocomplete, AutocompleteOptions, ComponentRestrictions, google.maps.event, google.maps.places, PlaceResult, Window
-
-### Community 23 - "dependencies"
-Cohesion: 0.20
-Nodes (10): dependencies, aws-amplify, @aws-amplify/ui-react, axios, date-fns-tz, react, react-dom, react-router-dom (+2 more)
 
 ### Community 24 - "resolve_simple.js"
 Cohesion: 0.33
 Nodes (5): cron, dateUtils, fs, index, types
 
 ### Community 26 - "compilerOptions"
-Cohesion: 0.17
-Nodes (11): compilerOptions, allowSyntheticDefaultImports, esModuleInterop, module, moduleResolution, paths, skipLibCheck, strict (+3 more)
+Cohesion: 0.15
+Nodes (12): compilerOptions, allowSyntheticDefaultImports, esModuleInterop, module, moduleResolution, paths, skipLibCheck, strict (+4 more)
 
 ### Community 31 - "flights.ts"
 Cohesion: 0.27
 Nodes (7): aeroHeaders(), cache, fetchWithRetry(), FlightResult, Flights, mapFlight(), parseLocalTime()
-
-### Community 32 - "airports.ts"
-Cohesion: 0.47
-Nodes (4): AirportInfo, AIRPORTS, getAirportAddress(), getAirportLabel()
 
 ### Community 35 - "compilerOptions"
 Cohesion: 0.40
@@ -192,24 +182,24 @@ Cohesion: 0.08
 Nodes (23): API Endpoints, APIs, Architecture, AWS Infrastructure, Backend, Deployment, Environment Variables, Features (+15 more)
 
 ## Knowledge Gaps
-- **294 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+289 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 329 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **296 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+291 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 331 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `App.tsx` to `googleCalendar.ts`, `web/package.json`?**
-  _High betweenness centrality (0.112) - this node is a cross-community bridge._
+- **Why does `react` connect `App.tsx` to `web/package.json`?**
+  _High betweenness centrality (0.111) - this node is a cross-community bridge._
 - **Why does `formatFlightTimeOnly()` connect `trip.ts` to `App.tsx`?**
-  _High betweenness centrality (0.081) - this node is a cross-community bridge._
-- **Why does `@aws-sdk/client-lambda` connect `core/package.json` to `functions/package.json`?**
+  _High betweenness centrality (0.080) - this node is a cross-community bridge._
+- **Why does `@aws-sdk/client-lambda` connect `trip.ts` to `functions/package.json`?**
   _High betweenness centrality (0.048) - this node is a cross-community bridge._
 - **What connects `name`, `private`, `workspaces` to the rest of the system?**
-  _294 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _296 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `maps.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05134825014343087 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.054203180785459264 - nodes in this community are weakly interconnected._
 - **Should `trip.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.13974358974358975 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08591466978375219 - nodes in this community are weakly interconnected._
 - **Should `App.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.08233117483811286 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06451612903225806 - nodes in this community are weakly interconnected._

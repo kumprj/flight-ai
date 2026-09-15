@@ -7,6 +7,8 @@ import {
   parseFlightTimeToUTC,
   calculateHoursUntilFlight,
   Flights,
+  GoogleMaps,
+  shouldAlertDriveTimeChange,
 } from "@flight-ai/core";
 
 const dynamodb = DynamoDBDocument.from(new DynamoDB({}));
@@ -217,18 +219,31 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
 
         // 4. Notification window evaluation based on effective departure time
         const notify12h = hoursUntilFlight > 11 && hoursUntilFlight <= 12;
-        const notifyPreference = hoursUntilFlight > (arrivalPreference + 1) && hoursUntilFlight <= (arrivalPreference + 2);
+        const notifyDeparture = hoursUntilFlight > 0 && hoursUntilFlight <= (arrivalPreference + 2);
 
         // De-duplication: skip if this window was already notified
         const already12h = Boolean(item.notified12h);
         const alreadyDeparture = Boolean(item.notifiedDeparture);
         const should12h = notify12h && !already12h;
-        const shouldDeparture = notifyPreference && !alreadyDeparture;
+        const shouldDeparture = notifyDeparture && !alreadyDeparture;
 
         if (should12h || shouldDeparture) {
           const reason = should12h ? '12-hour advance notice' : `${arrivalPreference + 2}-hour departure window`;
           const isDelayed = item.status === 'Delayed' || Boolean(item.revisedDate);
           console.log(`Triggering notification for ${item.flightNumber} (${reason}, Delayed: ${isDelayed})`);
+
+          // Calculate initial drive time if sending departure notification
+          let initialDriveMinutes: number | undefined;
+          if (shouldDeparture) {
+            try {
+              const estimatedLeaveUTC = new Date(flightDateUTC.getTime() - (arrivalPreference * 60 * 60 * 1000));
+              const driveEstimate = await GoogleMaps.getTravelTime(item.homeAddress, item.originAirport, estimatedLeaveUTC, "DRIVE");
+              initialDriveMinutes = Math.ceil(driveEstimate.durationSeconds / 60);
+              console.log(`Initial drive time for ${item.flightNumber}: ${initialDriveMinutes}m`);
+            } catch (err) {
+              console.warn(`Could not calculate initial drive time in cron for ${item.flightNumber}:`, err);
+            }
+          }
 
           await lambda.send(new InvokeCommand({
             FunctionName: process.env.WORKER_ARN!,
@@ -254,6 +269,11 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
           if (shouldDeparture) {
             updateParts.push('notifiedDeparture = :nDep');
             exprValues[':nDep'] = now.getTime();
+            if (initialDriveMinutes !== undefined) {
+              updateParts.push('lastDriveTimeMinutes = :ldtm');
+              exprValues[':ldtm'] = initialDriveMinutes;
+              item.lastDriveTimeMinutes = initialDriveMinutes;
+            }
           }
           // Track delay level at time of notification for change detection
           if (isDelayed && item.delayMinutes) {
@@ -269,10 +289,68 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
           });
 
           console.log(`Notification triggered for ${item.flightNumber} (${reason})`);
+        } else if (alreadyDeparture && hoursUntilFlight > 0 && hoursUntilFlight <= (arrivalPreference + 2)) {
+          // 5. Re-assess drive time as we get closer to the flight
+          try {
+            const estimatedLeaveUTC = new Date(flightDateUTC.getTime() - (arrivalPreference * 60 * 60 * 1000));
+            const driveEstimate = await GoogleMaps.getTravelTime(item.homeAddress, item.originAirport, estimatedLeaveUTC, "DRIVE");
+            const currentDriveMinutes = Math.ceil(driveEstimate.durationSeconds / 60);
+            const lastNotifiedDrive = item.lastDriveTimeMinutes;
+
+            console.log(`Re-assessing drive time for ${item.flightNumber}: current = ${currentDriveMinutes}m, last notified = ${lastNotifiedDrive}m`);
+
+            if (lastNotifiedDrive === undefined) {
+              // Establish baseline if not set previously
+              await dynamodb.update({
+                TableName: Resource.Table.name,
+                Key: { pk: item.pk, sk: item.sk },
+                UpdateExpression: "SET lastDriveTimeMinutes = :ldtm, updatedAt = :updatedAt",
+                ExpressionAttributeValues: {
+                  ":ldtm": currentDriveMinutes,
+                  ":updatedAt": now.getTime(),
+                },
+              });
+              item.lastDriveTimeMinutes = currentDriveMinutes;
+            } else if (shouldAlertDriveTimeChange(currentDriveMinutes, lastNotifiedDrive, 15)) {
+              const diff = Math.abs(currentDriveMinutes - lastNotifiedDrive);
+              console.log(`Drive time changed significantly for ${item.flightNumber}: ${lastNotifiedDrive}m → ${currentDriveMinutes}m (diff: ${diff}m > 15m). Sending update notification.`);
+
+              const isDelayed = item.status === 'Delayed' || Boolean(item.revisedDate);
+              await lambda.send(new InvokeCommand({
+                FunctionName: process.env.WORKER_ARN!,
+                InvocationType: "Event",
+                Payload: JSON.stringify({
+                  tripId: item.sk,
+                  userId: userId,
+                  homeAddress: item.homeAddress,
+                  airportCode: item.originAirport,
+                  isDelayed,
+                  delayMinutes: item.delayMinutes || 0,
+                  isDriveTimeUpdate: true,
+                  previousDriveMinutes: lastNotifiedDrive,
+                  currentDriveMinutes: currentDriveMinutes,
+                }),
+              }));
+
+              await dynamodb.update({
+                TableName: Resource.Table.name,
+                Key: { pk: item.pk, sk: item.sk },
+                UpdateExpression: "SET lastDriveTimeMinutes = :ldtm, updatedAt = :updatedAt",
+                ExpressionAttributeValues: {
+                  ":ldtm": currentDriveMinutes,
+                  ":updatedAt": now.getTime(),
+                },
+              });
+              item.lastDriveTimeMinutes = currentDriveMinutes;
+            } else {
+              const diff = Math.abs(currentDriveMinutes - lastNotifiedDrive);
+              console.log(`Drive time change for ${item.flightNumber} (${diff}m) is within 15-minute threshold. Skipping notification.`);
+            }
+          } catch (driveErr) {
+            console.error(`Failed to check drive time update for ${item.flightNumber}:`, driveErr);
+          }
         } else if (notify12h && already12h) {
           console.log(`Skipping 12h notification for ${item.flightNumber} — already sent`);
-        } else if (notifyPreference && alreadyDeparture) {
-          console.log(`Skipping departure notification for ${item.flightNumber} — already sent`);
         } else if (hoursUntilFlight <= 0) {
           console.log(`Flight ${item.flightNumber} has already departed`);
         } else {
