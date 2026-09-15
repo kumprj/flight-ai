@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {Config} from './config';
-import {fetchAuthSession, getCurrentUser, signInWithRedirect, signOut} from 'aws-amplify/auth';
+import {fetchAuthSession, getCurrentUser, signInWithRedirect} from 'aws-amplify/auth';
 import {Hub} from 'aws-amplify/utils';
 import Trips from './Trips';
 import {useState, useEffect} from 'react';
@@ -1107,13 +1107,13 @@ function App() {
                   >
                     <button
                         role="tab"
-                        aria-selected={view === 'list' || view === 'add'}
+                        aria-selected={view === 'list'}
                         onClick={() => {
                           if (editingTrip || view === 'add') handleCancel();
                           setView('list');
                         }}
                         className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 active:scale-95 cursor-pointer ${
-                            view === 'list' || view === 'add'
+                            view === 'list'
                                 ? 'bg-green-700 text-white shadow-sm font-semibold'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/70'
                         }`}
@@ -1122,6 +1122,34 @@ function App() {
                         <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z" />
                       </svg>
                       <span>Trips</span>
+                    </button>
+
+                    <button
+                        role="tab"
+                        aria-selected={view === 'add'}
+                        onClick={() => {
+                          if (editingTrip) handleCancel();
+                          else {
+                            setStep('input');
+                            setSearchResults([]);
+                            setMultiSegments(null);
+                            setCurrentSegmentIdx(0);
+                            setSelectedSegments([]);
+                            setSelectedFlight(null);
+                          }
+                          setView('add');
+                        }}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 active:scale-95 cursor-pointer ${
+                            view === 'add'
+                                ? 'bg-green-700 text-white shadow-sm font-semibold'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/70'
+                        }`}
+                    >
+                      <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                      <span>Add New</span>
                     </button>
 
                     <button
@@ -1142,22 +1170,6 @@ function App() {
                         <circle cx="12" cy="7" r="4" />
                       </svg>
                       <span>Profile</span>
-                    </button>
-
-                    <div aria-hidden="true" className="w-px h-5 bg-gray-200 dark:bg-gray-700/80 mx-1 self-center" />
-
-                    <button
-                        type="button"
-                        aria-label="Sign Out"
-                        onClick={() => signOut()}
-                        className="flex items-center gap-2 px-3.5 py-2 rounded-full text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-950/40 transition-all duration-200 active:scale-95 cursor-pointer"
-                    >
-                      <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                        <polyline points="16 17 21 12 16 7" />
-                        <line x1="21" y1="12" x2="9" y2="12" />
-                      </svg>
-                      <span>Sign Out</span>
                     </button>
                   </div>
                 </nav>

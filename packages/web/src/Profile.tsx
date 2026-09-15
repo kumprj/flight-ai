@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Config } from './config';
-import { fetchAuthSession } from 'aws-amplify/auth';
+import { fetchAuthSession, signOut } from 'aws-amplify/auth';
 import Toast, { type ToastType } from './Toast';
 import AddressAutocomplete from './AddressAutocomplete';
 
@@ -176,16 +176,34 @@ export default function Profile({ onBack }: ProfileProps) {
         )}
 
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">My Profile</h2>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label="Back to Trips"
+              className="p-1.5 -ml-1.5 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">My Profile</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Preferences & notifications</p>
+            </div>
+          </div>
           <button
             type="button"
-            onClick={onBack}
-            className="inline-flex items-center gap-1 text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 text-sm font-semibold cursor-pointer transition-colors"
+            onClick={() => signOut()}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 rounded-lg transition-colors cursor-pointer border border-red-200/80 dark:border-red-900/60 active:scale-95"
+            title="Sign out of your account"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6" />
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            Trips
+            Sign Out
           </button>
         </div>
 
