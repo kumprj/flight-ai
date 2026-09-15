@@ -163,20 +163,22 @@ export const testNotify: APIGatewayProxyHandlerV2 = async (event) => {
     // Get user profile
     const profile = await Database.get(userId, "PROFILE");
 
-    // Calculate travel time (multi-modal if transitEnabled)
+    // Calculate when to leave based on arrival preference
+    const arrivalPreference = profile?.arrivalPreference || 2;
+    const effectiveDateStr = trip.revisedDate || trip.date;
+    const flightUTC = parseFlightTimeToUTC(effectiveDateStr, trip.originAirport || trip.timezone);
+    const estimatedLeaveUTC = new Date(flightUTC.getTime() - (arrivalPreference * 60 * 60 * 1000));
+
+    // Calculate travel time using predicted traffic at estimated leave time (multi-modal if transitEnabled)
     const transitEnabled = Boolean(profile?.transitEnabled);
     const travelEstimate = await GoogleMaps.getMultiModalTravelTime(
       trip.homeAddress,
       trip.originAirport,
-      new Date(),
+      estimatedLeaveUTC,
       transitEnabled
     );
 
-    // Calculate when to leave based on arrival preference
-    const arrivalPreference = profile?.arrivalPreference || 2;
     const driveMinutes = Math.ceil(travelEstimate.drive.durationSeconds / 60);
-
-    const flightUTC = parseFlightTimeToUTC(trip.date, trip.originAirport || trip.timezone);
     const driveLeaveUTC = calculateLeaveTime(flightUTC, driveMinutes, arrivalPreference);
     const driveLeaveFormatted = formatLeaveTime(driveLeaveUTC, trip.originAirport || trip.timezone);
 
@@ -353,7 +355,7 @@ export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
   }
 
   const body = JSON.parse(event.body || "{}");
-  const { homeAddress, airportCode } = body;
+  const { homeAddress, airportCode, flightDate, timezone } = body;
 
   if (!homeAddress || !airportCode) {
     return { statusCode: 400, body: JSON.stringify({ error: "homeAddress and airportCode are required" }) };
@@ -362,12 +364,23 @@ export const getTravelTime: APIGatewayProxyHandlerV2 = async (event) => {
   try {
     const profile = await Database.get(userId, "PROFILE");
     const includeTransit = Boolean(body.includeTransit ?? profile?.transitEnabled);
+    const arrivalPreference = profile?.arrivalPreference || 2;
 
-    console.log("Calculating travel time from", homeAddress, "to", airportCode, "includeTransit:", includeTransit);
+    let targetTime = new Date();
+    if (flightDate) {
+      try {
+        const flightUTC = parseFlightTimeToUTC(flightDate, airportCode || timezone);
+        targetTime = new Date(flightUTC.getTime() - (arrivalPreference * 60 * 60 * 1000));
+      } catch (err) {
+        console.warn("Failed to parse flightDate, defaulting to now:", err);
+      }
+    }
+
+    console.log("Calculating travel time from", homeAddress, "to", airportCode, "targetTime:", targetTime.toISOString(), "includeTransit:", includeTransit);
     const travelEstimate = await GoogleMaps.getMultiModalTravelTime(
       homeAddress,
       airportCode,
-      new Date(),
+      targetTime,
       includeTransit
     );
     console.log("Travel time calculated:", travelEstimate);

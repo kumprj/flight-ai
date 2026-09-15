@@ -1,22 +1,21 @@
-# Graph Report - flight-ai  (2026-09-15)
+# Graph Report - flight-ai-drive-time  (2026-09-15)
 
 ## Corpus Check
-- 78 files · ~41,733 words
+- 77 files · ~41,896 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 6 file(s) not represented in the graph (top: (none) 4, .css 2)
+- Unclassified: 7 file(s) not represented in the graph (top: (none) 5, .css 2)
 
 ## Summary
-- 535 nodes · 774 edges · 45 communities (25 shown, 10 thin omitted)
+- 527 nodes · 770 edges · 43 communities (23 shown, 10 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 25 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f5a6d337`
+- Built from commit: `cb6f4891`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?
 - maps.ts
 - trip.ts
 - App.tsx
@@ -28,7 +27,6 @@
 - Make My Flight (makemyflight)
 - Agent skills
 - Domain Docs
-- Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?
 - functions/package.json
 - compilerOptions
 - React + TypeScript + Vite
@@ -55,8 +53,8 @@
 ## God Nodes (most connected - your core abstractions)
 1. `compilerOptions` - 20 edges
 2. `compilerOptions` - 18 edges
-3. `compilerOptions` - 13 edges
-4. `parseFlightTimeToUTC()` - 12 edges
+3. `parseFlightTimeToUTC()` - 13 edges
+4. `compilerOptions` - 13 edges
 5. `formatLeaveTime()` - 9 edges
 6. `compilerOptions` - 9 edges
 7. `react` - 9 edges
@@ -79,19 +77,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (45 total, 10 thin omitted)
-
-### Community 0 - "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?"
-Cohesion: 0.40
-Nodes (4): Answer, Outcome, Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?, Source Nodes
+## Communities (43 total, 10 thin omitted)
 
 ### Community 1 - "maps.ts"
 Cohesion: 0.06
-Nodes (55): alertMatchesAirport(), BART_STATIONS, bartToTransitAlerts(), formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport(), OAK_KEYWORDS (+47 more)
+Nodes (58): alertMatchesAirport(), BART_STATIONS, bartToTransitAlerts(), formatBartAlertsSummary(), getBartAlerts(), getBartStationInfo(), isBartAirport(), OAK_KEYWORDS (+50 more)
 
 ### Community 2 - "trip.ts"
-Cohesion: 0.08
-Nodes (46): AirportInfo, AIRPORTS, getAirportAddress(), getAirportLabel(), getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), filterNewFlights() (+38 more)
+Cohesion: 0.09
+Nodes (44): AirportInfo, AIRPORTS, getAirportAddress(), getAirportLabel(), getAirportTimezone(), calculateHoursUntilFlight(), calculateLeaveTime(), filterNewFlights() (+36 more)
 
 ### Community 3 - "App.tsx"
 Cohesion: 0.07
@@ -128,10 +122,6 @@ Nodes (5): Agent Guidelines - Make My Flight, Agent skills, Domain docs, Issue t
 ### Community 11 - "Domain Docs"
 Cohesion: 0.33
 Nodes (5): Before exploring, read these, Domain Docs, File structure, Flag ADR conflicts, Use the glossary's vocabulary
-
-### Community 12 - "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?"
-Cohesion: 0.40
-Nodes (4): Answer, Outcome, Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?, Source Nodes
 
 ### Community 13 - "functions/package.json"
 Cohesion: 0.09
@@ -182,24 +172,24 @@ Cohesion: 0.08
 Nodes (23): API Endpoints, APIs, Architecture, AWS Infrastructure, Backend, Deployment, Environment Variables, Features (+15 more)
 
 ## Knowledge Gaps
-- **284 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+279 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 319 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **279 isolated node(s):** `name`, `private`, `workspaces`, `dev`, `deploy` (+274 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 312 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `react` connect `App.tsx` to `web/package.json`?**
-  _High betweenness centrality (0.112) - this node is a cross-community bridge._
+  _High betweenness centrality (0.117) - this node is a cross-community bridge._
 - **Why does `formatFlightTimeOnly()` connect `trip.ts` to `App.tsx`?**
-  _High betweenness centrality (0.076) - this node is a cross-community bridge._
+  _High betweenness centrality (0.080) - this node is a cross-community bridge._
 - **Why does `@aws-sdk/client-lambda` connect `trip.ts` to `functions/package.json`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
 - **What connects `name`, `private`, `workspaces` to the rest of the system?**
-  _284 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _279 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `maps.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.06377204884667571 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05875251509054326 - nodes in this community are weakly interconnected._
 - **Should `trip.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08248587570621468 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08711433756805807 - nodes in this community are weakly interconnected._
 - **Should `App.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.06779661016949153 - nodes in this community are weakly interconnected._
