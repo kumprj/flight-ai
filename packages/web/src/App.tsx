@@ -30,12 +30,15 @@ interface Trip {
   sk: string;
   flightNumber: string;
   date: string;
+  revisedDate?: string;
   arrivalTime?: string;
   revisedArrivalTime?: string;
   originAirport: string;
   destinationAirport: string;
   homeAddress: string;
   createdAt?: number;
+  status?: string;
+  delayMinutes?: number;
 }
 
 interface MultiSegmentResult {
@@ -45,6 +48,34 @@ interface MultiSegmentResult {
 }
 
 type Step = 'input' | 'select' | 'confirm';
+
+const parseLocalDate = (dateStr: string): Date | null => {
+  if (!dateStr) return null;
+  const [datePart] = dateStr.split(/[T ]/);
+  const parts = datePart.split('-');
+  if (parts.length === 3) {
+    const [year, month, day] = parts.map(Number);
+    if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+      return new Date(year, month - 1, day);
+    }
+  }
+  const fallback = new Date(dateStr);
+  return isNaN(fallback.getTime()) ? null : fallback;
+};
+
+const formatDateOnly = (d: Date | null): string => {
+  if (!d || isNaN(d.getTime())) return '';
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getTripDateOnly = (dateStr?: string): string => {
+  if (!dateStr) return '';
+  const [datePart] = dateStr.split(/[T ]/);
+  return datePart;
+};
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -68,6 +99,15 @@ function App() {
   const [showCalendarImport, setShowCalendarImport] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = loading
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null); // null = loading
+
+  const isFlightUnchanged = Boolean(
+    editingTrip &&
+    searchMode === 'flight' &&
+    flightNumbers.length === 1 &&
+    flightNumbers[0].trim().toUpperCase().replace(/\s/g, '') === editingTrip.flightNumber.trim().toUpperCase().replace(/\s/g, '') &&
+    selectedDate &&
+    formatDateOnly(selectedDate) === getTripDateOnly(editingTrip.date)
+  );
 
   const handleCalendarImport = async (flights: CalendarFlight[], address: string): Promise<void> => {
     if (flights.length === 0) { setShowCalendarImport(false); return; }
@@ -199,7 +239,7 @@ function App() {
         headers: {Authorization: `Bearer ${token}`}
       });
 
-      if (res.data && res.data.homeAddress) {
+      if (res.data && res.data.homeAddress && !editingTrip) {
         setHomeAddress(res.data.homeAddress); // Directly set the home address
       }
     } catch (err) {
@@ -210,18 +250,60 @@ function App() {
 
 
   useEffect(() => {
-    if (view === 'add') {
+    if (view === 'add' && !editingTrip) {
       loadUserProfile();
     }
-  }, [view]);
+  }, [view, editingTrip]);
 
   const handleLookup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     const form = new FormData(e.target as HTMLFormElement);
-    const address = (form.get('homeAddress') as string) || homeAddress;
+    const address = ((form.get('homeAddress') as string) || homeAddress).trim();
     setHomeAddress(address);
+
+    if (!address) {
+      showToast("Please enter a starting location.", "error");
+      return;
+    }
+
+    // If editing a trip and the flight details (flight number & date) have not changed,
+    // directly save the updated trip without re-searching the flight API.
+    if (editingTrip && isFlightUnchanged) {
+      setLoading(true);
+      try {
+        const session = await fetchAuthSession();
+        const token = session.tokens?.idToken?.toString();
+
+        await axios.put(`${Config.API_URL}/trips`, {
+          flightNumber: editingTrip.flightNumber,
+          date: editingTrip.date,
+          arrivalTime: editingTrip.arrivalTime,
+          revisedArrivalTime: editingTrip.revisedArrivalTime,
+          originAirport: editingTrip.originAirport,
+          destinationAirport: editingTrip.destinationAirport,
+          homeAddress: address,
+          status: editingTrip.status,
+          revisedDate: editingTrip.revisedDate,
+          delayMinutes: editingTrip.delayMinutes,
+          createdAt: editingTrip.createdAt,
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        showToast("Trip updated successfully!", "success");
+        handleCancel();
+        setView('list');
+      } catch (err) {
+        console.error("Failed to update trip:", err);
+        showToast("Failed to update trip.", "error");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const session = await fetchAuthSession();
@@ -418,6 +500,7 @@ function App() {
           destinationAirport: selectedFlight?.destination,
           homeAddress: homeAddress,
           createdAt: editingTrip.createdAt,
+          oldTripId: `${editingTrip.date}#${editingTrip.flightNumber}`,
         }, {
           headers: {Authorization: `Bearer ${token}`}
         });
@@ -489,6 +572,8 @@ function App() {
     setSearchMode('flight');
     setFlightSegments([{ origin: '', destination: '' }]);
     setFlightNumbers(['']);
+    setHomeAddress('');
+    setSelectedDate(null);
   };
 
   const addFlightSegment = () => {
@@ -526,9 +611,11 @@ function App() {
 
   const handleEdit = (trip: Trip) => {
     setEditingTrip(trip);
+    setSearchMode('flight');
     setFlightNumbers([trip.flightNumber]);
     setHomeAddress(trip.homeAddress);
-    setSelectedDate(new Date(trip.date));
+    setSelectedDate(parseLocalDate(trip.date));
+    setStep('input');
     setView('add');
   };
 
@@ -606,7 +693,10 @@ function App() {
                   </h1>
                   <div className="flex gap-4 text-sm font-medium">
                     <button
-                        onClick={() => setView('list')}
+                        onClick={() => {
+                          if (editingTrip) handleCancel();
+                          setView('list');
+                        }}
                         className={`${
                             view === 'list'
                                 ? 'text-green-700 border-b-2 border-green-700'
@@ -616,7 +706,10 @@ function App() {
                       My Trips
                     </button>
                     <button
-                        onClick={() => setView('profile')}
+                        onClick={() => {
+                          if (editingTrip) handleCancel();
+                          setView('profile');
+                        }}
                         className={`${
                             view === 'profile'
                                 ? 'text-green-700 border-b-2 border-green-700'
@@ -646,35 +739,42 @@ function App() {
                             <div className="animate-fade-in">
                               <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-xl font-bold">{editingTrip ? 'Edit Trip' : 'Track a New Flight'}</h2>
-                                <button onClick={() => setView('list')}
-                                        className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium rounded-lg transition-colors"
+                                <button onClick={() => {
+                                  handleCancel();
+                                  setView('list');
+                                }}
+                                        className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium rounded-lg transition-colors cursor-pointer"
                                 >
                                   Cancel
                                 </button>
                               </div>
 
-                              <button
-                                  type="button"
-                                  onClick={async () => {
-                    await loadUserProfile();
-                    setShowCalendarImport(true);
-                  }}
-                                  className="w-full mb-4 py-2.5 px-4 border border-dashed border-green-600/50 hover:border-green-600 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2"
-                              >
-                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                Import from Google Calendar
-                              </button>
+                              {!editingTrip && (
+                                <>
+                                  <button
+                                      type="button"
+                                      onClick={async () => {
+                        await loadUserProfile();
+                        setShowCalendarImport(true);
+                      }}
+                                      className="w-full mb-4 py-2.5 px-4 border border-dashed border-green-600/50 hover:border-green-600 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Import from Google Calendar
+                                  </button>
 
-                              <div className="relative my-6">
-                                <div className="absolute inset-0 flex items-center">
-                                  <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
-                                </div>
-                                <div className="relative flex justify-center text-sm">
-                                  <span className="px-2 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400">or</span>
-                                </div>
-                              </div>
+                                  <div className="relative my-6">
+                                    <div className="absolute inset-0 flex items-center">
+                                      <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                                    </div>
+                                    <div className="relative flex justify-center text-sm">
+                                      <span className="px-2 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400">or</span>
+                                    </div>
+                                  </div>
+                                </>
+                              )}
 
                               <form onSubmit={handleLookup} className="space-y-4">
                                 <div>
@@ -714,6 +814,11 @@ function App() {
                                           className="block text-xs uppercase tracking-wider text-gray-500 mb-1 font-semibold">
                                         Flight Info
                                       </label>
+                                      {editingTrip && isFlightUnchanged && (
+                                        <p className="text-xs text-green-700 dark:text-green-400 font-medium mb-2 flex items-center gap-1">
+                                          <span>✓</span> Keeping flight {editingTrip.flightNumber} ({editingTrip.originAirport} → {editingTrip.destinationAirport})
+                                        </p>
+                                      )}
                                       <div className="space-y-2">
                                         {flightNumbers.map((fn, index) => (
                                           <div key={index} className="flex gap-2 items-center">
@@ -825,7 +930,9 @@ function App() {
                                     disabled={loading}
                                     className="w-full py-3.5 bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-green-600/30 transition-all disabled:opacity-70"
                                 >
-                                  {loading ? 'Searching...' : 'Find Flight'}
+                                  {loading
+                                    ? (editingTrip && isFlightUnchanged ? 'Saving...' : 'Searching...')
+                                    : (editingTrip && isFlightUnchanged ? 'Save Changes' : 'Find Flight')}
                                 </button>
                               </form>
                             </div>
