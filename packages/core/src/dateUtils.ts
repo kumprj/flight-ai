@@ -117,3 +117,58 @@ export const formatFlightDate = (isoString: string, airportCode: string): string
 export const formatFlightTimeOnly = (isoString: string, airportCode: string): string => {
   return formatFlightTime(isoString, airportCode, 'h:mm a');
 };
+
+/**
+ * Normalizes a flight number for reliable comparisons:
+ * Uppercased, trimmed, and whitespace removed (e.g. "UA 123" -> "UA123").
+ */
+export const normalizeFlightNumber = (flightNumber?: string): string => {
+  if (!flightNumber) return '';
+  return flightNumber.trim().toUpperCase().replace(/\s/g, '');
+};
+
+/**
+ * Extracts YYYY-MM-DD from an ISO string, naive local datetime string, or date string.
+ * Example: "2026-05-20T14:30:00" -> "2026-05-20"
+ */
+export const getTripDateOnly = (dateStr?: string): string => {
+  if (!dateStr) return '';
+  const [datePart] = dateStr.split(/[T ]/);
+  return datePart;
+};
+
+/**
+ * Checks if a candidate flight (e.g. from Google Calendar) matches any already tracked trip.
+ * Compares normalized flight numbers and checks scheduled departure date or revisedDate.
+ */
+export const isTripAlreadyTracked = (
+  candidate: { flightNumber: string; date: string },
+  existingTrips: Array<{ flightNumber: string; date: string; revisedDate?: string }>
+): boolean => {
+  if (!candidate || !candidate.flightNumber || !candidate.date) return false;
+  const candNorm = normalizeFlightNumber(candidate.flightNumber);
+  const candDate = getTripDateOnly(candidate.date);
+  if (!candNorm || !candDate) return false;
+
+  return existingTrips.some((trip) => {
+    const tripNorm = normalizeFlightNumber(trip.flightNumber);
+    if (tripNorm !== candNorm) return false;
+
+    const origDate = getTripDateOnly(trip.date);
+    const revisedDate = getTripDateOnly(trip.revisedDate);
+
+    return origDate === candDate || (Boolean(revisedDate) && revisedDate === candDate);
+  });
+};
+
+/**
+ * Filters candidate flights to return only net-new flights not already tracked in existingTrips.
+ */
+export const filterNewFlights = <T extends { flightNumber: string; date: string }>(
+  candidateFlights: T[],
+  existingTrips: Array<{ flightNumber: string; date: string; revisedDate?: string }>
+): T[] => {
+  if (!Array.isArray(candidateFlights)) return [];
+  if (!Array.isArray(existingTrips) || existingTrips.length === 0) return candidateFlights;
+  return candidateFlights.filter((flight) => !isTripAlreadyTracked(flight, existingTrips));
+};

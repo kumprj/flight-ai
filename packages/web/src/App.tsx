@@ -6,7 +6,7 @@ import Trips from './Trips';
 import {useState, useEffect} from 'react';
 import Toast, {type ToastType} from './Toast';
 import CustomDatePicker from './DatePicker';
-import {formatFlightDate, formatFlightTimeOnly} from './utils/flightTimes';
+import {formatFlightDate, formatFlightTimeOnly, filterNewFlights, normalizeFlightNumber} from './utils/flightTimes';
 import Profile from './Profile';
 import CalendarImport from './CalendarImport';
 import Onboarding from './Onboarding';
@@ -104,7 +104,7 @@ function App() {
     editingTrip &&
     searchMode === 'flight' &&
     flightNumbers.length === 1 &&
-    flightNumbers[0].trim().toUpperCase().replace(/\s/g, '') === editingTrip.flightNumber.trim().toUpperCase().replace(/\s/g, '') &&
+    normalizeFlightNumber(flightNumbers[0]) === normalizeFlightNumber(editingTrip.flightNumber) &&
     selectedDate &&
     formatDateOnly(selectedDate) === getTripDateOnly(editingTrip.date)
   );
@@ -117,11 +117,32 @@ function App() {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
 
+      // Fetch latest trips to guarantee no duplicates are created
+      let currentTrips: Trip[] = [];
+      try {
+        const tripsRes = await axios.get(`${Config.API_URL}/trips`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        currentTrips = tripsRes.data || [];
+      } catch (e) {
+        console.warn('Could not fetch existing trips for duplicate check in handleCalendarImport', e);
+      }
+
+      const flightsToImport = currentTrips.length > 0
+        ? filterNewFlights(flights, currentTrips)
+        : flights;
+
+      if (flightsToImport.length === 0) {
+        showToast('All selected flights are already being tracked.', 'success');
+        setShowCalendarImport(false);
+        return;
+      }
+
       let imported = 0;
       const ambiguous: Array<{ flight: CalendarFlight; results: FlightData[] }> = [];
       const notFound: string[] = [];
 
-      for (const calFlight of flights) {
+      for (const calFlight of flightsToImport) {
         try {
           const res = await axios.get(`${Config.API_URL}/flights/search`, {
             params: { flightNumber: calFlight.flightNumber, date: calFlight.date },
@@ -160,7 +181,7 @@ function App() {
       if (ambiguous.length > 0) {
         const first = ambiguous[0];
         setSearchMode('flight');
-        setSelectedDate(new Date(first.flight.date + 'T12:00:00'));
+        setSelectedDate(parseLocalDate(first.flight.date));
         setSearchResults(first.results);
         setView('add');
         setStep('select');

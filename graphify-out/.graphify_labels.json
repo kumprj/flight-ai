@@ -1,5 +1,5 @@
 {
-  "0": "googleCalendar.ts",
+  "0": "Q: Why does getAirportTimezone() connect Make My Flight Core Backend & Data to AWS Serverless SDK Dependencies?",
   "1": "maps.ts",
   "2": "trip.ts",
   "3": "App.tsx",
@@ -11,6 +11,7 @@
   "9": "Make My Flight (makemyflight)",
   "10": "Agent skills",
   "11": "Domain Docs",
+  "12": "Q: How does traffic prediction work from departure airport to Google Maps Routes API in Make My Flight?",
   "13": "functions/package.json",
   "14": "compilerOptions",
   "15": "React + TypeScript + Vite",
