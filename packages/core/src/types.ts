@@ -2,6 +2,8 @@ export interface Trip {
   userId: string;
   flightNumber: string;
   date: string; // ISO 8601 naive scheduled departure time (e.g. 2026-05-20T14:30:00)
+  arrivalTime?: string; // ISO 8601 naive arrival time (e.g. 2026-05-20T17:45:00)
+  revisedArrivalTime?: string;
   originAirport: string;
   destinationAirport: string;
   homeAddress: string;
@@ -56,8 +58,11 @@ export interface TransitStep {
   distanceMeters?: number;
   durationSeconds?: number;
   transitLine?: string;
+  lineShortName?: string;
   transitAgency?: string;
   stopName?: string;
+  departureStop?: string;
+  arrivalStop?: string;
   vehicleType?: string;
   numStops?: number;
 }
@@ -117,13 +122,34 @@ export interface NycTransitStationInfo {
   fareDescription: string;
 }
 
-export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo;
+export interface BartAlert {
+  id: string;
+  station: string;
+  type: string;
+  description: string;
+  sms_text: string;
+  posted: string;
+  expires: string;
+}
+
+export interface BartStationInfo {
+  agency: "BART";
+  airportCode: "SFO" | "OAK";
+  name: string;
+  line: string;
+  lineColor: string;
+  stationLocation: string;
+  fareDescription: string;
+}
+
+export type TransitStationInfo = CtaStationInfo | NycTransitStationInfo | BartStationInfo;
 
 export interface MultiModalTravelTime {
   drive: TravelTimeInfo;
   transit?: TravelTimeInfo;
   ctaAlerts?: CtaAlert[];
   mtaAlerts?: MtaAlert[];
+  bartAlerts?: BartAlert[];
   stationInfo?: TransitStationInfo;
 }
 
